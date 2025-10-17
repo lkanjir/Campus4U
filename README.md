@@ -29,6 +29,15 @@ F10 | Prijava kvara u prostorijama | Sustav će omogućiti studentima prijavu kv
 F11 | Upravljanje prijavljenim kvarovima | Sustav će omogućiti osoblju prikaz svih kvarova koje su studenti prijavili u studentskim učionicama i teretani. Osoblje mora imati uvid u sve prijavljene kvarove kako bi moglo pravovremeno reagirati i planirati popravke ili intervencije. Sustav će omogućiti filtriranje kvarova (po lokaciji, datumu prijave i vrsti problema), te vođenje evidencije (o učestalosti i vrsti kvarova). | Tin Posavec
 F12 | Prikaz tjednog jelovnika | Korisnik ima mogućnost pregledati dnevni jelovnik studentskog doma koji sadrži ponudu za ručak i večeru. Svaki jelovnik uključuje više opcija obroka, uključujući standardna i vegetarijanska jela, te dodatnu ponudu jela na narudžbu. Jelovnici se automatski izmjenjuju na dnevnoj bazi prema rasporedu spremljenom u bazi podataka. | Tin Posavec
 
+### Skice
+**Rezervacija prostorije**
+
+<img width="1366" height="768" alt="Campus4U" src="https://github.com/user-attachments/assets/87919d58-8ef5-4e0b-9f06-cd285db3439d" />
+
+**Dnevni jelovnik**
+
+![desktop dnevni jelovnik - skica](https://github.com/user-attachments/assets/6d91ea33-60eb-4b22-9b08-989715b07237)
+
 ## Tehnologije i oprema
 #### Tehnologije:
  - .NET Core
