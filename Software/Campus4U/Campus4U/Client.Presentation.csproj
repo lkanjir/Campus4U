@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <AssemblyName>Campus4U</AssemblyName>
+    <RootNamespace>Campus4U</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
