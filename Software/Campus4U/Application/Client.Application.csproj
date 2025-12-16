@@ -6,14 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Auth0.OidcClient.WPF" Version="4.4.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Contracts\Contracts.csproj" />
-    <ProjectReference Include="..\Data\Client.Data.csproj" />
-    <ProjectReference Include="..\Domain\Client.Domain.csproj" />
-  </ItemGroup>
-
 </Project>
