@@ -20,7 +20,7 @@ namespace Client.Presentation
             if (options is null)
                 throw new InvalidOperationException("appsettings.json ne postoji ili je Auth0 config krivog formata");
 
-            auth = new AuthService(options);
+            auth = new AuthService(options, new SecureTokenStore());
         }
 
         private async void BtnLogin_OnClick(object sender, RoutedEventArgs e)

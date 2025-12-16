@@ -7,8 +7,9 @@ namespace Client.Presentation.Auth;
 public sealed class AuthService
 {
     private readonly Auth0Client client;
+    private readonly SecureTokenStore store;
 
-    public AuthService(AuthOptions options)
+    public AuthService(AuthOptions options, SecureTokenStore store)
     {
         client = new Auth0Client(new Auth0ClientOptions
         {
@@ -16,10 +17,17 @@ public sealed class AuthService
             ClientId = options.ClientId,
             RedirectUri = options.RedirectUrl,
         });
+        this.store = store;
     }
 
-    public Task<LoginResult> LoginAsync(CancellationToken token = default)
+    public async Task<LoginResult> LoginAsync(CancellationToken token = default)
     {
-        return client.LoginAsync(cancellationToken: token);
+        var result = await client.LoginAsync(cancellationToken: token);
+        if (!result.IsError)
+        {
+            await store.SaveAsync(new Token(result.AccessToken, result.RefreshToken, result.AccessTokenExpiration));
+        }
+
+        return result;
     }
 }
