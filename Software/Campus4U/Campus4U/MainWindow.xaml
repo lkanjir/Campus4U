@@ -1,4 +1,4 @@
-﻿<Window x:Class="Campus4U.MainWindow"
+﻿<Window x:Class="Client.Presentation.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:Campus4U"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+    <StackPanel>
+        <TextBox IsReadOnly="True" x:Name="TxtStatus"></TextBox>
+        <Button x:Name="BtnLogin" Click="BtnLogin_OnClick">Prijava</Button>
+    </StackPanel>
 </Window>

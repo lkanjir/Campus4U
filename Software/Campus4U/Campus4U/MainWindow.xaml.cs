@@ -1,24 +1,36 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using Client.Presentation.Auth;
+using Microsoft.Extensions.Configuration;
 
-namespace Campus4U
+namespace Client.Presentation
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+    //Luka Kanjir
     public partial class MainWindow : Window
     {
+        private readonly AuthService auth;
+
         public MainWindow()
         {
             InitializeComponent();
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false)
+                .Build();
+
+            var options = config.GetSection("Auth0").Get<AuthOptions>();
+            if (options is null)
+                throw new InvalidOperationException("appsettings.json ne postoji ili je Auth0 config krivog formata");
+
+            auth = new AuthService(options);
+        }
+
+        private async void BtnLogin_OnClick(object sender, RoutedEventArgs e)
+        {
+            TxtStatus.Text = "Prijava traje...";
+            BtnLogin.IsEnabled = false;
+
+            var result = await auth.LoginAsync();
+            if (result.IsError) TxtStatus.Text = $"Greska: {result.Error}";
+            else TxtStatus.Text = $"Prijavljen: {result.User?.FindFirst("name")?.Value}";
         }
     }
 }
