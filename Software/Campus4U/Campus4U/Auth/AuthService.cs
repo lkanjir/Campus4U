@@ -1,6 +1,5 @@
 using Auth0.OidcClient;
 using Duende.IdentityModel.OidcClient;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Client.Presentation.Auth;
 
@@ -13,14 +12,17 @@ public sealed class AuthService
 
     public AuthService(AuthOptions options, SecureTokenStore store)
     {
-        client = new Auth0Client(new Auth0ClientOptions
+        var clientOptions = new Auth0ClientOptions
         {
             Domain = options.Domain,
             ClientId = options.ClientId,
             RedirectUri = options.RedirectUri,
             PostLogoutRedirectUri = options.PostLogoutRedirectUri,
-            Browser = new SystemBrowser()
-        });
+            Browser = new SystemBrowser(),
+            Scope = options.Scope,
+        };
+
+        client = new Auth0Client(clientOptions);
         this.store = store;
     }
 
@@ -33,10 +35,45 @@ public sealed class AuthService
             store.Clear();
             return null;
         }
-        
+
         return token;
     }
-    
+
+    public async Task<AuthSessionRestoreResult> RestoreSessionAsync(CancellationToken cancellationToken = default)
+    {
+        var existing = await store.ReadAsync();
+        if (existing is null) return new AuthSessionRestoreResult(AuthSessionRestoreState.SignedOut, null, null);
+        if (!IsExpired(existing)) return new AuthSessionRestoreResult(AuthSessionRestoreState.SignedIn, existing, null);
+
+        var refreshToken = existing.RefreshToken;
+        if (string.IsNullOrWhiteSpace(refreshToken))
+        {
+            store.Clear();
+            return new AuthSessionRestoreResult(AuthSessionRestoreState.ExpiredNoRefreshToken, null, null);
+        }
+
+        var refreshed = await client.RefreshTokenAsync(refreshToken, cancellationToken);
+        if (refreshed.IsError)
+        {
+            store.Clear();
+            return new AuthSessionRestoreResult(AuthSessionRestoreState.RefreshFailed, null,
+                refreshed.Error ?? "Neuspješno ažuriranje tokena");
+        }
+
+        if (string.IsNullOrWhiteSpace(refreshed.AccessToken))
+        {
+            store.Clear();
+            return new AuthSessionRestoreResult(AuthSessionRestoreState.RefreshFailed, null,
+                "Neuspješno ažuriranje, access token nedostaje");
+        }
+        
+        var refreshTokenToSave = string.IsNullOrWhiteSpace(refreshed.RefreshToken) ? refreshToken : refreshed.RefreshToken;
+        var newToken = new Token(refreshed.AccessToken, refreshTokenToSave, refreshed.AccessTokenExpiration);
+        await store.SaveAsync(newToken);
+
+        return new AuthSessionRestoreResult(AuthSessionRestoreState.Refreshed, newToken, null);
+    }
+
     public async Task<LoginResult> LoginAsync(CancellationToken token = default)
     {
         var result = await client.LoginAsync(cancellationToken: token);

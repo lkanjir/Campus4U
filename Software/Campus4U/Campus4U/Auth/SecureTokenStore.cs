@@ -6,6 +6,7 @@ using System.Text.Json;
 
 namespace Client.Presentation.Auth;
 
+//Luka Kanjir
 public sealed record Token(
     string AccessToken,
     string? RefreshToken,
