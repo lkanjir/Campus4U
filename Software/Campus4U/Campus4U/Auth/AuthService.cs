@@ -26,7 +26,7 @@ public sealed class AuthService
         client = new Auth0Client(clientOptions);
         this.store = store;
     }
-    
+
     public async Task<AuthSessionRestoreResult> RestoreSessionAsync(CancellationToken cancellationToken = default)
     {
         var existing = await store.ReadAsync();
@@ -54,8 +54,9 @@ public sealed class AuthService
             return new AuthSessionRestoreResult(AuthSessionRestoreState.RefreshFailed, null,
                 "Neuspješno ažuriranje, access token nedostaje");
         }
-        
-        var refreshTokenToSave = string.IsNullOrWhiteSpace(refreshed.RefreshToken) ? refreshToken : refreshed.RefreshToken;
+
+        var refreshTokenToSave =
+            string.IsNullOrWhiteSpace(refreshed.RefreshToken) ? refreshToken : refreshed.RefreshToken;
         var newToken = new Token(refreshed.AccessToken, refreshTokenToSave, refreshed.AccessTokenExpiration);
         await store.SaveAsync(newToken);
 
@@ -64,7 +65,12 @@ public sealed class AuthService
 
     public async Task<LoginResult> LoginAsync(CancellationToken token = default)
     {
-        var result = await client.LoginAsync(cancellationToken: token);
+        //samo za test
+        var extraParameters = new Dictionary<string, string>();
+        extraParameters.Add("audience", "https://test-api.local");
+        //end test
+
+        var result = await client.LoginAsync(cancellationToken: token, extraParameters: extraParameters);
         if (!result.IsError)
         {
             await store.SaveAsync(new Token(result.AccessToken, result.RefreshToken, result.AccessTokenExpiration));
@@ -84,11 +90,12 @@ public sealed class AuthService
             store.Clear();
         }
     }
-    
+
     private bool IsExpired(Token token)
     {
         if (token.ExpiresAt is null) return false;
         return token.ExpiresAt.Value <= DateTimeOffset.UtcNow.Add(expiredGracePeriod);
     }
+
     public void ClearLocalSession() => store.Clear();
 }

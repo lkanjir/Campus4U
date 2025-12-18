@@ -12,5 +12,10 @@
             <Button x:Name="BtnLogin" Click="BtnLogin_OnClick" Width="150">Prijava</Button>
             <Button x:Name="BtnLogout" Click="BtnLogout_OnClick" Width="150" Margin="10 0 0 0" IsEnabled="False">Odjava</Button>
         </StackPanel>
+        
+        <StackPanel Margin="0 10 0 0 ">
+            <TextBox IsReadOnly="True" x:Name="TxtDiagnostics"></TextBox>
+            <Button Margin="0 10 0 0 " Width="150" HorizontalAlignment="Left" x:Name="BtnTest" Click="BtnTest_OnClick">Test </Button>
+        </StackPanel>
     </StackPanel>
 </Window>

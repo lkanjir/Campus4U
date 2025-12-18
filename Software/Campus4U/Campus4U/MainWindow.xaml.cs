@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Media;
 using Client.Presentation.Auth;
 using Duende.IdentityModel.OidcClient.Browser;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +11,8 @@ namespace Client.Presentation
     {
         private readonly AuthService auth;
         private bool isAuthenticated;
+
+        private readonly AuthDiagnostics diagnostics;
 
         public MainWindow()
         {
@@ -23,6 +26,8 @@ namespace Client.Presentation
                 throw new InvalidOperationException("appsettings.json ne postoji ili je Auth0 config krivog formata");
 
             auth = new AuthService(options, new SecureTokenStore());
+
+            diagnostics = new AuthDiagnostics(auth, options.Domain);
         }
 
         private async void BtnLogin_OnClick(object sender, RoutedEventArgs e)
@@ -72,8 +77,8 @@ namespace Client.Presentation
                 ApplyButtons();
             }
         }
-        
-    private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+
+        private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             await RestoreAuthStateAsyc();
         }
@@ -94,7 +99,8 @@ namespace Client.Presentation
                         var token = result.Token;
                         TxtStatus.Text =
                             token?.ExpiresAt is null
-                                ?  "Sesija - bez expires at" : $"Sesija - istice: {token.ExpiresAt.Value.LocalDateTime}";
+                                ? "Sesija - bez expires at"
+                                : $"Sesija - istice: {token.ExpiresAt.Value.LocalDateTime}";
                         break;
                     case AuthSessionRestoreState.ExpiredNoRefreshToken:
                         isAuthenticated = false;
@@ -121,12 +127,47 @@ namespace Client.Presentation
         {
             BtnLogin.IsEnabled = !isAuthenticated;
             BtnLogout.IsEnabled = isAuthenticated;
+
+            BtnTest.IsEnabled = isAuthenticated;
         }
 
         private void SetBusy(bool busy)
         {
             BtnLogin.IsEnabled = !busy;
             BtnLogout.IsEnabled = !busy;
+
+            BtnTest.IsEnabled = !busy && isAuthenticated;
+        }
+
+        private async void BtnTest_OnClick(object sender, RoutedEventArgs e)
+        {
+            SetBusy(true);
+            TxtStatus.Text = "Refresh userinfo ... ";
+            TxtDiagnostics.Clear();
+
+            try
+            {
+                var result = await diagnostics.RunAsync();
+                isAuthenticated =
+                    result.RestoreState is AuthSessionRestoreState.SignedIn or AuthSessionRestoreState.Refreshed;
+
+                if (result.IsSuccess)
+                {
+                    var expires = result.ExpiresAt?.LocalDateTime;
+                    TxtStatus.Text = $"OK: {expires}";
+                    TxtDiagnostics.Text = result.Payload ?? "prazno";
+                }
+                else
+                {
+                    TxtStatus.Text = result.Error ?? "Dijagnostika: greska";
+                    TxtDiagnostics.Text = result.Payload ?? "Nema tijela";
+                }
+            }
+            finally
+            {
+                SetBusy(false);
+                ApplyButtons();
+            }
         }
     }
 }
