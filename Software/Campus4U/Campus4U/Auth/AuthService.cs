@@ -1,5 +1,6 @@
 using Auth0.OidcClient;
 using Duende.IdentityModel.OidcClient;
+using Duende.IdentityModel.OidcClient.Browser;
 
 namespace Client.Presentation.Auth;
 
@@ -25,20 +26,7 @@ public sealed class AuthService
         client = new Auth0Client(clientOptions);
         this.store = store;
     }
-
-    public async Task<Token?> GetTokenOrClearAsync()
-    {
-        var token = await store.ReadAsync();
-        if (token is null) return null;
-        if (IsExpired(token))
-        {
-            store.Clear();
-            return null;
-        }
-
-        return token;
-    }
-
+    
     public async Task<AuthSessionRestoreResult> RestoreSessionAsync(CancellationToken cancellationToken = default)
     {
         var existing = await store.ReadAsync();
@@ -85,6 +73,18 @@ public sealed class AuthService
         return result;
     }
 
+    public async Task<BrowserResultType> LogoutAsync(bool federated = false, CancellationToken token = default)
+    {
+        try
+        {
+            return await client.LogoutAsync(federated, null, token);
+        }
+        finally
+        {
+            store.Clear();
+        }
+    }
+    
     private bool IsExpired(Token token)
     {
         if (token.ExpiresAt is null) return false;

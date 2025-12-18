@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using Client.Presentation.Auth;
+using Duende.IdentityModel.OidcClient.Browser;
 using Microsoft.Extensions.Configuration;
 
 namespace Client.Presentation
@@ -49,15 +50,30 @@ namespace Client.Presentation
             }
         }
 
-        private void BtnLogout_OnClick(object sender, RoutedEventArgs e)
+        private async void BtnLogout_OnClick(object sender, RoutedEventArgs e)
         {
-            auth.ClearLocalSession();
-            isAuthenticated = false;
-            TxtStatus.Text = "Obrisana lokalna sesija";
-            ApplyButtons();
-        }
+            try
+            {
+                var result = await auth.LogoutAsync();
+                isAuthenticated = false;
 
-        private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+                TxtStatus.Text = result == BrowserResultType.Success
+                    ? "Uspješna odjava i brisanje lokalne sesije"
+                    : $"Lokalna sesija obrisana, Auth0 greska: {result}";
+            }
+            catch (Exception ex)
+            {
+                isAuthenticated = false;
+                TxtStatus.Text = $"Lokalna sesija obrisana, greska: {ex.Message}";
+            }
+            finally
+            {
+                SetBusy(false);
+                ApplyButtons();
+            }
+        }
+        
+    private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             await RestoreAuthStateAsyc();
         }
@@ -65,22 +81,34 @@ namespace Client.Presentation
         private async Task RestoreAuthStateAsyc()
         {
             SetBusy(true);
-            TxtStatus.Text = "Učitavanje sessiona";
+            TxtStatus.Text = "Ucitavanje sesije";
 
             try
             {
-                var token = await auth.GetTokenOrClearAsync();
-                if (token is null)
+                var result = await auth.RestoreSessionAsync();
+                switch (result.State)
                 {
-                    isAuthenticated = false;
-                    TxtStatus.Text = "Niste prijavljeni";
-                    return;
+                    case AuthSessionRestoreState.SignedIn:
+                    case AuthSessionRestoreState.Refreshed:
+                        isAuthenticated = true;
+                        var token = result.Token;
+                        TxtStatus.Text =
+                            token?.ExpiresAt is null
+                                ?  "Sesija - bez expires at" : $"Sesija - istice: {token.ExpiresAt.Value.LocalDateTime}";
+                        break;
+                    case AuthSessionRestoreState.ExpiredNoRefreshToken:
+                        isAuthenticated = false;
+                        TxtStatus.Text = "Sesija isteka, nema refresh tokena";
+                        break;
+                    case AuthSessionRestoreState.RefreshFailed:
+                        isAuthenticated = false;
+                        TxtStatus.Text = $"Sesija istekla, greska kod azuriranja: {result.Error}";
+                        break;
+                    default:
+                        isAuthenticated = false;
+                        TxtStatus.Text = "Niste prijavljeni";
+                        break;
                 }
-
-                isAuthenticated = true;
-                TxtStatus.Text = token.ExpiresAt is null
-                    ? "Sesija je aktivna"
-                    : $"Sesija je aktivna i ističe: {token.ExpiresAt.Value.LocalDateTime}";
             }
             finally
             {
