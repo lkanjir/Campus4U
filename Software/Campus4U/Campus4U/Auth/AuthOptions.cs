@@ -4,5 +4,6 @@ namespace Client.Presentation.Auth;
 public sealed record AuthOptions(
     string Domain,
     string ClientId,
-    string RedirectUrl
+    string RedirectUri,
+    string PostLogoutRedirectUri
 );

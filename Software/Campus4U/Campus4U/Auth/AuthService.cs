@@ -15,7 +15,9 @@ public sealed class AuthService
         {
             Domain = options.Domain,
             ClientId = options.ClientId,
-            RedirectUri = options.RedirectUrl,
+            RedirectUri = options.RedirectUri,
+            PostLogoutRedirectUri = options.PostLogoutRedirectUri,
+            Browser = new SystemBrowser()
         });
         this.store = store;
     }
