@@ -8,6 +8,7 @@ namespace Client.Presentation
     public partial class MainWindow : Window
     {
         private readonly AuthService auth;
+        private bool isAuthenticated;
 
         public MainWindow()
         {
@@ -25,12 +26,79 @@ namespace Client.Presentation
 
         private async void BtnLogin_OnClick(object sender, RoutedEventArgs e)
         {
+            SetBusy(true);
             TxtStatus.Text = "Prijava traje...";
-            BtnLogin.IsEnabled = false;
+            try
+            {
+                var result = await auth.LoginAsync();
+                if (result.IsError)
+                {
+                    isAuthenticated = false;
+                    TxtStatus.Text = $"Greska: {result.Error}";
+                }
+                else
+                {
+                    isAuthenticated = true;
+                    TxtStatus.Text = $"Uspjeh: {result.User?.FindFirst("name")?.Value}";
+                }
+            }
+            finally
+            {
+                SetBusy(false);
+                ApplyButtons();
+            }
+        }
 
-            var result = await auth.LoginAsync();
-            if (result.IsError) TxtStatus.Text = $"Greska: {result.Error}";
-            else TxtStatus.Text = $"Prijavljen: {result.User?.FindFirst("name")?.Value}";
+        private void BtnLogout_OnClick(object sender, RoutedEventArgs e)
+        {
+            auth.ClearLocalSession();
+            isAuthenticated = false;
+            TxtStatus.Text = "Obrisana lokalna sesija";
+            ApplyButtons();
+        }
+
+        private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            await RestoreAuthStateAsyc();
+        }
+
+        private async Task RestoreAuthStateAsyc()
+        {
+            SetBusy(true);
+            TxtStatus.Text = "Učitavanje sessiona";
+
+            try
+            {
+                var token = await auth.GetTokenOrClearAsync();
+                if (token is null)
+                {
+                    isAuthenticated = false;
+                    TxtStatus.Text = "Niste prijavljeni";
+                    return;
+                }
+
+                isAuthenticated = true;
+                TxtStatus.Text = token.ExpiresAt is null
+                    ? "Sesija je aktivna"
+                    : $"Sesija je aktivna i ističe: {token.ExpiresAt.Value.LocalDateTime}";
+            }
+            finally
+            {
+                SetBusy(false);
+                ApplyButtons();
+            }
+        }
+
+        private void ApplyButtons()
+        {
+            BtnLogin.IsEnabled = !isAuthenticated;
+            BtnLogout.IsEnabled = isAuthenticated;
+        }
+
+        private void SetBusy(bool busy)
+        {
+            BtnLogin.IsEnabled = !busy;
+            BtnLogout.IsEnabled = !busy;
         }
     }
 }

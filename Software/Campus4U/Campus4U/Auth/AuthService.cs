@@ -1,5 +1,6 @@
 using Auth0.OidcClient;
 using Duende.IdentityModel.OidcClient;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Client.Presentation.Auth;
 
@@ -8,6 +9,7 @@ public sealed class AuthService
 {
     private readonly Auth0Client client;
     private readonly SecureTokenStore store;
+    private readonly TimeSpan expiredGracePeriod = TimeSpan.FromMinutes(1);
 
     public AuthService(AuthOptions options, SecureTokenStore store)
     {
@@ -22,6 +24,19 @@ public sealed class AuthService
         this.store = store;
     }
 
+    public async Task<Token?> GetTokenOrClearAsync()
+    {
+        var token = await store.ReadAsync();
+        if (token is null) return null;
+        if (IsExpired(token))
+        {
+            store.Clear();
+            return null;
+        }
+        
+        return token;
+    }
+    
     public async Task<LoginResult> LoginAsync(CancellationToken token = default)
     {
         var result = await client.LoginAsync(cancellationToken: token);
@@ -32,4 +47,11 @@ public sealed class AuthService
 
         return result;
     }
+
+    private bool IsExpired(Token token)
+    {
+        if (token.ExpiresAt is null) return false;
+        return token.ExpiresAt.Value <= DateTimeOffset.UtcNow.Add(expiredGracePeriod);
+    }
+    public void ClearLocalSession() => store.Clear();
 }

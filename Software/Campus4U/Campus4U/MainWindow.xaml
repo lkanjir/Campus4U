@@ -5,9 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Campus4U"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <StackPanel>
+        Title="MainWindow" Height="450" Width="800" Loaded="MainWindow_OnLoaded">
+    <StackPanel Margin="12">
         <TextBox IsReadOnly="True" x:Name="TxtStatus"></TextBox>
-        <Button x:Name="BtnLogin" Click="BtnLogin_OnClick">Prijava</Button>
+        <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
+            <Button x:Name="BtnLogin" Click="BtnLogin_OnClick" Width="150">Prijava</Button>
+            <Button x:Name="BtnLogout" Click="BtnLogout_OnClick" Width="150" Margin="10 0 0 0" IsEnabled="False">Odjava</Button>
+        </StackPanel>
     </StackPanel>
 </Window>
