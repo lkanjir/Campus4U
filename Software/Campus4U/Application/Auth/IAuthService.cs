@@ -2,6 +2,7 @@ using Client.Domain.Auth;
 
 namespace Client.Application.Auth;
 
+//Luka Kanjir
 public sealed record TokenGrantResult(
     bool IsSuccess,
     string? AccessToken,
@@ -10,6 +11,7 @@ public sealed record TokenGrantResult(
     string? Error
 );
 
+//Luka Kanjir
 public interface IAuthService
 {
     Task<AuthSessionRestoreResult> RestoreSessionAsync(CancellationToken ct = default);

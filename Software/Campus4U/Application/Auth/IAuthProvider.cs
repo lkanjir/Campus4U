@@ -1,5 +1,6 @@
 namespace Client.Application.Auth;
 
+//Luka Kanjir
 public interface IAuthProvider
 {
     Task<TokenGrantResult> LoginAsync(CancellationToken ct = default);

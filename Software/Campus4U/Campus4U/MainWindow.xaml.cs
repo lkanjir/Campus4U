@@ -3,6 +3,7 @@
 using Client.Application.Auth;
 using Client.Data.Auth;
 using Client.Domain.Auth;
+using Duende.IdentityModel.OidcClient.Browser;
 using Microsoft.Extensions.Configuration;
 
 namespace Client.Presentation
@@ -11,10 +12,10 @@ namespace Client.Presentation
     public partial class MainWindow : Window
     {
         private bool isAuthenticated;
-        private SecureTokenStore tokenStore;
-        private SystemBrowser browser;
-        private OidcProvider authProvider;
-        private AuthService authService;
+        private ITokenStore tokenStore;
+        private IBrowser browser;
+        private IAuthProvider authProvider;
+        private IAuthService authService;
         
         
         private readonly AuthDiagnostics diagnostics;
@@ -66,6 +67,7 @@ namespace Client.Presentation
 
         private async void BtnLogout_OnClick(object sender, RoutedEventArgs e)
         {
+            SetBusy(true);
             try
             {
                 await authService.LogoutAsync();

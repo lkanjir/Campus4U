@@ -84,7 +84,14 @@ public sealed class OidcProvider : IAuthProvider
 
     public async Task LogoutAsync(CancellationToken ct = default)
     {
-        var req = new LogoutRequest();
-        await client.LogoutAsync(req, ct);
+        var authority = options.Domain;
+        var clientId = Uri.EscapeDataString(options.ClientId);
+        var returnTo = Uri.EscapeDataString(options.PostLogoutRedirectUri);
+        var url = $"{authority}/v2/logout?client_id={clientId}&returnTo={returnTo}";
+        var browserOptions = new BrowserOptions(url, options.PostLogoutRedirectUri)
+        {
+            Timeout = TimeSpan.FromSeconds(120),
+        };
+        await client.Options.Browser.InvokeAsync(browserOptions, ct);
     }
 }

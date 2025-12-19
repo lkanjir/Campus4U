@@ -6,7 +6,7 @@ using Duende.IdentityModel.OidcClient.Browser;
 namespace Client.Data.Auth;
 
 //Luka Kanjir
-public sealed class SystemBrowser : IBrowser, ISystemBrowser
+public sealed class SystemBrowser : IBrowser
 {
     private const string ErrorMsg = "Greška";
     private const string SuccessMsg = "Uspješna prijava";
@@ -73,13 +73,5 @@ public sealed class SystemBrowser : IBrowser, ISystemBrowser
         }
 
         return result;
-    }
-
-    public async Task<SystemBrowserResult> OpenAsync(string startUrl, string endUrl, CancellationToken ct = default)
-    {
-        var result = await InvokeAsync(new BrowserOptions(startUrl, endUrl), ct);
-        return result.ResultType == BrowserResultType.Success
-            ? new SystemBrowserResult(true, result.Response, null)
-            : new SystemBrowserResult(false, result.Response, result.Error ?? result.ResultType.ToString());
     }
 }
