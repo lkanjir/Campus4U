@@ -1,4 +1,5 @@
 using Auth0.OidcClient;
+using Client.Domain.Auth;
 using Duende.IdentityModel.OidcClient;
 using Duende.IdentityModel.OidcClient.Browser;
 

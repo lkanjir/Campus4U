@@ -1,17 +1,10 @@
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Client.Domain.Auth;
 
 namespace Client.Presentation.Auth;
-
-//Luka Kanjir
-public sealed record Token(
-    string AccessToken,
-    string? RefreshToken,
-    DateTimeOffset? ExpiresAt
-);
 
 //Luka Kanjir
 public sealed class SecureTokenStore

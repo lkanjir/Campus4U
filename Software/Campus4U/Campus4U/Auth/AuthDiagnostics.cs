@@ -1,5 +1,6 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Client.Domain.Auth;
 
 namespace Client.Presentation.Auth;
 

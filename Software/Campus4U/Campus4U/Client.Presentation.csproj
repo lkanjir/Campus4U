@@ -20,4 +20,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Application\Client.Application.csproj" />
+    <ProjectReference Include="..\Domain\Client.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
