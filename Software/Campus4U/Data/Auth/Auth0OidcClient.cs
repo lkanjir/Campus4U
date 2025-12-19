@@ -43,42 +43,44 @@ public sealed class OidcProvider : IAuthProvider
 
             var result = await client.LoginAsync(loginRequest, ct);
             if (result.IsError)
-                return new TokenGrantResult(false, null, null, null, result.Error);
+                return new TokenGrantResult(false, null, null, null, result.Error, null);
 
+            const string roleNamespace = "https://campus4u.foi.hr/claims/role";
+            var role = result.User?.FindFirst(roleNamespace)?.Value ?? "student";
             return new TokenGrantResult(true, result.AccessToken, result.RefreshToken, result.AccessTokenExpiration,
-                null);
+                null, role);
         }
         catch (OperationCanceledException)
         {
-            return new TokenGrantResult(false, null, null, null, "Prijava prekinuta.");
+            return new TokenGrantResult(false, null, null, null, "Prijava prekinuta.",null);
         }
         catch (Exception ex)
         {
-            return new TokenGrantResult(false, null, null, null, ex.Message);
+            return new TokenGrantResult(false, null, null, null, ex.Message,null);
         }
     }
 
     public async Task<TokenGrantResult> RefreshAsync(string refreshToken, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(refreshToken))
-            return new TokenGrantResult(false, null, null, null, "Refresh token ne postoji");
+            return new TokenGrantResult(false, null, null, null, "Refresh token ne postoji",null);
 
         try
         {
             var r = await client.RefreshTokenAsync(refreshToken, cancellationToken: ct);
-            if (r.IsError) return new TokenGrantResult(false, null, null, null, r.Error);
+            if (r.IsError) return new TokenGrantResult(false, null, null, null, r.Error,null);
             if (string.IsNullOrWhiteSpace(r.AccessToken))
-                return new TokenGrantResult(false, null, null, null, "Access token ne postoji");
-
-            return new TokenGrantResult(true, r.AccessToken, r.RefreshToken, r.AccessTokenExpiration, null);
+                return new TokenGrantResult(false, null, null, null, "Access token ne postoji", null);
+            
+            return new TokenGrantResult(true, r.AccessToken, r.RefreshToken, r.AccessTokenExpiration, null,null);
         }
         catch (OperationCanceledException)
         {
-            return new TokenGrantResult(false, null, null, null, "Refresh prekinut");
+            return new TokenGrantResult(false, null, null, null, "Refresh prekinut", null);
         }
         catch (Exception ex)
         {
-            return new TokenGrantResult(false, null, null, null, ex.Message);
+            return new TokenGrantResult(false, null, null, null, ex.Message, null);
         }
     }
 

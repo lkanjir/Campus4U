@@ -4,5 +4,6 @@ namespace Client.Domain.Auth;
 public sealed record Token(
     string AccessToken,
     string? RefreshToken,
-    DateTimeOffset? ExpiresAt
+    DateTimeOffset? ExpiresAt,
+    string? Role
 );

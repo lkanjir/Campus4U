@@ -8,7 +8,8 @@ public sealed record TokenGrantResult(
     string? AccessToken,
     string? RefreshToken,
     DateTimeOffset? ExpiresAt,
-    string? Error
+    string? Error,
+    string? Role
 );
 
 //Luka Kanjir
