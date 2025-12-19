@@ -1,8 +1,8 @@
 ﻿using System.Windows;
-using System.Windows.Media;
+
+using Client.Application.Auth;
+using Client.Data.Auth;
 using Client.Domain.Auth;
-using Client.Presentation.Auth;
-using Duende.IdentityModel.OidcClient.Browser;
 using Microsoft.Extensions.Configuration;
 
 namespace Client.Presentation
@@ -10,14 +10,19 @@ namespace Client.Presentation
     //Luka Kanjir
     public partial class MainWindow : Window
     {
-        private readonly AuthService auth;
         private bool isAuthenticated;
-
+        private SecureTokenStore tokenStore;
+        private SystemBrowser browser;
+        private OidcProvider authProvider;
+        private AuthService authService;
+        
+        
         private readonly AuthDiagnostics diagnostics;
 
         public MainWindow()
         {
             InitializeComponent();
+            
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false)
                 .Build();
@@ -26,9 +31,12 @@ namespace Client.Presentation
             if (options is null)
                 throw new InvalidOperationException("appsettings.json ne postoji ili je Auth0 config krivog formata");
 
-            auth = new AuthService(options, new SecureTokenStore());
-
-            diagnostics = new AuthDiagnostics(auth, options.Domain);
+            tokenStore = new SecureTokenStore();
+            browser = new SystemBrowser();
+            authProvider = new OidcProvider(options, browser);
+            authService = new AuthService(authProvider, tokenStore);
+            
+            diagnostics = new AuthDiagnostics(authService, options.Domain);
         }
 
         private async void BtnLogin_OnClick(object sender, RoutedEventArgs e)
@@ -37,8 +45,8 @@ namespace Client.Presentation
             TxtStatus.Text = "Prijava traje...";
             try
             {
-                var result = await auth.LoginAsync();
-                if (result.IsError)
+                var result = await authService.LoginAsync();
+                if (!result.IsSuccess)
                 {
                     isAuthenticated = false;
                     TxtStatus.Text = $"Greska: {result.Error}";
@@ -46,7 +54,7 @@ namespace Client.Presentation
                 else
                 {
                     isAuthenticated = true;
-                    TxtStatus.Text = $"Uspjeh: {result.User?.FindFirst("name")?.Value}";
+                    TxtStatus.Text = $"Uspjeh: {result.ExpiresAt}";
                 }
             }
             finally
@@ -60,12 +68,10 @@ namespace Client.Presentation
         {
             try
             {
-                var result = await auth.LogoutAsync();
+                await authService.LogoutAsync();
                 isAuthenticated = false;
 
-                TxtStatus.Text = result == BrowserResultType.Success
-                    ? "Uspješna odjava i brisanje lokalne sesije"
-                    : $"Lokalna sesija obrisana, Auth0 greska: {result}";
+                TxtStatus.Text = "Odjavljen";
             }
             catch (Exception ex)
             {
@@ -91,7 +97,7 @@ namespace Client.Presentation
 
             try
             {
-                var result = await auth.RestoreSessionAsync();
+                var result = await authService.RestoreSessionAsync();
                 switch (result.State)
                 {
                     case AuthSessionRestoreState.SignedIn:

@@ -1,32 +1,12 @@
-using Auth0.OidcClient;
 using Client.Domain.Auth;
-using Duende.IdentityModel.OidcClient;
-using Duende.IdentityModel.OidcClient.Browser;
 
-namespace Client.Presentation.Auth;
+namespace Client.Application.Auth;
 
 //Luka Kanjir
-public sealed class AuthService
+public sealed class AuthService(IAuthProvider authProvider, ITokenStore store) : IAuthService
 {
-    private readonly Auth0Client client;
-    private readonly SecureTokenStore store;
+    private readonly IAuthProvider authProvider = authProvider;
     private readonly TimeSpan expiredGracePeriod = TimeSpan.FromMinutes(1);
-
-    public AuthService(AuthOptions options, SecureTokenStore store)
-    {
-        var clientOptions = new Auth0ClientOptions
-        {
-            Domain = options.Domain,
-            ClientId = options.ClientId,
-            RedirectUri = options.RedirectUri,
-            PostLogoutRedirectUri = options.PostLogoutRedirectUri,
-            Browser = new SystemBrowser(),
-            Scope = options.Scope,
-        };
-
-        client = new Auth0Client(clientOptions);
-        this.store = store;
-    }
 
     public async Task<AuthSessionRestoreResult> RestoreSessionAsync(CancellationToken cancellationToken = default)
     {
@@ -41,8 +21,8 @@ public sealed class AuthService
             return new AuthSessionRestoreResult(AuthSessionRestoreState.ExpiredNoRefreshToken, null, null);
         }
 
-        var refreshed = await client.RefreshTokenAsync(refreshToken, cancellationToken);
-        if (refreshed.IsError)
+        var refreshed = await authProvider.RefreshAsync(refreshToken, cancellationToken);
+        if (!refreshed.IsSuccess)
         {
             store.Clear();
             return new AuthSessionRestoreResult(AuthSessionRestoreState.RefreshFailed, null,
@@ -58,33 +38,28 @@ public sealed class AuthService
 
         var refreshTokenToSave =
             string.IsNullOrWhiteSpace(refreshed.RefreshToken) ? refreshToken : refreshed.RefreshToken;
-        var newToken = new Token(refreshed.AccessToken, refreshTokenToSave, refreshed.AccessTokenExpiration);
+        var newToken = new Token(refreshed.AccessToken, refreshTokenToSave, refreshed.ExpiresAt);
         await store.SaveAsync(newToken);
 
         return new AuthSessionRestoreResult(AuthSessionRestoreState.Refreshed, newToken, null);
     }
 
-    public async Task<LoginResult> LoginAsync(CancellationToken token = default)
+    public async Task<TokenGrantResult> LoginAsync(CancellationToken token = default)
     {
-        //samo za test
-        var extraParameters = new Dictionary<string, string>();
-        extraParameters.Add("audience", "https://test-api.local");
-        //end test
-
-        var result = await client.LoginAsync(cancellationToken: token, extraParameters: extraParameters);
-        if (!result.IsError)
+        var result = await authProvider.LoginAsync(token);
+        if (result.IsSuccess && !string.IsNullOrWhiteSpace(result.AccessToken))
         {
-            await store.SaveAsync(new Token(result.AccessToken, result.RefreshToken, result.AccessTokenExpiration));
+            await store.SaveAsync(new Token(result.AccessToken, result.RefreshToken, result.ExpiresAt));
         }
 
         return result;
     }
 
-    public async Task<BrowserResultType> LogoutAsync(bool federated = false, CancellationToken token = default)
+    public async Task LogoutAsync(CancellationToken ct = default)
     {
         try
         {
-            return await client.LogoutAsync(federated, null, token);
+            await authProvider.LogoutAsync(ct);
         }
         finally
         {
@@ -97,6 +72,4 @@ public sealed class AuthService
         if (token.ExpiresAt is null) return false;
         return token.ExpiresAt.Value <= DateTimeOffset.UtcNow.Add(expiredGracePeriod);
     }
-
-    public void ClearLocalSession() => store.Clear();
 }

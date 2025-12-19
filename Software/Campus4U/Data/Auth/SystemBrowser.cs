@@ -1,36 +1,37 @@
 using System.Diagnostics;
 using System.Net;
+using Client.Application.Auth;
 using Duende.IdentityModel.OidcClient.Browser;
 
-namespace Client.Presentation.Auth;
+namespace Client.Data.Auth;
 
 //Luka Kanjir
-public sealed class SystemBrowser : IBrowser
+public sealed class SystemBrowser : IBrowser, ISystemBrowser
 {
     private const string ErrorMsg = "Greška";
     private const string SuccessMsg = "Uspješna prijava";
-    private const string SuccessLoguotMsg = "Uspješna odjava";
+    private const string SuccessLogoutMsg = "Uspješna odjava";
 
     private HttpListener httpListener;
 
     private void StartSystemBrowser(string startUrl) =>
         Process.Start(new ProcessStartInfo(startUrl) { UseShellExecute = true });
-    
+
     public async Task<BrowserResult> InvokeAsync(BrowserOptions options,
         CancellationToken cancellationToken = default)
     {
         StartSystemBrowser(options.StartUrl);
         var result = new BrowserResult();
-        
+
         httpListener?.Abort();
         using (httpListener = new HttpListener())
         {
             var url = options.EndUrl;
             if (!url.EndsWith("/")) url += "/";
-            
+
             httpListener.Prefixes.Add(url);
             httpListener.Start();
-            using (cancellationToken.Register(() => { httpListener?.Abort(); }))
+            await using (cancellationToken.Register(() => { httpListener?.Abort(); }))
             {
                 HttpListenerContext context;
                 try
@@ -53,7 +54,7 @@ public sealed class SystemBrowser : IBrowser
                 }
                 else if (options.StartUrl.Contains("/logout") && context.Request.Url.AbsoluteUri == options.EndUrl)
                 {
-                    msg = SuccessLoguotMsg;
+                    msg = SuccessLogoutMsg;
                     result.ResultType = BrowserResultType.Success;
                 }
                 else
@@ -64,12 +65,21 @@ public sealed class SystemBrowser : IBrowser
 
                 Byte[] buffer = System.Text.Encoding.UTF8.GetBytes(msg);
                 context.Response.ContentLength64 = buffer.Length;
-                context.Response.OutputStream.Write(buffer, 0, buffer.Length);
+                await context.Response.OutputStream.WriteAsync(buffer, cancellationToken);
                 context.Response.OutputStream.Close();
                 context.Response.Close();
                 httpListener.Stop();
             }
         }
+
         return result;
+    }
+
+    public async Task<SystemBrowserResult> OpenAsync(string startUrl, string endUrl, CancellationToken ct = default)
+    {
+        var result = await InvokeAsync(new BrowserOptions(startUrl, endUrl), ct);
+        return result.ResultType == BrowserResultType.Success
+            ? new SystemBrowserResult(true, result.Response, null)
+            : new SystemBrowserResult(false, result.Response, result.Error ?? result.ResultType.ToString());
     }
 }

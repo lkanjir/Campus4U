@@ -1,8 +1,7 @@
-using System.Net.Http;
 using System.Net.Http.Headers;
 using Client.Domain.Auth;
 
-namespace Client.Presentation.Auth;
+namespace Client.Application.Auth;
 
 //Luka Kanjir
 public sealed record DebugRefreshResult(
@@ -14,9 +13,9 @@ public sealed record DebugRefreshResult(
 );
 
 //Luka Kanjir
-public class AuthDiagnostics(AuthService auth, string domain)
+public class AuthDiagnostics(IAuthService auth, string domain)
 {
-    private readonly AuthService auth = auth;
+    private readonly IAuthService auth = auth;
     private readonly HttpClient http = new();
     private readonly string domain = domain;
 
@@ -31,7 +30,7 @@ public class AuthDiagnostics(AuthService auth, string domain)
             return new DebugRefreshResult(restore.State, false, null, null, "Nema access tokena nakon restore");
 
         var expiresAt = restore.Token?.ExpiresAt;
-        using var req = new HttpRequestMessage(HttpMethod.Get, $"https://{domain}/userinfo");
+        using var req = new HttpRequestMessage(HttpMethod.Get, $"{domain}/userinfo");
         req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", access);
 
         var res = await http.SendAsync(req, cancellationToken);

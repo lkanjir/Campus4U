@@ -1,13 +1,13 @@
-using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Client.Application.Auth;
 using Client.Domain.Auth;
 
-namespace Client.Presentation.Auth;
+namespace Client.Data.Auth;
 
 //Luka Kanjir
-public sealed class SecureTokenStore
+public sealed class SecureTokenStore : ITokenStore
 {
     private readonly string path =
         Path.Combine(

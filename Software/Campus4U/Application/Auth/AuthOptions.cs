@@ -1,6 +1,4 @@
-using System.Windows;
-
-namespace Client.Presentation.Auth;
+namespace Client.Application.Auth;
 
 //Luka Kanjir
 public sealed record AuthOptions
