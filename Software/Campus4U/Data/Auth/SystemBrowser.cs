@@ -1,5 +1,8 @@
 using System.Diagnostics;
+using System.IO.IsolatedStorage;
 using System.Net;
+using System.Runtime.Serialization;
+using System.Text;
 using Client.Application.Auth;
 using Duende.IdentityModel.OidcClient.Browser;
 
@@ -8,10 +11,6 @@ namespace Client.Data.Auth;
 //Luka Kanjir
 public sealed class SystemBrowser : IBrowser
 {
-    private const string ErrorMsg = "Greška";
-    private const string SuccessMsg = "Uspješna prijava";
-    private const string SuccessLogoutMsg = "Uspješna odjava";
-
     private HttpListener httpListener;
 
     private void StartSystemBrowser(string startUrl) =>
@@ -45,26 +44,14 @@ public sealed class SystemBrowser : IBrowser
                 }
 
                 result.Response = context.Request.Url.AbsoluteUri;
+                var isLogoutFlow = options.StartUrl.Contains("/logout", StringComparison.OrdinalIgnoreCase);
+                var isSuccess = context.Request.QueryString.Get("code") != null ||
+                                (isLogoutFlow && context.Request.Url.AbsoluteUri == options.EndUrl);
+                result.ResultType = isSuccess ? BrowserResultType.Success : BrowserResultType.UnknownError;
 
-                string msg;
-                if (context.Request.QueryString.Get("code") != null)
-                {
-                    msg = SuccessMsg;
-                    result.ResultType = BrowserResultType.Success;
-                }
-                else if (options.StartUrl.Contains("/logout") && context.Request.Url.AbsoluteUri == options.EndUrl)
-                {
-                    msg = SuccessLogoutMsg;
-                    result.ResultType = BrowserResultType.Success;
-                }
-                else
-                {
-                    msg = ErrorMsg;
-                    result.ResultType = BrowserResultType.UnknownError;
-                }
-
-                Byte[] buffer = System.Text.Encoding.UTF8.GetBytes(msg);
-                context.Response.ContentLength64 = buffer.Length;
+                var html = await BuildHtml(isLogoutFlow, isSuccess);
+                var buffer = Encoding.UTF8.GetBytes(html);
+                context.Response.ContentType = "text/html";
                 await context.Response.OutputStream.WriteAsync(buffer, cancellationToken);
                 context.Response.OutputStream.Close();
                 context.Response.Close();
@@ -73,5 +60,28 @@ public sealed class SystemBrowser : IBrowser
         }
 
         return result;
+    }
+
+    private static async Task<string> BuildHtml(bool isLogoutFlow, bool isSuccess)
+    {
+        string title, description;
+        if (isLogoutFlow)
+        {
+            title = isSuccess ? "Uspješna odjava" : "Greška prilikom odjave";
+            description = isSuccess
+                ? "Uspješno ste se odjavili."
+                : "Došlo je do greške prilikom odjave. Kako bi ponovno koristili aplikaciju morate se ponovno prijaviti.";
+        }
+        else
+        {
+            title = isSuccess ? "Uspejšna prijava" : "Greška kod prijave";
+            description = isSuccess
+                ? "Uspješno ste se prijavili u aplikaciju Campus4U. Možete se vratiti u aplikaciju"
+                : "Došlo je do greške prilikom prijave. Kako bi koristili aplikaciju morate se ponovno prijaviti.";
+        }
+
+        var template = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Auth", "Template.html"), Encoding.UTF8);
+        template = template.Replace("{{title}}", title).Replace("{{description}}", description);
+        return template;
     }
 }
