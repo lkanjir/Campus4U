@@ -5,17 +5,42 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Campus4U"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Loaded="MainWindow_OnLoaded">
-    <StackPanel Margin="12">
-        <TextBox IsReadOnly="True" x:Name="TxtStatus"></TextBox>
-        <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
-            <Button x:Name="BtnLogin" Click="BtnLogin_OnClick" Width="150">Prijava</Button>
-            <Button x:Name="BtnLogout" Click="BtnLogout_OnClick" Width="150" Margin="10 0 0 0" IsEnabled="False">Odjava</Button>
-        </StackPanel>
-        
-        <StackPanel Margin="0 10 0 0 ">
-            <TextBox IsReadOnly="True" x:Name="TxtDiagnostics"></TextBox>
-            <Button Margin="0 10 0 0 " Width="150" HorizontalAlignment="Left" x:Name="BtnTest" Click="BtnTest_OnClick">Test </Button>
-        </StackPanel>
-    </StackPanel>
+        Title="MainWindow" Height="450" Width="800" 
+        Loaded="MainWindow_OnLoaded"
+        Background="{StaticResource BrushBackground}">
+   <Grid Margin="24">
+       <Grid.RowDefinitions>
+           <RowDefinition Height="Auto"/>
+           <RowDefinition Height="*"/>
+       </Grid.RowDefinitions>
+       
+       <Border x:Name="PanelHeader" Style="{StaticResource Card}" Visibility="Collapsed"> 
+           <Grid>
+               <Grid.ColumnDefinitions>
+                   <ColumnDefinition Width="*"/>
+                   <ColumnDefinition Width="Auto"/>
+               </Grid.ColumnDefinitions>
+               <TextBlock Text="Campus4U" Style="{StaticResource HeadingText}" VerticalAlignment="Center"/>
+               <Button Grid.Column="1" x:Name="BtnLogout" Click="BtnLogout_OnClick" 
+                       Style="{StaticResource SecondaryButton}" 
+                       IsEnabled="False"
+                       Width="140">Odjava</Button>
+           </Grid>
+       </Border>
+       
+       <Grid Grid.Row="1" Margin="0 18 0 0 ">
+           <ContentControl x:Name="RoleContent" Visibility="Collapsed"/>
+           <Border x:Name="PanelSignedOut" Style="{StaticResource Card}" Padding="28">
+               <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                   <TextBlock Text="LOGO" Margin="0 14 0 0" Style="{StaticResource HeadingText}" TextAlignment="Center"/>
+                   <TextBlock Text="Campus4U" Margin="0 14 0 0" Style="{StaticResource HeadingText}" TextAlignment="Center"/>
+                   <Button x:Name="BtnLogin" Click="BtnLogin_OnClick" 
+                           Width="180" Height="44"
+                           Margin="0 18 0 0"
+                           Style="{StaticResource PrimaryButton}">Prijava</Button>
+                   <TextBlock x:Name="TxtStatus" Margin="0 12 0 0" TextAlignment="Center" Visibility="Collapsed"/>
+               </StackPanel>
+           </Border>
+       </Grid>
+   </Grid>
 </Window>
