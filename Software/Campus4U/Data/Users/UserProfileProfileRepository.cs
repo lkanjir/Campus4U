@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Client.Application.Users;
 using Client.Data.Context;
 using Client.Data.Entities;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Client.Data.Users;
 
 //Luka Kanjir
-public class UserProfileRepository : IUserRepository
+public class UserProfileProfileRepository : IUserProfileRepository
 {
     public async Task<UserProfile?> GetBySubAsync(string sub, CancellationToken ct = default)
     {
@@ -29,8 +30,9 @@ public class UserProfileRepository : IUserRepository
         var entity = await
             (from u in db.Uloge.AsNoTracking()
                 where u.NazivUloge == normalized
-                select u.Id).FirstOrDefaultAsync(ct);
+                select (int?)u.Id).FirstOrDefaultAsync(ct);
 
+        Debug.WriteLine($"Role id iz baze: {entity}");
         return entity;
     }
 
