@@ -1,0 +1,81 @@
+﻿using System;
+using System.Collections.Generic;
+using Client.Data.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace Client.Data.Context;
+
+public partial class Campus4UContext : DbContext
+{
+    public Campus4UContext()
+    {
+    }
+
+    public Campus4UContext(DbContextOptions<Campus4UContext> options)
+        : base(options)
+    {
+    }
+
+    public virtual DbSet<Korisnici> Korisnici { get; set; }
+
+    public virtual DbSet<Uloge> Uloge { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=31.147.206.65;Database=RPP2025_13_DB;User Id=RPP2025_13_User;Password=\"Qic6;,R&oi{drR?r\";TrustServerCertificate=True;");
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Korisnici>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__korisnic__3213E83F54EBF408");
+
+            entity.ToTable("korisnici");
+
+            entity.HasIndex(e => e.Email, "UQ__korisnic__AB6E61642276BC97").IsUnique();
+
+            entity.HasIndex(e => e.Sub, "UQ__korisnic__DDDF3AD8466C9646").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.BrojSobe)
+                .HasMaxLength(50)
+                .HasColumnName("broj_sobe");
+            entity.Property(e => e.Email)
+                .HasMaxLength(255)
+                .HasColumnName("email");
+            entity.Property(e => e.Ime)
+                .HasMaxLength(255)
+                .HasColumnName("ime");
+            entity.Property(e => e.Prezime)
+                .HasMaxLength(255)
+                .HasColumnName("prezime");
+            entity.Property(e => e.Sub)
+                .HasMaxLength(255)
+                .HasColumnName("sub");
+            entity.Property(e => e.UlogaId).HasColumnName("uloga_id");
+
+            entity.HasOne(d => d.Uloga).WithMany(p => p.Korisnici)
+                .HasForeignKey(d => d.UlogaId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__korisnici__uloga__2C3393D0");
+        });
+
+        modelBuilder.Entity<Uloge>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("uloge_pk");
+
+            entity.ToTable("uloge");
+
+            entity.HasIndex(e => e.NazivUloge, "UQ__uloge__690D1BE5F0F82B00").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.NazivUloge)
+                .HasMaxLength(50)
+                .HasColumnName("naziv_uloge");
+        });
+
+        OnModelCreatingPartial(modelBuilder);
+    }
+
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+}

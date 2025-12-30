@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--black);
+    }
+
+    :root {
+        --primary: #B11226;
+        --dark: #7A0C19;
+        --light: #E86A6A;
+        --black: #0B0F14;
+        --white: rgb(245, 239, 234);
+    }
+
+    body {
+        background-color: var(--white);
+    }
+
+    main {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .card{
+        display: flex;
+        flex-direction: column;
+        padding: 10rem;
+        border-radius: 2rem;
+        background-color: #fefefe;
+        border: 1px var(--black) solid;
+    }
+
+    .card > p{
+        padding-top: 1rem;
+    }
+</style>
+
+<body>
+<main>
+    <div class="card">
+        <h1>{{title}}</h1>
+        <p>{{description}}</p>
+        <p class="close">Možete zatvoriti ovaj prozor.</p>
+    </div>
+</main>
+<script>
+</script>
+</body>
+
+</html>
