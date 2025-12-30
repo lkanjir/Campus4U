@@ -5,5 +5,7 @@ public sealed record Token(
     string AccessToken,
     string? RefreshToken,
     DateTimeOffset? ExpiresAt,
-    string? Role
+    string? Role,
+    string? Sub,
+    string? Email
 );

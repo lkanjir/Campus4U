@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Client.Application.Auth;
 using Duende.IdentityModel.Client;
 using Duende.IdentityModel.OidcClient;
@@ -43,44 +44,47 @@ public sealed class OidcProvider : IAuthProvider
 
             var result = await client.LoginAsync(loginRequest, ct);
             if (result.IsError)
-                return new TokenGrantResult(false, null, null, null, result.Error, null);
+                return new TokenGrantResult(false, null, null, null, result.Error, null, null, null);
 
             const string roleNamespace = "https://campus4u.foi.hr/claims/role";
             var role = result.User?.FindFirst(roleNamespace)?.Value ?? "student";
+            var sub = result?.User?.FindFirst("sub")?.Value;
+            var email = result?.User?.FindFirst("email")?.Value ?? result?.User?.FindFirst(ClaimTypes.Email)?.Value;
             return new TokenGrantResult(true, result.AccessToken, result.RefreshToken, result.AccessTokenExpiration,
-                null, role);
+                null, role, sub, email);
         }
         catch (OperationCanceledException)
         {
-            return new TokenGrantResult(false, null, null, null, "Prijava prekinuta.",null);
+            return new TokenGrantResult(false, null, null, null, "Prijava prekinuta.", null, null, null);
         }
         catch (Exception ex)
         {
-            return new TokenGrantResult(false, null, null, null, ex.Message,null);
+            return new TokenGrantResult(false, null, null, null, ex.Message, null, null, null);
         }
     }
 
     public async Task<TokenGrantResult> RefreshAsync(string refreshToken, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(refreshToken))
-            return new TokenGrantResult(false, null, null, null, "Refresh token ne postoji",null);
+            return new TokenGrantResult(false, null, null, null, "Refresh token ne postoji", null, null, null);
 
         try
         {
             var r = await client.RefreshTokenAsync(refreshToken, cancellationToken: ct);
-            if (r.IsError) return new TokenGrantResult(false, null, null, null, r.Error,null);
+            if (r.IsError) return new TokenGrantResult(false, null, null, null, r.Error, null, null, null);
             if (string.IsNullOrWhiteSpace(r.AccessToken))
-                return new TokenGrantResult(false, null, null, null, "Access token ne postoji", null);
-            
-            return new TokenGrantResult(true, r.AccessToken, r.RefreshToken, r.AccessTokenExpiration, null,null);
+                return new TokenGrantResult(false, null, null, null, "Access token ne postoji", null, null, null);
+
+            return new TokenGrantResult(true, r.AccessToken, r.RefreshToken, r.AccessTokenExpiration, null, null, null,
+                null);
         }
         catch (OperationCanceledException)
         {
-            return new TokenGrantResult(false, null, null, null, "Refresh prekinut", null);
+            return new TokenGrantResult(false, null, null, null, "Refresh prekinut", null, null, null);
         }
         catch (Exception ex)
         {
-            return new TokenGrantResult(false, null, null, null, ex.Message, null);
+            return new TokenGrantResult(false, null, null, null, ex.Message, null, null, null);
         }
     }
 

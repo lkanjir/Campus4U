@@ -9,7 +9,9 @@ public sealed record TokenGrantResult(
     string? RefreshToken,
     DateTimeOffset? ExpiresAt,
     string? Error,
-    string? Role
+    string? Role,
+    string? Sub,
+    string? Email
 );
 
 //Luka Kanjir

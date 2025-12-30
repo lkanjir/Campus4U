@@ -16,6 +16,8 @@ public sealed class AuthService(IAuthProvider authProvider, ITokenStore store) :
 
         var refreshToken = existing.RefreshToken;
         var role = existing.Role ?? "student";
+        var sub = existing.Sub;
+        var email = existing.Email;
         if (string.IsNullOrWhiteSpace(refreshToken))
         {
             store.Clear();
@@ -39,7 +41,7 @@ public sealed class AuthService(IAuthProvider authProvider, ITokenStore store) :
 
         var refreshTokenToSave =
             string.IsNullOrWhiteSpace(refreshed.RefreshToken) ? refreshToken : refreshed.RefreshToken;
-        var newToken = new Token(refreshed.AccessToken, refreshTokenToSave, refreshed.ExpiresAt,role);
+        var newToken = new Token(refreshed.AccessToken, refreshTokenToSave, refreshed.ExpiresAt, role, sub, email);
         await store.SaveAsync(newToken);
 
         return new AuthSessionRestoreResult(AuthSessionRestoreState.Refreshed, newToken, null);
@@ -50,7 +52,8 @@ public sealed class AuthService(IAuthProvider authProvider, ITokenStore store) :
         var result = await authProvider.LoginAsync(token);
         if (result.IsSuccess && !string.IsNullOrWhiteSpace(result.AccessToken))
         {
-            await store.SaveAsync(new Token(result.AccessToken, result.RefreshToken, result.ExpiresAt, result.Role));
+            await store.SaveAsync(new Token(result.AccessToken, result.RefreshToken, result.ExpiresAt, result.Role,
+                result.Sub, result.Email));
         }
 
         return result;
