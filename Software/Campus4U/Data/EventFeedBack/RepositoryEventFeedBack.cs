@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Client.Data.EventFeedBack
 {
-    internal class RepositoryEventFeedBack : IRepositoryEventFeedBack
+    public sealed class RepositoryEventFeedBack : IRepositoryEventFeedBack
     {
         public bool Azuriraj(EventFeedbackComment komentar)
         {

@@ -7,11 +7,11 @@ namespace Client.Application.EventFeedBack
 {
     public sealed class EventFeedBackService : IEventFeedBackService
     {
-        private readonly IRepositoryEventFeedBack _repository;
+        private readonly IRepositoryEventFeedBack _repo;
 
         public EventFeedBackService(IRepositoryEventFeedBack repository)
         {
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _repo = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
         public Task<IEnumerable<EventFeedbackComment>> DohatiSve(int idDogadaja)
@@ -21,7 +21,7 @@ namespace Client.Application.EventFeedBack
                 throw new ArgumentOutOfRangeException(nameof(idDogadaja));
             }
 
-            return _repository.DohatiSve(idDogadaja);
+            return _repo.DohatiSve(idDogadaja);
         }
 
         public Task<IEnumerable<EventFeedbackComment>> DohatiMoje(int idDogadaja, int idKorisnika)
@@ -36,7 +36,7 @@ namespace Client.Application.EventFeedBack
                 throw new ArgumentOutOfRangeException(nameof(idKorisnika));
             }
 
-            return _repository.DohatiMoje(idDogadaja, idKorisnika);
+            return _repo.DohatiMoje(idDogadaja, idKorisnika);
         }
 
         public bool Dodaj(EventFeedbackComment komentar)
@@ -50,7 +50,7 @@ namespace Client.Application.EventFeedBack
                 throw new ArgumentException("Neispravan unos komentara.");
             }
 
-            return _repository.Unesi(komentar);
+            return _repo.Unesi(komentar);
         }
 
         public bool Uredi(EventFeedbackComment komentar)
@@ -64,7 +64,7 @@ namespace Client.Application.EventFeedBack
                 throw new ArgumentException("Neispravan unos komentara.");
             }
 
-            return _repository.Azuriraj(komentar);
+            return _repo.Azuriraj(komentar);
         }
 
         public bool Obrisi(int komentarId)
@@ -74,7 +74,7 @@ namespace Client.Application.EventFeedBack
                 throw new ArgumentOutOfRangeException(nameof(komentarId));
             }
 
-            return _repository.Obrisi(komentarId);
+            return _repo.Obrisi(komentarId);
         }
 
         private bool provjeriUnos(EventFeedbackComment komentar)
