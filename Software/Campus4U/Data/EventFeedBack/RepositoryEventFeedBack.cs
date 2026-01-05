@@ -1,4 +1,5 @@
-﻿using Client.Data.Context;
+﻿using Client.Application.EventFeedBack;
+using Client.Data.Context;
 using Client.Data.Context.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,53 +12,95 @@ namespace Client.Data.EventFeedBack
 {
     internal class RepositoryEventFeedBack : IRepositoryEventFeedBack
     {
-        public void Azuriraj(KomentariDogadaja komentar)
+        public bool Azuriraj(EventFeedbackComment komentar)
         {
             using (var db = new Campus4UContext())
             {
-                db.KomentariDogadaja.Update(komentar);
+                var entity = db.KomentariDogadaja.FirstOrDefault(k => k.Id == komentar.Id);
+                if (entity is null)
+                {
+                    return false;
+                }
+
+                entity.Datum = komentar.Datum;
+                entity.Ocjena = komentar.Ocjena;
+                entity.Komentar = komentar.Komentar;
+                entity.DogadajId = komentar.DogadajId;
+                entity.KorisnikId = komentar.KorisnikId;
+
                 db.SaveChanges();
+
+                return true;
             }
         }
 
-        public async Task<IEnumerable<KomentariDogadaja>> DohatiMoje(int idDogadaja, int idKorisnika)
+        public async Task<IEnumerable<EventFeedbackComment>> DohatiMoje(int idDogadaja, int idKorisnika)
         {
            await using(var db = new Campus4UContext())
             {
                 var komentar = from k in db.KomentariDogadaja
                             where k.DogadajId == idDogadaja && k.KorisnikId == idKorisnika
-                            select k;
+                            select new EventFeedbackComment(
+                                k.Id,
+                                k.Datum,
+                                k.Ocjena,
+                                k.Komentar,
+                                k.DogadajId,
+                                k.KorisnikId);
                 return await komentar.ToListAsync();
             }
         }
 
-        public async Task<IEnumerable<KomentariDogadaja>> DohatiSve(int idDogadaja)
+        public async Task<IEnumerable<EventFeedbackComment>> DohatiSve(int idDogadaja)
         {
             await using(var db = new Campus4UContext())
             {
                 var komentari = from k in db.KomentariDogadaja
                             where k.DogadajId == idDogadaja
-                            select k;
+                            select new EventFeedbackComment(
+                                k.Id,
+                                k.Datum,
+                                k.Ocjena,
+                                k.Komentar,
+                                k.DogadajId,
+                                k.KorisnikId);
                 return await komentari.ToListAsync();
             }
         }
 
-        public void Obrisi(KomentariDogadaja komentar)
+        public bool Obrisi(int komentarId)
         {
             using (var db = new Campus4UContext())
             {
-                db.Attach(komentar);
-                db.KomentariDogadaja.Remove(komentar);
+                var entity = db.KomentariDogadaja.FirstOrDefault(k => k.Id == komentarId);
+                if (entity is null)
+                {
+                    return false;
+                }
+
+                db.KomentariDogadaja.Remove(entity);
                 db.SaveChanges();
+                return true;
             }
         }
 
-        public void Unesi(KomentariDogadaja komentar)
+        public bool Unesi(EventFeedbackComment komentar)
         {
-            using(var db = new Campus4UContext())
+            using (var db = new Campus4UContext())
             {
-                db.KomentariDogadaja.Add(komentar);
+                var entity = new KomentariDogadaja
+                {
+                    Datum = komentar.Datum,
+                    Ocjena = komentar.Ocjena,
+                    Komentar = komentar.Komentar,
+                    DogadajId = komentar.DogadajId,
+                    KorisnikId = komentar.KorisnikId
+                };
+
+                db.KomentariDogadaja.Add(entity);
                 db.SaveChanges();
+
+                return true;
             }
         }
     }
