@@ -39,12 +39,15 @@ namespace Client.Data.EventFeedBack
            await using(var db = new Campus4UContext())
             {
                 var komentar = from k in db.KomentariDogadaja
+                            join u in db.Korisnici on k.KorisnikId equals u.Id into korisnici
+                            from u in korisnici.DefaultIfEmpty()
                             where k.DogadajId == idDogadaja && k.KorisnikId == idKorisnika
                             select new EventFeedbackComment(
                                 k.Id,
                                 k.Datum,
                                 k.Ocjena,
                                 k.Komentar,
+                                u == null ? string.Empty : ((u.Ime ?? string.Empty) + " " + (u.Prezime ?? string.Empty)).Trim(),
                                 k.DogadajId,
                                 k.KorisnikId);
                 return await komentar.ToListAsync();
@@ -56,12 +59,15 @@ namespace Client.Data.EventFeedBack
             await using(var db = new Campus4UContext())
             {
                 var komentari = from k in db.KomentariDogadaja
+                            join u in db.Korisnici on k.KorisnikId equals u.Id into korisnici
+                            from u in korisnici.DefaultIfEmpty()
                             where k.DogadajId == idDogadaja
                             select new EventFeedbackComment(
                                 k.Id,
                                 k.Datum,
                                 k.Ocjena,
                                 k.Komentar,
+                                u == null ? string.Empty : ((u.Ime ?? string.Empty) + " " + (u.Prezime ?? string.Empty)).Trim(),
                                 k.DogadajId,
                                 k.KorisnikId);
                 return await komentari.ToListAsync();

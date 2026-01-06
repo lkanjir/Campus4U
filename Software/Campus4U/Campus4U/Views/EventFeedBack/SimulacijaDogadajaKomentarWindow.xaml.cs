@@ -15,13 +15,14 @@ namespace Client.Presentation.Views.EventFeedBack
             InitializeComponent();
 
             _servis = new EventFeedBackService(new RepositoryEventFeedBack());
+            EventFeedbackControl.DogadajId = 1;
+            EventFeedbackControl.KorisnikId = 6;
             Loaded += OnLoaded;
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            //Komentari za dogadaj s ID-jem 1
-            await LoadCommentsAsync(1);
+            await LoadCommentsAsync(EventFeedbackControl.DogadajId);
         }
 
         private async Task LoadCommentsAsync(int dogadajId)

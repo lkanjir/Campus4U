@@ -5,5 +5,6 @@ public sealed record EventFeedbackComment(
     DateTime Datum,
     int Ocjena,
     string Komentar,
+    string ImePrezime,
     int DogadajId,
     int KorisnikId);
