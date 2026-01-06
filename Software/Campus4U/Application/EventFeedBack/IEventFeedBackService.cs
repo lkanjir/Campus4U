@@ -8,7 +8,7 @@ namespace Client.Application.EventFeedBack
 {
     public interface IEventFeedBackService
     {
-        Task<IEnumerable<EventFeedbackComment>> DohatiSve(int idDogadaja);
+        Task<IEnumerable<EventFeedbackComment>> DohatiSve(int idDogadaja, int idKorisnika);
 
         Task<IEnumerable<EventFeedbackComment>> DohatiMoje(int idDogadaja, int idKorisnika);
 

@@ -6,6 +6,8 @@ namespace Client.Presentation.Views;
 
 public partial class StaffView : UserControl
 {
+    public int KorisnikId { get; set; }
+
     public StaffView()
     {
         InitializeComponent();
@@ -13,7 +15,7 @@ public partial class StaffView : UserControl
 
     private void BtnEventFeedback_OnClick(object sender, System.Windows.RoutedEventArgs e)
     {
-        var window = new SimulacijaDogadajaKomentarWindow
+        var window = new SimulacijaDogadajaKomentarWindow(KorisnikId)
         {
             Owner = Window.GetWindow(this)
         };

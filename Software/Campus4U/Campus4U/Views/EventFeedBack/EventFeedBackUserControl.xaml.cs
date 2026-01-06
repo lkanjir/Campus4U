@@ -11,11 +11,11 @@ namespace Client.Presentation.Views.EventFeedBack
     public partial class EventFeedBackUserControl : UserControl
     {
         private readonly IEventFeedBackService _servis;
-
         public ObservableCollection<EventFeedbackComment> Comments { get; } = new();
 
-        public int DogadajId { get; set; } = 1;
-        public int KorisnikId { get; set; } = 6;
+        public int KorisnikId { get; set; }
+
+        public int DogadajId { get; set; }
 
         public EventFeedBackUserControl()
         {
@@ -48,6 +48,7 @@ namespace Client.Presentation.Views.EventFeedBack
                     ocjena,
                     tekstKomentara,
                     string.Empty,
+                    false,
                     DogadajId,
                     KorisnikId);
 
@@ -58,7 +59,7 @@ namespace Client.Presentation.Views.EventFeedBack
                     return;
                 }
 
-                await ReloadCommentsAsync(DogadajId);
+                await PonovoUcitajKomentareAsync(DogadajId);
                 txtKomentar.Text = string.Empty;
                 cboOcjena.SelectedIndex = -1;
             }
@@ -68,13 +69,42 @@ namespace Client.Presentation.Views.EventFeedBack
             }
         }
 
-        private async Task ReloadCommentsAsync(int dogadajId)
+        private async Task PonovoUcitajKomentareAsync(int dogadajId)
         {
-            var komentari = await _servis.DohatiSve(dogadajId);
+            var komentari = await _servis.DohatiSve(dogadajId, KorisnikId);
             Comments.Clear();
             foreach (var komentar in komentari)
             {
                 Comments.Add(komentar);
+            }
+        }
+
+        private async void btnObrisiKomentar_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+            var komentar = (EventFeedbackComment)button.DataContext;
+
+            var potvrda = MessageBox.Show("Jeste li sigurni da želite obrisati ovaj komentar?", "Potvrda brisanja",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (potvrda != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            try
+            {
+                var uspjeh = _servis.Obrisi(komentar.Id);
+                if (!uspjeh)
+                {
+                    MessageBox.Show("Brisanje komentara nije uspjelo.", "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                await PonovoUcitajKomentareAsync(DogadajId);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greška kod brisanja komentara: {ex.Message}", "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

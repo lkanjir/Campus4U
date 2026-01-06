@@ -48,13 +48,14 @@ namespace Client.Data.EventFeedBack
                                 k.Ocjena,
                                 k.Komentar,
                                 u == null ? string.Empty : ((u.Ime ?? string.Empty) + " " + (u.Prezime ?? string.Empty)).Trim(),
+                                true,
                                 k.DogadajId,
                                 k.KorisnikId);
                 return await komentar.ToListAsync();
             }
         }
 
-        public async Task<IEnumerable<EventFeedbackComment>> DohatiSve(int idDogadaja)
+        public async Task<IEnumerable<EventFeedbackComment>> DohatiSve(int idDogadaja, int idKorisnika)
         {
             await using(var db = new Campus4UContext())
             {
@@ -68,6 +69,7 @@ namespace Client.Data.EventFeedBack
                                 k.Ocjena,
                                 k.Komentar,
                                 u == null ? string.Empty : ((u.Ime ?? string.Empty) + " " + (u.Prezime ?? string.Empty)).Trim(),
+                                idKorisnika > 0 && k.KorisnikId == idKorisnika,
                                 k.DogadajId,
                                 k.KorisnikId);
                 return await komentari.ToListAsync();

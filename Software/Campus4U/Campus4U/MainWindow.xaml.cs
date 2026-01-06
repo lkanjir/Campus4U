@@ -1,4 +1,4 @@
-Ôªøusing System.Windows;
+using System.Windows;
 
 using Client.Application.Auth;
 using Client.Application.Users;
@@ -20,6 +20,7 @@ namespace Client.Presentation
         private bool requiresOnboarding;
         private string? currentSub;
         private string? currentEmail;
+        private int currentId;
         
         private IAuthService authService;
         private UserProfileService userProfileService;
@@ -73,7 +74,7 @@ namespace Client.Presentation
                 if (!result.isSuccess)
                 {
                     requiresOnboarding = true;
-                    onboardingView.SetStatus(result.Error ?? "Gre≈°ka kod spremanja profila");
+                    onboardingView.SetStatus(result.Error ?? "Greöka kod spremanja profila");
                     return;
                 }
 
@@ -82,7 +83,7 @@ namespace Client.Presentation
             catch (Exception)
             {
                 requiresOnboarding = true;
-                onboardingView.SetStatus("Gre≈°ka kod spremanja profila");
+                onboardingView.SetStatus("Greöka kod spremanja profila");
             }
             finally
             {
@@ -139,7 +140,7 @@ namespace Client.Presentation
         private async Task RestoreAuthState()
         {
             SetBusy(true);
-            SetStatus("Uƒçitavanje sesije");
+            SetStatus("UËitavanje sesije");
             try
             {
                 var result = await authService.RestoreSessionAsync();
@@ -185,13 +186,16 @@ namespace Client.Presentation
                 requiresOnboarding = false;
                 currentSub = null;
                 currentEmail = null;
-                SetStatus("Uspje≈°na odjava");
+                currentId = 0;
+                staffView.KorisnikId = 0;
+                studentView.KorisnikId = 0;
+                SetStatus("Uspjeöna odjava");
             }
             catch (Exception ex)
             {
                 isAuthenticated = false;
                 requiresOnboarding = false;
-                SetStatus($"Gre≈°ka kod odjave: {ex.Message}");
+                SetStatus($"Greöka kod odjave: {ex.Message}");
             }
             finally
             {
@@ -239,11 +243,17 @@ namespace Client.Presentation
                 requiresOnboarding = false;
                 currentSub = null;
                 currentEmail = null;
+                currentId = 0;
+                staffView.KorisnikId = 0;
+                studentView.KorisnikId = 0;
                 SetStatus("Nedostaju podaci iz Auth0 profila");
                 return;
             }
 
             var profile = await userProfileService.GetBySubAsync(currentSub);
+            currentId = profile?.Id ?? 0;
+            staffView.KorisnikId = currentId;
+            studentView.KorisnikId = currentId;
             if (profile is null || !profile.IsOnboardingComplete)
             {
                 requiresOnboarding = true;

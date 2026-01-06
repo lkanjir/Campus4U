@@ -9,7 +9,7 @@ namespace Client.Data.EventFeedBack
 {
     public interface IRepositoryEventFeedBack
     {
-        Task<IEnumerable<EventFeedbackComment>> DohatiSve(int idDogadaja);
+        Task<IEnumerable<EventFeedbackComment>> DohatiSve(int idDogadaja, int idKorisnika);
 
         Task<IEnumerable<EventFeedbackComment>> DohatiMoje(int idDogadaja, int idKorisnika);
 

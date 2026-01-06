@@ -20,7 +20,7 @@ public class UserProfileProfileRepository : IUserProfileRepository
 
         return entity is null
             ? null
-            : new UserProfile(entity.Sub, entity.Email, entity.Ime, entity.Prezime, entity.BrojSobe, entity.UlogaId);
+            : new UserProfile(entity.Id, entity.Sub, entity.Email, entity.Ime, entity.Prezime, entity.BrojSobe, entity.UlogaId);
     }
 
     public async Task<int?> GetRoleIdByNameAsync(string roleName, CancellationToken ct = default)

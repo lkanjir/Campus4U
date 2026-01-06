@@ -6,5 +6,6 @@ public sealed record EventFeedbackComment(
     int Ocjena,
     string Komentar,
     string ImePrezime,
+    bool MojKomentar,
     int DogadajId,
     int KorisnikId);

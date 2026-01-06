@@ -14,14 +14,18 @@ namespace Client.Application.EventFeedBack
             _repo = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public Task<IEnumerable<EventFeedbackComment>> DohatiSve(int idDogadaja)
+        public Task<IEnumerable<EventFeedbackComment>> DohatiSve(int idDogadaja, int idKorisnika)
         {
             if (idDogadaja <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(idDogadaja));
             }
+            if (idKorisnika <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(idKorisnika));
+            }
 
-            return _repo.DohatiSve(idDogadaja);
+            return _repo.DohatiSve(idDogadaja, idKorisnika);
         }
 
         public Task<IEnumerable<EventFeedbackComment>> DohatiMoje(int idDogadaja, int idKorisnika)
