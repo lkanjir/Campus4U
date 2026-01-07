@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client.Presentation.Views.EventFeedBack"
         mc:Ignorable="d"
-        Title="SimulacijaDogadajaKomentarWindow" Height="450" Width="800">
+        Title="SimulacijaDogadajaKomentarWindow" Height="450" Width="800"
+        Background="{StaticResource BrushBackground}">
     <Grid>
         <local:EventFeedBackUserControl x:Name="EventFeedbackControl" />
     </Grid>

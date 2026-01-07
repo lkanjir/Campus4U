@@ -1,0 +1,36 @@
+<Window x:Class="Client.Presentation.Views.EventFeedBack.UpdateEventFeedBackWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Client.Presentation.Views.EventFeedBack"
+        mc:Ignorable="d"
+        Title="UpdateEventFeedBackWindow" Height="450" Width="800"
+        Background="{StaticResource BrushBackground}">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Label Content="Uredi povratnu informaciju" FontSize="20" FontWeight="Bold"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
+            <TextBlock Text="Ocjena:" FontSize="16" VerticalAlignment="Center" Margin="5,0,10,0"/>
+            <ComboBox x:Name="cboOcjena" Width="80" FontSize="14">
+                <ComboBoxItem Content="1"/>
+                <ComboBoxItem Content="2"/>
+                <ComboBoxItem Content="3"/>
+                <ComboBoxItem Content="4"/>
+                <ComboBoxItem Content="5"/>
+            </ComboBox>
+        </StackPanel>
+        <Label Grid.Row="2" Content="Komentar:" FontSize="16"/>
+        <TextBox Grid.Row="3" x:Name="txtKomentar" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" FontSize="14" MinHeight="200" Margin="0,5,0,10"/>
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="btnUpdateKomentar" Content="Ažuriraj" Style="{StaticResource PrimaryButton}" Height="36" Width="100" Margin="0,0,20,0" Click="btnUpdateKomentar_Click"/>
+            <Button x:Name="btnOdustani" Content="Odustani" Style="{StaticResource SecondaryButton}" Height="36" Width="100" Click="btnOdustani_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

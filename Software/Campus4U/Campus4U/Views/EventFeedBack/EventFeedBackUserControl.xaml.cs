@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,7 +9,7 @@ using Client.Data.EventFeedBack;
 
 namespace Client.Presentation.Views.EventFeedBack
 {
-    public partial class EventFeedBackUserControl : UserControl
+public partial class EventFeedBackUserControl : UserControl, INotifyPropertyChanged
     {
         private readonly IEventFeedBackService _servis;
         public ObservableCollection<EventFeedbackComment> Comments { get; } = new();
@@ -16,6 +17,22 @@ namespace Client.Presentation.Views.EventFeedBack
         public int KorisnikId { get; set; }
 
         public int DogadajId { get; set; }
+
+        private string _poruka = string.Empty;
+        public string Poruka
+        {
+            get => _poruka;
+            set
+            {
+                if (_poruka == value)
+                {
+                    return;
+                }
+
+                _poruka = value;
+                OnPropertyChanged(nameof(Poruka));
+            }
+        }
 
         public EventFeedBackUserControl()
         {
@@ -62,6 +79,7 @@ namespace Client.Presentation.Views.EventFeedBack
                 await PonovoUcitajKomentareAsync(DogadajId);
                 txtKomentar.Text = string.Empty;
                 cboOcjena.SelectedIndex = -1;
+                Poruka = "Komentar je uspješno dodan.";
             }
             catch (Exception ex)
             {
@@ -101,11 +119,37 @@ namespace Client.Presentation.Views.EventFeedBack
                 }
 
                 await PonovoUcitajKomentareAsync(DogadajId);
+                Poruka = "Komentar je uspješno obrisan.";
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Greška kod brisanja komentara: {ex.Message}", "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private async void btnUrediKomentar_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+            var komentar = (EventFeedbackComment)button.DataContext;
+
+            var window = new UpdateEventFeedBackWindow(komentar)
+            {
+                Owner = Window.GetWindow(this)
+            };
+
+            var result = window.ShowDialog();
+            if (result == true)
+            {
+                await PonovoUcitajKomentareAsync(DogadajId);
+                Poruka = "Komentar je uspješno ažuriran.";
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

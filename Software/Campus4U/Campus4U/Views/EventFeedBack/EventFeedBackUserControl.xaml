@@ -16,48 +16,60 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Margin="20">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="20,20,20,5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="Ostavite komentar i ocjenu" FontSize="14" FontWeight="Bold" Margin="0,0,0,10"></TextBlock>
+            <TextBlock Grid.Row="0" Text="Ostavite komentar i ocjenu" FontSize="14" FontWeight="Bold" Margin="0,0,0,10"></TextBlock>
 
-                <Border Grid.Row="1" CornerRadius="10" BorderBrush="Gray" BorderThickness="1" Padding="4">
-                    <TextBox x:Name="txtKomentar" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" FontSize="10" BorderThickness="0" Padding="8"></TextBox>
-                </Border>
+            <Border Grid.Row="1" CornerRadius="10" BorderBrush="Gray" BorderThickness="1" Padding="4">
+                <TextBox x:Name="txtKomentar" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" FontSize="12" BorderThickness="0" Padding="8"/>
+            </Border>
 
-                <Grid Grid.Row="2" Margin="0,10,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+            <Grid Grid.Row="2" Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        
-                    </Grid>
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="Ocjena:" FontSize="12" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                        <ComboBox x:Name="cboOcjena" Width="60" FontSize="12">
-                            <ComboBoxItem Content="1"/>
-                            <ComboBoxItem Content="2"/>
-                            <ComboBoxItem Content="3"/>
-                            <ComboBoxItem Content="4"/>
-                            <ComboBoxItem Content="5"/>
-                        </ComboBox>
-                    </StackPanel>
-                    <Button x:Name="btnDodajKomentar" Grid.Column="2" Content="Dodaj" Style="{StaticResource PrimaryButton}" Height="36" VerticalAlignment="Center" HorizontalAlignment="Left" Width="67" Click="btnDodajKomentar_Click"/>
-                </Grid>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Ocjena:" FontSize="12" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <ComboBox x:Name="cboOcjena" Width="60" FontSize="12">
+                        <ComboBoxItem Content="1"/>
+                        <ComboBoxItem Content="2"/>
+                        <ComboBoxItem Content="3"/>
+                        <ComboBoxItem Content="4"/>
+                        <ComboBoxItem Content="5"/>
+                    </ComboBox>
+                </StackPanel>
+                <Button x:Name="btnDodajKomentar" Grid.Column="2" Content="Dodaj" Style="{StaticResource PrimaryButton}" Height="36" VerticalAlignment="Center" HorizontalAlignment="Left" Width="67" Click="btnDodajKomentar_Click"/>
+            </Grid>
         </Grid>
 
-        <TextBlock Grid.Row="1" Margin="20,0,20,8" Text="Komentari" FontSize="17" FontWeight="Bold"/>
+        <StackPanel Grid.Row="1" Margin="20,0,20,8">
+            <TextBlock Margin="0,0,0,10"
+                       Text="{Binding ElementName=Root, Path=Poruka}"
+                       FontSize="12">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=Root, Path=Poruka}" Value="">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ElementName=Root, Path=Poruka}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <TextBlock Text="Komentari" FontSize="17" FontWeight="Bold"/>
+        </StackPanel>
 
         <ScrollViewer Grid.Row="2" Margin="20,0,20,20" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding ElementName=Root, Path=Comments}">
@@ -71,10 +83,23 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock FontWeight="SemiBold" FontSize="15" Text="{Binding ImePrezime}"/>
-                                    <StackPanel Grid.Column="1" HorizontalAlignment="Right">
-                                        <TextBlock Foreground="{StaticResource BrushMuted}"
-                                                   Text="{Binding Datum, StringFormat={}{0:dd.MM.yyyy HH:mm}}"/>
-                                        <Button Content="Obrisi" Margin="0,4,0,0" Padding="6,2" FontSize="11"
+                                    <TextBlock Grid.Column="1" Foreground="{StaticResource BrushMuted}"
+                                               Text="{Binding Datum, StringFormat={}{0:dd.MM.yyyy HH:mm}}"/>
+                                </Grid>
+                                <Grid Margin="0,4,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock FontSize="12" Text="{Binding Ocjena, StringFormat=Ocjena: {0}}"/>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="Uredi" Style="{StaticResource SecondaryButton}" Margin="0,0,6,0" Padding="6,2" FontSize="11"
+                                                Click="btnUrediKomentar_Click">
+                                            <Button.Visibility>
+                                                <Binding Path="MojKomentar" Converter="{StaticResource BooleanToVisibilityConverter}"/>
+                                            </Button.Visibility>
+                                        </Button>
+                                        <Button Content="Obrisi" Style="{StaticResource SecondaryButton}" Padding="6,2" FontSize="11"
                                                 Click="btnObrisiKomentar_Click">
                                             <Button.Visibility>
                                                 <Binding Path="MojKomentar" Converter="{StaticResource BooleanToVisibilityConverter}"/>
@@ -82,7 +107,6 @@
                                         </Button>
                                     </StackPanel>
                                 </Grid>
-                                <TextBlock Margin="0,4,0,0" FontSize="12" Text="{Binding Ocjena, StringFormat=Ocjena: {0}}"/>
                                 <TextBlock Margin="0,6,0,0" FontSize="12" TextWrapping="Wrap" Text="{Binding Komentar}"/>
                             </StackPanel>
                         </Border>
