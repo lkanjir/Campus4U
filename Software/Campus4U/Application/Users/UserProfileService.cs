@@ -23,7 +23,7 @@ public class UserProfileService(IUserProfileRepository profileRepository)
 
         if (role is null) return new SaveUserProfileResult(false, "Uloga nije pronađena u bazi");
 
-        var profile = new UserProfile(sub.Trim(), email.Trim(), string.IsNullOrWhiteSpace(ime) ? null : ime.Trim(),
+        var profile = new UserProfile(0, sub.Trim(), email.Trim(), string.IsNullOrWhiteSpace(ime) ? null : ime.Trim(),
             string.IsNullOrWhiteSpace(prezime) ? null : prezime.Trim(),
             string.IsNullOrWhiteSpace(brojSobe) ? null : brojSobe.Trim(), role.Value);
 

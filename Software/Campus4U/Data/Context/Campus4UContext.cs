@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Client.Data.Context.Entities;
 using Client.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 
 namespace Client.Data.Context;
 
@@ -19,6 +20,9 @@ public partial class Campus4UContext : DbContext
     public virtual DbSet<Korisnici> Korisnici { get; set; }
 
     public virtual DbSet<Uloge> Uloge { get; set; }
+    public virtual DbSet<Dogadaji> Dogadaji { get; set; }
+
+    public virtual DbSet<KomentariDogadaja> KomentariDogadaja { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -73,6 +77,19 @@ public partial class Campus4UContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("naziv_uloge");
         });
+
+        modelBuilder.Entity<Dogadaji>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__dogadaji__3213E83FCAC6C6DB");
+        });
+
+        modelBuilder.Entity<KomentariDogadaja>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__komentar__3213E83F08A035D5");
+
+            entity.HasOne(d => d.Dogadaj).WithMany(p => p.KomentariDogadaja).HasConstraintName("FK_kd_dogadaji");
+        });
+
 
         OnModelCreatingPartial(modelBuilder);
     }
