@@ -24,6 +24,10 @@ public partial class Campus4UContext : DbContext
 
     public virtual DbSet<KomentariDogadaja> KomentariDogadaja { get; set; }
 
+    public virtual DbSet<DnevniJelovnik> DnevniJelovnik { get; set; }
+
+    public virtual DbSet<Jelo> Jelo { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=31.147.206.65;Database=RPP2025_13_DB;User Id=RPP2025_13_User;Password=\"Qic6;,R&oi{drR?r\";TrustServerCertificate=True;");
@@ -90,6 +94,13 @@ public partial class Campus4UContext : DbContext
             entity.HasOne(d => d.Dogadaj).WithMany(p => p.KomentariDogadaja).HasConstraintName("FK_kd_dogadaji");
         });
 
+        modelBuilder.Entity<Jelo>(entity =>
+        {
+            entity.HasOne(d => d.DnevniJelovnik)
+                .WithMany(p => p.Jela)
+                .HasForeignKey(d => d.JelovnikId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }
