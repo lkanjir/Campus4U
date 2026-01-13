@@ -13,22 +13,6 @@ namespace Client.Data.Menu
 {
     public sealed class MenuRepository : IMenuRepository
     {
-        public async Task<IEnumerable<DailyMenu>> DohvatiSveJelovnike()
-        {
-            await using var db = new Campus4UContext();
-            var jelovnici = await db.DnevniJelovnik
-                .Include(j => j.Jela)
-                .ToListAsync();
-
-            return jelovnici.Select(j => new DailyMenu(
-                j.JelovnikId,
-                j.Datum,
-                j.DanUTjednu,
-                j.ZadnjeAzurirano,
-                j.Jela.Select(x => new Meal(x.JeloId, x.JelovnikId, x.Naziv, x.Kategorija)).ToList()
-            ));
-        }
-
         public async Task<DailyMenu?> DohvatiJelovnikZaDatum(DateTime datum)
         {
             await using var db = new Campus4UContext();
@@ -69,7 +53,7 @@ namespace Client.Data.Menu
             ));
         }
 
-        public bool SpremiJelovnik(DailyMenu jelovnik)
+        private bool SpremiJelovnik(DailyMenu jelovnik)
         {
             try
             {
@@ -149,13 +133,6 @@ namespace Client.Data.Menu
             {
                 return false;
             }
-        }
-
-        public async Task<DateTime?> DohvatiDatumZadnjegAzuriranja()
-        {
-            await using var db = new Campus4UContext();
-            return await db.DnevniJelovnik
-                .MaxAsync(j => (DateTime?)j.ZadnjeAzurirano);
         }
 
         public bool IsJelovnikAzuriran(DateTime datum)
