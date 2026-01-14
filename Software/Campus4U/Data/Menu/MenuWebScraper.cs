@@ -1,10 +1,11 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
+using Client.Application.Menu;
 using Client.Domain.Menu;
 using HtmlAgilityPack;
 
 // Tin Posavec
 
-namespace Client.Application.Menu
+namespace Client.Data.Menu
 {
     public sealed class MenuWebScraper : IMenuWebScraper
     {

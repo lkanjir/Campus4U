@@ -1,0 +1,83 @@
+<UserControl x:Class="Client.Presentation.Views.Menu.JelovnikUserControl"
+             x:Name="Root"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="550" d:DesignWidth="800"
+             Loaded="UserControl_Loaded">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="Tjedni jelovnik" FontWeight="Bold" FontSize="30" Style="{StaticResource HeadingText}"/>
+            </StackPanel>
+            <Button Grid.Column="1" x:Name="BtnOsvjezi" Content="Osvježi"
+                    Style="{StaticResource PrimaryButton}" Click="BtnOsvjezi_Click"/>
+        </Grid>
+
+        <StackPanel Grid.Row="1" x:Name="PanelDani" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,16"/>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,16">
+            <Button x:Name="BtnRucak" Content="Ručak" Width="120" Margin="0,0,8,0"
+                    Style="{StaticResource PrimaryButton}" Click="BtnRucak_Click"/>
+            <Button x:Name="BtnVecera" Content="Večera" Width="120"
+                    Style="{StaticResource SecondaryButton}" Click="BtnVecera_Click"/>
+        </StackPanel>
+
+
+        <Grid Grid.Row="3">
+            <TextBlock x:Name="TxtStatus" Text="Učitavanje jelovnika..."
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       FontSize="14" Foreground="{StaticResource BrushMuted}"/>
+
+            <ScrollViewer x:Name="ScrollJela" VerticalScrollBarVisibility="Auto" Visibility="Collapsed"
+                              MaxWidth="800" HorizontalAlignment="Center">
+                <ItemsControl x:Name="ListaJela">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel HorizontalAlignment="Center"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource Card}" Margin="6" Width="350" MinHeight="200">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Kategorija}" FontWeight="SemiBold" FontSize="14"
+                                               Foreground="{StaticResource BrushPrimary}" Margin="0,0,0,8"/>
+                                    <ItemsControl ItemsSource="{Binding Jela}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock FontSize="13" TextWrapping="Wrap" Margin="0,2">
+                                                    <Run Text="•" Foreground="{StaticResource BrushMuted}"/>
+                                                    <Run Text=" "/>
+                                                    <Run Text="{Binding Naziv}"/>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+
+        <TextBlock Grid.Row="4" x:Name="TxtZadnjeAzuriranje" FontSize="11"
+                   Foreground="{StaticResource BrushMuted}" HorizontalAlignment="Right" Margin="0,8,0,0"/>
+    </Grid>
+</UserControl>
