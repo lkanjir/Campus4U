@@ -25,6 +25,9 @@ public partial class Campus4UContext : DbContext
     public virtual DbSet<KomentariDogadaja> KomentariDogadaja { get; set; }
 
     public virtual DbSet<DnevniJelovnik> DnevniJelovnik { get; set; }
+    public virtual DbSet<Prostori> Prostori { get; set; }
+    public virtual DbSet<VrsteKvarova> VrsteKvarova { get; set; }
+    public virtual DbSet<Kvarovi> Kvarovi { get; set; }
 
     public virtual DbSet<Jelo> Jelo { get; set; }
 
@@ -100,6 +103,36 @@ public partial class Campus4UContext : DbContext
                 .WithMany(p => p.Jela)
                 .HasForeignKey(d => d.JelovnikId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Prostori>(entity =>
+        {
+            entity.ToTable("prostori");
+            entity.HasKey(e => e.Id);
+        });
+
+        modelBuilder.Entity<VrsteKvarova>(entity =>
+        {
+            entity.ToTable("vrste_kvarova");
+            entity.HasKey(e => e.VrstaKvaraId);
+        });
+
+        modelBuilder.Entity<Kvarovi>(entity =>
+        {
+            entity.ToTable("kvarovi");
+            entity.HasKey(e => e.KvarId);
+
+            entity.HasOne(d => d.Korisnik)
+                .WithMany()
+                .HasForeignKey(d => d.KorisnikId);
+
+            entity.HasOne(d => d.Prostor)
+                .WithMany()
+                .HasForeignKey(d => d.ProstorId);
+
+            entity.HasOne(d => d.VrstaKvara)
+                .WithMany()
+                .HasForeignKey(d => d.VrstaKvaraId);
         });
 
         OnModelCreatingPartial(modelBuilder);
