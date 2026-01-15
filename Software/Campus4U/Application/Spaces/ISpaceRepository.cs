@@ -8,6 +8,6 @@ namespace Client.Application.Spaces
 {
     public interface ISpaceRepository
     {
-        List<Space> DohvatiSveProstore();
+        Task<List<Space>> DohvatiSveProstore();
     }
 }

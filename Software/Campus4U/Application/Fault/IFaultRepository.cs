@@ -7,7 +7,7 @@ namespace Client.Application.Fault
 {
     public interface IFaultRepository
     {
-        List<FaultType> DohvatiVrsteKvarova();
-        bool SpremiKvar(FaultReport kvar);
+        Task<List<FaultType>> DohvatiVrsteKvarova();
+        Task<bool> SpremiKvar(FaultReport kvar);
     }
 }

@@ -2,26 +2,26 @@
 using Client.Data.Context;
 using Client.Data.Entities;
 using Client.Domain.Fault;
+using Microsoft.EntityFrameworkCore;
 
 // Tin Posavec
+
 namespace Client.Data.Fault
 {
     public sealed class FaultRepository : IFaultRepository
     {
-        public List<FaultType> DohvatiVrsteKvarova()
+        public async Task<List<FaultType>> DohvatiVrsteKvarova()
         {
-            using var db = new Campus4UContext();
+            await using var db = new Campus4UContext();
 
-            var kvarovi = db.VrsteKvarova
+            return await db.VrsteKvarova
                 .Select(v => new FaultType(v.VrstaKvaraId, v.Naziv))
-                .ToList();
-
-            return kvarovi;
+                .ToListAsync();
         }
 
-        public bool SpremiKvar(FaultReport kvar)
+        public async Task<bool> SpremiKvar(FaultReport kvar)
         {
-            using var db = new Campus4UContext();
+            await using var db = new Campus4UContext();
 
             var entitet = new Kvarovi
             {
@@ -35,7 +35,7 @@ namespace Client.Data.Fault
             };
 
             db.Kvarovi.Add(entitet);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
 
             return true;
         }
