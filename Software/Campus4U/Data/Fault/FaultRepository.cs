@@ -30,14 +30,14 @@ namespace Client.Data.Fault
                 VrstaKvaraId = kvar.VrstaKvaraId,
                 Opis = kvar.Opis,
                 Fotografija = kvar.Fotografija,
-                Status = "Aktivan",
-                DatumPrijave = DateTime.Now
+                Status = kvar.Status,
+                DatumPrijave = kvar.DatumPrijave
             };
 
             db.Kvarovi.Add(entitet);
-            await db.SaveChangesAsync();
+            var spremljen = await db.SaveChangesAsync();
 
-            return true;
+            return spremljen > 0;
         }
     }
 }
