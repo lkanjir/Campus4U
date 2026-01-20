@@ -10,7 +10,8 @@ namespace Client.Domain.Spaces
         string Oprema,
         string Opis,
         Dom Dom,
-        TipProstora TipProstora
+        TipProstora TipProstora,
+        string? SlikaPutanja
         );
     
 }

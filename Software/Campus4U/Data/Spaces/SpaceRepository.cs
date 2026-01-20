@@ -15,7 +15,7 @@ namespace Client.Data.Spaces
             await using var db = new Campus4UContext();
 
             return await db.Prostori
-                .Select(p => new Space(p.Id, p.Naziv, p.Kapacitet, p.Opremljenost, p.Opis, (Dom)p.DomId, (TipProstora)p.TipProstorijeId))
+                .Select(p => new Space(p.Id, p.Naziv, p.Kapacitet, p.Opremljenost, p.Opis, (Dom)p.DomId, (TipProstora)p.TipProstorijeId, p.SlikaPutanja))
                 .ToListAsync();
         }
 
@@ -32,7 +32,7 @@ namespace Client.Data.Spaces
                 query = query.Where(p => p.TipProstorijeId == (int)tip.Value);
             }
             return await query
-                .Select(p => new Space(p.Id, p.Naziv, p.Kapacitet, p.Opremljenost, p.Opis, (Dom)p.DomId, (TipProstora)p.TipProstorijeId))
+                .Select(p => new Space(p.Id, p.Naziv, p.Kapacitet, p.Opremljenost, p.Opis, (Dom)p.DomId, (TipProstora)p.TipProstorijeId, p.SlikaPutanja))
                 .ToListAsync();
         }
     }

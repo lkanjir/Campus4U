@@ -28,5 +28,8 @@ namespace Client.Data.Entities
 
         [Column("tip_prostorije_id")]
         public int TipProstorijeId { get; set; }
-    }
+
+        [Column("slika_putanja")]
+        public string? SlikaPutanja { get; set; }
+        }
 }
