@@ -12,6 +12,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Client.Presentation.Views.Spaces;
+using Client.Domain.Spaces;
 
 namespace Client.Presentation.Views.Spaces
 {
@@ -23,10 +25,19 @@ namespace Client.Presentation.Views.Spaces
     public partial class SpacesView : Window
     {
         private readonly SpaceRepository prostorRepo;
-        public SpacesView()
+        private readonly TipProstora tipProstora;
+        public SpacesView(TipProstora tip)
         {
             InitializeComponent();
             prostorRepo = new SpaceRepository();
+            Loaded += SpacesView_Loaded;
+            tipProstora = tip;
+
+        }
+
+        private async void SpacesView_Loaded(object sender, RoutedEventArgs e)
+        {
+            GridProstori.ItemsSource = await prostorRepo.DohvatiPoTipu(tipProstora);
         }
     }
 }

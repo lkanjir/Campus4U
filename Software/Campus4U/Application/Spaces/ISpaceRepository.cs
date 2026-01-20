@@ -10,5 +10,6 @@ namespace Client.Application.Spaces
     {
         Task<List<Space>> DohvatiSveProstore();
         Task<List<Space>> DohvatiFilter(string? naziv, TipProstora? tip);
+        Task<List<Space>> DohvatiPoTipu(TipProstora tip);
     }
 }

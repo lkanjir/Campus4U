@@ -35,5 +35,14 @@ namespace Client.Data.Spaces
                 .Select(p => new Space(p.Id, p.Naziv, p.Kapacitet, p.Opremljenost, p.Opis, (Dom)p.DomId, (TipProstora)p.TipProstorijeId, p.SlikaPutanja))
                 .ToListAsync();
         }
+
+        public async Task<List<Space>> DohvatiPoTipu(TipProstora tip)
+        {
+            await using var db = new Campus4UContext();
+            return await db.Prostori
+                .Where(p => p.TipProstorijeId == (int)tip)
+                .Select(p => new Space(p.Id, p.Naziv, p.Kapacitet, p.Opremljenost, p.Opis, (Dom)p.DomId, (TipProstora)p.TipProstorijeId, p.SlikaPutanja))
+                .ToListAsync();
+        }
     }
 }
