@@ -10,8 +10,10 @@
 
   <ItemGroup>
     <None Remove="Images\Spaces\teretana1.jpg" />
+    <None Remove="Images\Spaces\teretanaLogo.jpg" />
     <None Remove="Images\Spaces\ucionica1.jpg" />
     <None Remove="Images\Spaces\ucionica2.jpg" />
+    <None Remove="Images\Spaces\ucionicaLogo.jpg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,10 +41,16 @@
     <Resource Include="Images\Spaces\teretana1.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Images\Spaces\teretanaLogo.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\Spaces\ucionica1.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\Spaces\ucionica2.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Spaces\ucionicaLogo.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

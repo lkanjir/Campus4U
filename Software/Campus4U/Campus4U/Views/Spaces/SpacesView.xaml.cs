@@ -39,5 +39,12 @@ namespace Client.Presentation.Views.Spaces
         {
             GridProstori.ItemsSource = await prostorRepo.DohvatiPoTipu(tipProstora);
         }
+
+        private void BtnBack_Click(object sender, RoutedEventArgs e)
+        {
+            CategorySelectionView categorySelectionView = new CategorySelectionView();
+            categorySelectionView.Show();
+            this.Close();
+        }
     }
 }

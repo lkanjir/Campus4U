@@ -3,15 +3,38 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Odabir Kategorije" 
         Height="600" Width="900"
-        WindowStartupLocation="CenterScreen"
-        Background="#F0F2F5">
+        Background="{StaticResource BrushBackground}"
+        WindowStartupLocation="CenterScreen">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Button Grid.Column="0" 
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center" 
+                    Margin="0,40,0,10">
+
+            <TextBlock Text="Campus4U" 
+                       FontSize="36" 
+                       FontWeight="Bold" 
+                       Foreground="#333" 
+                       HorizontalAlignment="Center"/>
+
+            <TextBlock Text="Prikaz objekata i prostora" 
+                       FontSize="18" 
+                       Foreground="#666" 
+                       Margin="0,5,0,0"
+                       HorizontalAlignment="Center"/>
+        </StackPanel>
+
+        <Button Grid.Row="1" Grid.Column="0" 
                 Margin="40" 
                 Cursor="Hand"
                 Click="BtnUcionice_Click"
@@ -32,7 +55,7 @@
                             </Grid.RowDefinitions>
 
                             <Border Grid.Row="0" CornerRadius="20,20,0,0" ClipToBounds="True">
-                                <Image Source="/Images/Spaces/ucionicaLogo.jpg" 
+                                <Image Source="pack://application:,,,/Images/Spaces/ucionicaLogo.jpg" 
                                        Stretch="UniformToFill"/>
                             </Border>
 
@@ -43,7 +66,7 @@
                                            Foreground="#333" 
                                            HorizontalAlignment="Center"/>
 
-                                <TextBlock Text="Predavaonice i kabineti" 
+                                <TextBlock Text="Učenje" 
                                            FontSize="14" 
                                            Foreground="Gray" 
                                            Margin="0,5,0,0"
@@ -62,7 +85,7 @@
         </Button>
 
 
-        <Button Grid.Column="1" 
+        <Button Grid.Row="1" Grid.Column="1" 
                 Margin="40" 
                 Cursor="Hand"
                 Click="BtnTeretane_Click"
@@ -83,7 +106,7 @@
                             </Grid.RowDefinitions>
 
                             <Border Grid.Row="0" CornerRadius="20,20,0,0" ClipToBounds="True">
-                                <Image Source="/Images/Spaces/teretanaLogo.jpg" 
+                                <Image Source="pack://application:,,,/Images/Spaces/teretanaLogo.jpg" 
                                        Stretch="UniformToFill"/>
                             </Border>
 
