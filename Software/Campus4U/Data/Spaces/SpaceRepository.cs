@@ -4,7 +4,7 @@ using Client.Domain.Spaces;
 using Microsoft.EntityFrameworkCore;
 
 
-// Tin Posavec
+// Tin Posavec, Marko Mišić
 
 namespace Client.Data.Spaces
 {
@@ -15,7 +15,7 @@ namespace Client.Data.Spaces
             await using var db = new Campus4UContext();
 
             return await db.Prostori
-                .Select(p => new Space(p.Id, p.Naziv))
+                .Select(p => new Space(p.Id, p.Naziv, p.Kapacitet, p.Opremljenost, p.Opis, (Dom)p.DomId, (TipProstora)p.TipProstorijeId))
                 .ToListAsync();
         }
     }
