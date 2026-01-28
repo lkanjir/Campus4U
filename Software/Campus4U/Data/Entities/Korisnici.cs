@@ -15,6 +15,8 @@ public partial class Korisnici
 
     public string? Prezime { get; set; }
 
+    public string? KorisnickoIme { get; set; }
+
     public string Email { get; set; } = null!;
 
     public string? BrojSobe { get; set; }

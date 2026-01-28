@@ -1,4 +1,4 @@
-﻿using Client.Application.Users;
+using Client.Application.Users;
 using Client.Data.Users;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -54,9 +54,10 @@ namespace Client.Presentation.Views.UserProfile
             {
                 string imePrezime = (profil.Ime ?? "") + " " + (profil.Prezime ?? "");
                 txtImePrezime.Text = imePrezime;
-                txtEmail.Text = profil.Email;
+                txtKorIme.Text += profil.KorisnickoIme.IsNullOrEmpty() ? " -" : " " + profil.KorisnickoIme;
+                txtEmail.Text += profil.Email.IsNullOrEmpty() ? " -" : " " + profil.Email;
                 txtBrojSobe.Text += profil.BrojSobe.IsNullOrEmpty() ? " -" : " " + profil.BrojSobe;
-                txtBrojTelefona.Text = profil.BrojTelefona;
+                txtBrojTelefona.Text += profil.BrojTelefona.IsNullOrEmpty() ? " -" : " " + profil.BrojTelefona;
                 txtUloga.Text = profil.UlogaId == 1 ? "Student" : "Administrator";
             }
         }

@@ -60,6 +60,9 @@ public partial class Campus4UContext : DbContext
             entity.Property(e => e.Prezime)
                 .HasMaxLength(255)
                 .HasColumnName("prezime");
+            entity.Property(e => e.KorisnickoIme)
+                .HasMaxLength(50)
+                .HasColumnName("korisnicko_ime");
             entity.Property(e => e.Sub)
                 .HasMaxLength(255)
                 .HasColumnName("sub");

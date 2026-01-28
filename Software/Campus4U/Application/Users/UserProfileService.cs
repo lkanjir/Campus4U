@@ -13,7 +13,7 @@ public class UserProfileService(IUserProfileRepository profileRepository)
         string.IsNullOrWhiteSpace(sub) ? Task.FromResult<UserProfile?>(null) : profileRepository.GetBySubAsync(sub, ct);
 
     public async Task<SaveUserProfileResult> SaveAsync(string sub, string email, string? ime, string? prezime,
-        string? brojSobe, string? brojTelefona, string? slikaProfila, string roleName, CancellationToken ct = default)
+        string? brojSobe, string? brojTelefona, string? slikaProfila, string korIme, string roleName, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(sub) || string.IsNullOrWhiteSpace(email))
             return new SaveUserProfileResult(false, "Nedostaje sub ili email");
@@ -26,6 +26,7 @@ public class UserProfileService(IUserProfileRepository profileRepository)
 
         var profile = new UserProfile(0, sub.Trim(), email.Trim(), string.IsNullOrWhiteSpace(ime) ? null : ime.Trim(),
             string.IsNullOrWhiteSpace(prezime) ? null : prezime.Trim(),
+            string.IsNullOrWhiteSpace(korIme) ? null : korIme.Trim(),
             string.IsNullOrWhiteSpace(brojSobe) ? null : brojSobe.Trim(), 
             string.IsNullOrWhiteSpace(brojTelefona) ? null : brojTelefona.Trim(),
             string.IsNullOrWhiteSpace(slikaProfila) ? null : slikaProfila.Trim(), role.Value);

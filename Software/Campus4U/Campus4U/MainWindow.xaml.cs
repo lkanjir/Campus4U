@@ -70,7 +70,8 @@ namespace Client.Presentation
             onboardingView.SetStatus(string.Empty);
             try
             {
-                var result = await userProfileService.SaveAsync(currentSub, currentEmail, e.Ime, e.Prezime, e.BrojSobe, "", "",
+                // "" => brojTelefona, slikaProfila, korIme nisu obavezni za onboarding
+                var result = await userProfileService.SaveAsync(currentSub, currentEmail, e.Ime, e.Prezime, e.BrojSobe, "", "", "",
                     currentRole);
 
                 if (!result.isSuccess)

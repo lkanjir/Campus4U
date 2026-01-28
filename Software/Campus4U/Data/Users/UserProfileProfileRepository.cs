@@ -21,7 +21,7 @@ public class UserProfileProfileRepository : IUserProfileRepository
 
         return entity is null
             ? null
-            : new UserProfile(entity.Id, entity.Sub, entity.Email, entity.Ime, entity.Prezime, entity.BrojSobe, entity.BrojTelefona, entity.SlikaProfila, entity.UlogaId);
+            : new UserProfile(entity.Id, entity.Sub, entity.Email, entity.Ime, entity.Prezime, entity.KorisnickoIme, entity.BrojSobe, entity.BrojTelefona, entity.SlikaProfila, entity.UlogaId);
     }
 
     public async Task<int?> GetRoleIdByNameAsync(string roleName, CancellationToken ct = default)
@@ -51,6 +51,7 @@ public class UserProfileProfileRepository : IUserProfileRepository
                 Sub = profile.Sub,
                 Ime = profile.Ime,
                 Prezime = profile.Prezime,
+                KorisnickoIme = profile.KorisnickoIme,
                 Email = profile.Email,
                 BrojSobe = profile.BrojSobe,
                 BrojTelefona = profile.BrojTelefona,
@@ -63,6 +64,7 @@ public class UserProfileProfileRepository : IUserProfileRepository
             entity.Email = profile.Email;
             entity.Ime = profile.Ime;
             entity.Prezime = profile.Prezime;
+            entity.KorisnickoIme = profile.KorisnickoIme;
             entity.BrojSobe = profile.BrojSobe;
             entity.UlogaId = profile.UlogaId;
             entity.BrojTelefona = profile.BrojTelefona;
@@ -84,6 +86,7 @@ public class UserProfileProfileRepository : IUserProfileRepository
 
         entity.Ime = profile.Ime;
         entity.Prezime = profile.Prezime;
+        entity.KorisnickoIme = profile.KorisnickoIme;
         entity.BrojSobe = profile.BrojSobe;
         entity.UlogaId = profile.UlogaId;
         entity.BrojTelefona = profile.BrojTelefona;
@@ -109,4 +112,3 @@ public class UserProfileProfileRepository : IUserProfileRepository
     }
 
 }
-

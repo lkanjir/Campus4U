@@ -31,7 +31,7 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0">
                     <TextBlock FontSize="30" x:Name="txtImePrezime">Ime Prezime</TextBlock>
-                    <TextBlock FontSize="20" Foreground="#222" x:Name="txtKorIme">Korisničko ime</TextBlock>
+                    <TextBlock FontSize="20" Foreground="#222" x:Name="txtKorIme">Korisničko ime:</TextBlock>
                     <TextBlock FontSize="16" x:Name="txtEmail">E-mail:</TextBlock>
                     <TextBlock FontSize="16" x:Name="txtBrojTelefona">Broj telefona:</TextBlock>
                 </StackPanel>
