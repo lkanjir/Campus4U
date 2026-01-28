@@ -1,3 +1,4 @@
+using Client.Domain.Menu;
 using Client.Domain.Users;
 
 namespace Client.Application.Users;
@@ -30,6 +31,34 @@ public class UserProfileService(IUserProfileRepository profileRepository)
             string.IsNullOrWhiteSpace(slikaProfila) ? null : slikaProfila.Trim(), role.Value);
 
         await profileRepository.SaveAsync(profile, ct);
+        return new SaveUserProfileResult(true, null);
+    }
+
+    public async Task<SaveUserProfileResult> AzurirajProfil(UserProfile profile, string? ime, string? prezime, string? brojSobe, string? brojTelefona)
+    {
+        if (profile.Id <= 0)
+            return new SaveUserProfileResult(false, "Neispravan ID korisnika");
+
+        if (string.IsNullOrWhiteSpace(profile.Sub) || string.IsNullOrWhiteSpace(profile.Email))
+            return new SaveUserProfileResult(false, "Nedostaje sub ili email");
+
+        static string? NormalizeUpdate(string? input, string? current)
+        {
+            if (input is null)
+                return current;
+
+            var trimmed = input.Trim();
+            return string.IsNullOrWhiteSpace(trimmed) ? null : trimmed;
+        }
+
+        var azuriranProfile = profile with {
+            Ime = NormalizeUpdate(ime, profile.Ime),
+            Prezime = NormalizeUpdate(prezime, profile.Prezime),
+            BrojSobe = NormalizeUpdate(brojSobe, profile.BrojSobe),
+            BrojTelefona = NormalizeUpdate(brojTelefona, profile.BrojTelefona)
+        };
+        bool stanje = await profileRepository.AzurirajKorisnika(azuriranProfile);
+        if(!stanje) return new SaveUserProfileResult(false, "Neuspješna izmjena podataka korisnika");
         return new SaveUserProfileResult(true, null);
     }
 }

@@ -71,7 +71,7 @@ public class UserProfileProfileRepository : IUserProfileRepository
         
         await db.SaveChangesAsync(ct);
     }
-    public async Task<bool> AzurirajKorisnik(UserProfile profile)
+    public async Task<bool> AzurirajKorisnika(UserProfile profile)
     {
         await using var db = new Campus4UContext();
         var entity = await (from u in db.Korisnici
@@ -82,7 +82,6 @@ public class UserProfileProfileRepository : IUserProfileRepository
             return false;
         }
 
-        entity.Email = profile.Email;
         entity.Ime = profile.Ime;
         entity.Prezime = profile.Prezime;
         entity.BrojSobe = profile.BrojSobe;
@@ -94,9 +93,9 @@ public class UserProfileProfileRepository : IUserProfileRepository
         return changed > 0;
     }
 
-    public Task<bool> AzurirajProfilnuSliku(int id, string urlSkike)
+    public Task<bool> AzurirajProfilnuSliku(int id, string urlSlike)
     {
-        // Implementacija æe se izvršiti kada server bude spreman
+        // Implementacija æe se napraviti kada server bude spreman
         throw new NotImplementedException();
     }
     public Task<bool> IzbrisiKorisnika(int id)
@@ -104,9 +103,10 @@ public class UserProfileProfileRepository : IUserProfileRepository
         throw new NotImplementedException();
     }
 
-    public Task<bool> PromjeniLozinku(int id, string novaLozinka)
+    public Task<bool> AzurirajOsobnePodatke(int id, string? noviEmail, string? novaLozinka)
     {
         throw new NotImplementedException();
     }
 
 }
+
