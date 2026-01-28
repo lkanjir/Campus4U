@@ -20,7 +20,7 @@ public class UserProfileProfileRepository : IUserProfileRepository
 
         return entity is null
             ? null
-            : new UserProfile(entity.Id, entity.Sub, entity.Email, entity.Ime, entity.Prezime, entity.BrojSobe, entity.UlogaId);
+            : new UserProfile(entity.Id, entity.Sub, entity.Email, entity.Ime, entity.Prezime, entity.BrojSobe, entity.BrojTelefona, entity.SlikaProfila, entity.UlogaId);
     }
 
     public async Task<int?> GetRoleIdByNameAsync(string roleName, CancellationToken ct = default)
@@ -53,6 +53,8 @@ public class UserProfileProfileRepository : IUserProfileRepository
                 Prezime = profile.Prezime,
                 Email = profile.Email,
                 BrojSobe = profile.BrojSobe,
+                BrojTelefona = profile.BrojTelefona,
+                SlikaProfila = profile.SlikaProfila
             };
             db.Korisnici.Add(entity);
         }
@@ -63,6 +65,8 @@ public class UserProfileProfileRepository : IUserProfileRepository
             entity.Prezime = profile.Prezime;
             entity.BrojSobe = profile.BrojSobe;
             entity.UlogaId = profile.UlogaId;
+            entity.BrojTelefona = profile.BrojTelefona;
+            entity.SlikaProfila = profile.SlikaProfila;
         }
         
         await db.SaveChangesAsync(ct);

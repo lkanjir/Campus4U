@@ -19,5 +19,9 @@ public partial class Korisnici
 
     public string? BrojSobe { get; set; }
 
+    public string? BrojTelefona { get; set; }
+
+    public string? SlikaProfila { get; set; }
+
     public virtual Uloge Uloga { get; set; } = null!;
 }

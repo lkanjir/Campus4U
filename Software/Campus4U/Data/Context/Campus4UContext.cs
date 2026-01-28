@@ -64,6 +64,10 @@ public partial class Campus4UContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("sub");
             entity.Property(e => e.UlogaId).HasColumnName("uloga_id");
+            entity.Property(e => e.BrojTelefona)
+                .HasMaxLength(30)
+                .HasColumnName("broj_telefona");
+            entity.Property(e => e.SlikaProfila).HasMaxLength(500).HasColumnName("slika_profila");
 
             entity.HasOne(d => d.Uloga).WithMany(p => p.Korisnici)
                 .HasForeignKey(d => d.UlogaId)
