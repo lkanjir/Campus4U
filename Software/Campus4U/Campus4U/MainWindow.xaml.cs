@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Input;
 
 using Client.Application.Auth;
 using Client.Application.Users;
@@ -6,6 +7,7 @@ using Client.Data.Auth;
 using Client.Data.Users;
 using Client.Domain.Auth;
 using Client.Presentation.Views;
+using Client.Presentation.Views.UserProfile;
 using Duende.IdentityModel.OidcClient.Browser;
 using Microsoft.Extensions.Configuration;
 
@@ -275,5 +277,14 @@ namespace Client.Presentation
             onboardingView.SetBusy(busy);
             ApplyUiState();
         }
+        private void BtnProfilKorisnika_OnClick(object sender, MouseButtonEventArgs e)
+        {
+            var profileView = new UserProfileView(currentSub)
+            {
+                Owner = this
+            };
+            profileView.Show();
+        }
+
     }
 }

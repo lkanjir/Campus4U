@@ -21,10 +21,20 @@
                    <ColumnDefinition Width="Auto"/>
                </Grid.ColumnDefinitions>
                <TextBlock Text="Campus4U" Style="{StaticResource HeadingText}" VerticalAlignment="Center"/>
-               <Button Grid.Column="1" x:Name="BtnLogout" Click="BtnLogout_OnClick" 
-                       Style="{StaticResource SecondaryButton}" 
-                       IsEnabled="False"
-                       Width="140">Odjava</Button>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button  x:Name="BtnLogout" Click="BtnLogout_OnClick" 
+                        Style="{StaticResource SecondaryButton}" 
+                        IsEnabled="False"
+                        Width="140">Odjava</Button>
+                    <Ellipse x:Name="btnProfilKorisnika" Width="36" Height="36" Margin="12, 0,0,0"
+                             VerticalAlignment="Center" Stroke="#B0B0B0" StrokeThickness="2" Cursor="Hand"
+                             MouseLeftButtonUp="BtnProfilKorisnika_OnClick">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="/Images/Profile/default-profile.png" Stretch="UniformToFill"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                </StackPanel>
+               
            </Grid>
        </Border>
        
