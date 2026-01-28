@@ -8,4 +8,9 @@ public interface IUserProfileRepository
     Task<UserProfile?> GetBySubAsync(string sub, CancellationToken ct = default);
     Task<int?> GetRoleIdByNameAsync(string roleName, CancellationToken ct = default);
     Task SaveAsync(UserProfile profile, CancellationToken ct = default);
+    Task<bool> AzurirajKorisnik(UserProfile profile);
+    Task<bool> IzbrisiKorisnika(int id);
+    Task<bool> AzurirajProfilnuSliku(int id, string urlSkike);
+    Task<bool> PromjeniLozinku(int id, string novaLozinka);
+
 }

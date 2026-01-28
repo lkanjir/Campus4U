@@ -4,6 +4,7 @@ using Client.Data.Context;
 using Client.Data.Entities;
 using Client.Domain.Users;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace Client.Data.Users;
 
@@ -35,7 +36,6 @@ public class UserProfileProfileRepository : IUserProfileRepository
         Debug.WriteLine($"Role id iz baze: {entity}");
         return entity;
     }
-
     public async Task SaveAsync(UserProfile profile, CancellationToken ct = default)
     {
         await using var db = new Campus4UContext();
@@ -71,4 +71,42 @@ public class UserProfileProfileRepository : IUserProfileRepository
         
         await db.SaveChangesAsync(ct);
     }
+    public async Task<bool> AzurirajKorisnik(UserProfile profile)
+    {
+        await using var db = new Campus4UContext();
+        var entity = await (from u in db.Korisnici
+                            where u.Id == profile.Id
+                            select u).FirstOrDefaultAsync();
+        if (entity is null)
+        {
+            return false;
+        }
+
+        entity.Email = profile.Email;
+        entity.Ime = profile.Ime;
+        entity.Prezime = profile.Prezime;
+        entity.BrojSobe = profile.BrojSobe;
+        entity.UlogaId = profile.UlogaId;
+        entity.BrojTelefona = profile.BrojTelefona;
+        entity.SlikaProfila = profile.SlikaProfila;
+
+        var changed = await db.SaveChangesAsync();
+        return changed > 0;
+    }
+
+    public Task<bool> AzurirajProfilnuSliku(int id, string urlSkike)
+    {
+        // Implementacija æe se izvršiti kada server bude spreman
+        throw new NotImplementedException();
+    }
+    public Task<bool> IzbrisiKorisnika(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> PromjeniLozinku(int id, string novaLozinka)
+    {
+        throw new NotImplementedException();
+    }
+
 }
