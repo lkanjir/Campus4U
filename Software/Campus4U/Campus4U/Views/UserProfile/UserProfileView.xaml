@@ -18,9 +18,9 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             
-            <Ellipse Grid.Column="0" Width="72" Height="72" Margin="12, 0,0,0" VerticalAlignment="Center" Stroke="#B0B0B0" StrokeThickness="2" Cursor="Hand">
+            <Ellipse Grid.Column="0" Width="72" Height="72" Margin="12, 0,0,0" VerticalAlignment="Center" Stroke="#B0B0B0" StrokeThickness="2" Cursor="Hand" MouseLeftButtonUp="Ellipse_MouseLeftButtonUp" >
                 <Ellipse.Fill>
-                    <ImageBrush ImageSource="/Images/Profile/default-profile.png" Stretch="UniformToFill"/>
+                    <ImageBrush x:Name="ProfileImageBrush" ImageSource="/Images/Profile/default-profile.png" Stretch="UniformToFill"/>
                 </Ellipse.Fill>
             </Ellipse>
 
@@ -40,7 +40,7 @@
                     <TextBlock FontSize="20" HorizontalAlignment="Right" x:Name="txtUloga">Uloga:</TextBlock>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button x:Name="BtnUrediProfil" 
+                        <Button x:Name="BtnUrediProfil" Click="BtnUrediProfil_OnClick"
                                 Width="120" Height="36"
                                 Margin="0 18 0 0"
                                 Style="{StaticResource SecondaryButton}">Uredi profil</Button>
