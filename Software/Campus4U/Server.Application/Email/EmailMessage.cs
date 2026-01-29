@@ -1,4 +1,4 @@
-﻿namespace Server.Domain.Email;
+﻿namespace Server.Application.Email;
 
 public sealed class EmailMessage
 {
