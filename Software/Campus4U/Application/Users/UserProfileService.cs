@@ -35,7 +35,7 @@ public class UserProfileService(IUserProfileRepository profileRepository)
         return new SaveUserProfileResult(true, null);
     }
 
-    public async Task<SaveUserProfileResult> AzurirajProfil(UserProfile profile, string? ime, string? prezime, string? korisnickoIme, string? brojSobe, string? brojTelefona)
+    public async Task<SaveUserProfileResult> AzurirajProfilAsync(UserProfile profile, string? ime, string? prezime, string? korisnickoIme, string? brojSobe, string? brojTelefona)
     {
         if (profile.Id <= 0)
             return new SaveUserProfileResult(false, "Neispravan ID korisnika");
@@ -59,7 +59,7 @@ public class UserProfileService(IUserProfileRepository profileRepository)
             BrojSobe = NormalizeUpdate(brojSobe, profile.BrojSobe),
             BrojTelefona = NormalizeUpdate(brojTelefona, profile.BrojTelefona)
         };
-        bool stanje = await profileRepository.AzurirajKorisnika(azuriranProfile);
+        bool stanje = await profileRepository.AzurirajKorisnikaAsync(azuriranProfile);
         if(!stanje) return new SaveUserProfileResult(false, "Neuspješna izmjena podataka korisnika");
         return new SaveUserProfileResult(true, null);
     }

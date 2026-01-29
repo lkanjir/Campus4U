@@ -73,7 +73,7 @@ public class UserProfileProfileRepository : IUserProfileRepository
         
         await db.SaveChangesAsync(ct);
     }
-    public async Task<bool> AzurirajKorisnika(UserProfile profile)
+    public async Task<bool> AzurirajKorisnikaAsync(UserProfile profile)
     {
         await using var db = new Campus4UContext();
         var entity = await (from u in db.Korisnici
@@ -96,7 +96,7 @@ public class UserProfileProfileRepository : IUserProfileRepository
         return changed > 0;
     }
 
-    public Task<bool> AzurirajProfilnuSliku(int id, string urlSlike)
+    public Task<bool> AzurirajProfilnuSlikuAsync(int id, string urlSlike)
     {
         // Implementacija æe se napraviti kada server bude spreman
         throw new NotImplementedException();

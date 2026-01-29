@@ -44,7 +44,7 @@ namespace Client.Presentation.Views.UserProfile
 
         private async void BtnSpremi_Click(object sender, RoutedEventArgs e)
         {
-            var rez = await _userProfileService.AzurirajProfil(_profile,
+            var rez = await _userProfileService.AzurirajProfilAsync(_profile,
                 TxtIme.Text,
                 TxtPrezime.Text,
                 TxtKorIme.Text,
