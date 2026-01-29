@@ -27,5 +27,7 @@ namespace Client.Data.Entities
 
         [Column("Status")]
         public string Status { get; set; } = null!;
+        [Column("BrojOsoba")]
+        public int BrojOsoba { get; set; }
     }
 }

@@ -38,11 +38,26 @@ namespace Client.Data.Spaces
                 VrijemeOd = rezervacija.PocetnoVrijeme,
                 VrijemeDo = rezervacija.KrajnjeVrijeme,
                 DatumKreiranja = DateTime.Now,
-                Status = rezervacija.Status
+                Status = rezervacija.Status,
+                BrojOsoba = rezervacija.BrojOsoba
             };
 
             db.Rezervacije.Add(novaRezervacija);
             await db.SaveChangesAsync();
+        }
+
+        public async Task<int> DohvatiZauzetoMjesta(int prostorId, DateTime pocetnoVrijeme, DateTime krajnjeVrijeme)
+        {
+            await using var db = new Campus4UContext();
+
+            var zauzeto = await db.Rezervacije
+                .Where(r => r.ProstorId == prostorId
+                            && r.Status != "Otkazano"
+                            && r.VrijemeOd < krajnjeVrijeme
+                            && r.VrijemeDo > pocetnoVrijeme)
+                .SumAsync(r => (int?)r.BrojOsoba) ?? 0;
+
+            return zauzeto;
         }
     }
 }

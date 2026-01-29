@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Client.Data.Spaces;
 using Client.Domain.Spaces;
 
 namespace Client.Presentation.Views.Spaces
@@ -19,9 +20,11 @@ namespace Client.Presentation.Views.Spaces
     /// <summary>
     /// Interaction logic for ReservationView.xaml
     /// </summary>
+    /// Marko Mišić
     public partial class ReservationView : Window
     {
         public Space TrenutniProstor { get; set; }
+        public readonly ReservationRepository reservationRepository = new ReservationRepository();
         public ReservationView(Space prostor)
         {
             InitializeComponent();
@@ -36,7 +39,52 @@ namespace Client.Presentation.Views.Spaces
 
         public void BtnRezerviraj_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                if (Datum.SelectedDate == null)
+                {
+                    throw new Exception("Morate odabrati datum");
+                }
 
+                DateTime datum = Datum.SelectedDate.Value;
+                TimeSpan odVrijeme = TimeSpan.Parse(odVrijemeText.Text);
+                TimeSpan doVrijeme = TimeSpan.Parse(odVrijemeText.Text);
+
+                DateTime pocetak = datum.Add(odVrijeme);
+                DateTime kraj = datum.Add(doVrijeme);
+
+                if (pocetak >= kraj)
+                {
+                    throw new Exception("Krajnje vrijeme mora biti nakon početnog vremena");
+                }
+
+                if (pocetak < DateTime.Now.AddMinutes(5))
+                {
+                    throw new Exception("Rezervaciju morate napraviti najkasnije 5 minuta prije početka i ne može biti u prošlosti.");
+                }
+
+                int brojOsoba = int.Parse(TxtBrojOsoba.Text);
+
+                
+
+                Rezervacija novaRezervacija = new Rezervacija
+                (
+                    0,
+                    TrenutniProstor,
+                    9,
+                    pocetak,
+                    kraj,
+                    "Aktivno"
+                );
+
+                reservationRepository.SpremiRezervaciju(novaRezervacija);
+                MessageBox.Show("Uspješno ste rezervirali prostor.");
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Greška pri rezervaciji", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void BtnMinus_Click(object sender, RoutedEventArgs e)

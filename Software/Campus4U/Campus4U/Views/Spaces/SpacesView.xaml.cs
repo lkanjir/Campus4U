@@ -26,6 +26,7 @@ namespace Client.Presentation.Views.Spaces
     {
         private readonly SpaceRepository prostorRepo;
         private readonly TipProstora tipProstora;
+        
         public SpacesView(TipProstora tip)
         {
             InitializeComponent();

@@ -13,5 +13,6 @@ namespace Client.Application.Spaces
     {
         Task<bool> ProvjeriDostupnost(int prostorId, DateTime pocetnoVrijeme, DateTime krajnjeVrijeme);
         Task SpremiRezervaciju(Rezervacija rezervacija);
+        Task<int> DohvatiZauzetoMjesta(int prostorId, DateTime pocetnoVrijeme, DateTime krajnjeVrijeme);
     }
 }

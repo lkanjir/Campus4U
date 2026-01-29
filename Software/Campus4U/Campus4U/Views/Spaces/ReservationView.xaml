@@ -30,7 +30,7 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="📅" VerticalAlignment="Center" Margin="5,0,10,0"/>
                     <DatePicker Grid.Column="1" BorderThickness="0" VerticalAlignment="Center" 
-                        Background="Transparent"/>
+                        Background="Transparent" Name="Datum"/>
                 </Grid>
             </Border>
 
@@ -44,14 +44,14 @@
                 <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="15" Padding="10,5">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="🕒" VerticalAlignment="Center" Margin="5,0,10,0"/>
-                        <TextBox Text="09:00" BorderThickness="0" VerticalAlignment="Center" Width="80"/>
+                        <TextBox Text="09:00" BorderThickness="0" VerticalAlignment="Center" Width="80" Name="odVrijemeText"/>
                     </StackPanel>
                 </Border>
 
                 <Border Grid.Column="2" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="15" Padding="10,5">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="🕒" VerticalAlignment="Center" Margin="5,0,10,0"/>
-                        <TextBox Text="10:00" BorderThickness="0" VerticalAlignment="Center" Width="80"/>
+                        <TextBox Text="10:00" BorderThickness="0" VerticalAlignment="Center" Width="80" Name="doVrijemeText"/>
                     </StackPanel>
                 </Border>
             </Grid>
@@ -87,7 +87,7 @@
                 </Button.Resources>
             </Button>
 
-            <Button Grid.Column="2" Content="Rezerviraj" Height="50" Background="#0D4D92" Foreground="White" BorderThickness="0" FontWeight="Bold">
+            <Button Grid.Column="2" Content="Rezerviraj" Height="50" Background="#0D4D92" Foreground="White" BorderThickness="0" FontWeight="Bold" Click="BtnRezerviraj_Click">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="15"/>
