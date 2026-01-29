@@ -1,8 +1,11 @@
 ﻿using Api.Middleware;
 using FluentValidation;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.EntityFrameworkCore;
 using Server.Application;
 using Server.Application.Email;
+using Server.Data;
+using Server.Data.Context;
 using Server.Data.Email;
 
 namespace Api.DI;
@@ -32,6 +35,19 @@ public static class ServiceCollectionExtensions
     {
         services.AddValidatorsFromAssemblyContaining<ValidationMiddleware>(ServiceLifetime.Singleton);
         services.AddScoped<IEmailSender, EmailSender>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<ConnectionStrings>().Bind(configuration.GetSection("ConnectionStrings"))
+            .Validate(s => !string.IsNullOrWhiteSpace(s.Campus4U),
+                "DB: Nedostaje connection string (ConnectionStrings__Campus4U) u compose.yaml")
+            .ValidateOnStart();
+
+        services.AddDbContext<Campus4UContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("Campus4U")));
 
         return services;
     }

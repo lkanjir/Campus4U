@@ -13,6 +13,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddEmail(builder.Configuration);
 builder.Services.AddApplication();
+builder.Services.AddDatabase(builder.Configuration);
 
 var app = builder.Build();
 
