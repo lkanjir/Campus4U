@@ -46,5 +46,24 @@ namespace Client.Presentation.Views.Spaces
             categorySelectionView.Show();
             this.Close();
         }
+
+        private void BtnRezerviraj_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button gumb)
+            {
+                return;
+            }
+            if (gumb.CommandParameter is not Space prostor)
+            {
+                return;
+            }
+
+            var pogled = new ReservationView(prostor)
+            {
+                Owner = this
+            };
+
+            pogled.ShowDialog();
+        }
     }
 }

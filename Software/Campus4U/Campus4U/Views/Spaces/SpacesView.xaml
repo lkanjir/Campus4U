@@ -113,7 +113,9 @@
                                         FontWeight="Bold"
                                         BorderThickness="0"
                                         Cursor="Hand"
-                                        VerticalAlignment="Center">
+                                        VerticalAlignment="Center"
+                                        Click="BtnRezerviraj_Click"
+                                        CommandParameter="{Binding}">
                                     <Button.Resources>
                                         <Style TargetType="Border">
                                             <Setter Property="CornerRadius" Value="8"/>
