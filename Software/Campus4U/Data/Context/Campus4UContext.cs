@@ -26,6 +26,7 @@ public partial class Campus4UContext : DbContext
 
     public virtual DbSet<DnevniJelovnik> DnevniJelovnik { get; set; }
     public virtual DbSet<Prostori> Prostori { get; set; }
+    public virtual DbSet<ProstoriFavoriti> ProstoriFavoriti { get; set; }
     public virtual DbSet<VrsteKvarova> VrsteKvarova { get; set; }
     public virtual DbSet<Kvarovi> Kvarovi { get; set; }
 
@@ -116,6 +117,24 @@ public partial class Campus4UContext : DbContext
         {
             entity.ToTable("prostori");
             entity.HasKey(e => e.Id);
+        });
+
+        modelBuilder.Entity<ProstoriFavoriti>(entity =>
+        {
+            entity.ToTable("prostori_favoriti");
+            entity.HasKey(e => new { e.ProstorId, e.KorisnikId });
+
+            entity.HasOne(d => d.Prostor)
+                .WithMany(p => p.ProstoriFavoriti)
+                .HasForeignKey(d => d.ProstorId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("Fk_pf_prostori");
+
+            entity.HasOne(d => d.Korisnik)
+                .WithMany(p => p.ProstoriFavoriti)
+                .HasForeignKey(d => d.KorisnikId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("Fk_pf_korisnici");
         });
 
         modelBuilder.Entity<VrsteKvarova>(entity =>

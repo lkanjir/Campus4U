@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
+using System.Collections.Generic;
 
 namespace Client.Data.Entities
 {
@@ -31,5 +32,7 @@ namespace Client.Data.Entities
 
         [Column("slika_putanja")]
         public string? SlikaPutanja { get; set; }
-        }
+
+        public virtual ICollection<ProstoriFavoriti> ProstoriFavoriti { get; set; } = new List<ProstoriFavoriti>();
+    }
 }

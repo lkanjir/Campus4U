@@ -26,4 +26,6 @@ public partial class Korisnici
     public string? SlikaProfila { get; set; }
 
     public virtual Uloge Uloga { get; set; } = null!;
+
+    public virtual ICollection<ProstoriFavoriti> ProstoriFavoriti { get; set; } = new List<ProstoriFavoriti>();
 }
