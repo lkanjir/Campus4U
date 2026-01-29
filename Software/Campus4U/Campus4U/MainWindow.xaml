@@ -28,7 +28,7 @@
                         Width="140">Odjava</Button>
                     <Ellipse x:Name="btnProfilKorisnika" Width="36" Height="36" Margin="12, 0,0,0"
                              VerticalAlignment="Center" Stroke="#B0B0B0" StrokeThickness="2" Cursor="Hand"
-                             MouseLeftButtonUp="BtnProfilKorisnika_OnClick">
+                             MouseLeftButtonUp="BtnProfilKorisnika_OnClick" RenderOptions.BitmapScalingMode="HighQuality"  SnapsToDevicePixels="True" UseLayoutRounding="True">
                         <Ellipse.Fill>
                             <ImageBrush ImageSource="/Images/Profile/default-profile.png" Stretch="UniformToFill"/>
                         </Ellipse.Fill>

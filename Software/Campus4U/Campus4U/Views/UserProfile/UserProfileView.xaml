@@ -18,7 +18,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             
-            <Ellipse Grid.Column="0" Width="72" Height="72" Margin="12, 0,0,0" VerticalAlignment="Center" Stroke="#B0B0B0" StrokeThickness="2" Cursor="Hand" MouseLeftButtonUp="Ellipse_MouseLeftButtonUp" >
+            <Ellipse Grid.Column="0" Width="72" Height="72" Margin="12, 0,0,0" VerticalAlignment="Center" Stroke="#B0B0B0" StrokeThickness="2" Cursor="Hand" MouseLeftButtonUp="Ellipse_MouseLeftButtonUp" RenderOptions.BitmapScalingMode="HighQuality"  SnapsToDevicePixels="True" UseLayoutRounding="True">
                 <Ellipse.Fill>
                     <ImageBrush x:Name="ProfileImageBrush" ImageSource="/Images/Profile/default-profile.png" Stretch="UniformToFill"/>
                 </Ellipse.Fill>
