@@ -44,14 +44,14 @@
                 <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="15" Padding="10,5">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="🕒" VerticalAlignment="Center" Margin="5,0,10,0"/>
-                        <TextBox Text="09:00" BorderThickness="0" VerticalAlignment="Center" Width="80" Name="odVrijemeText"/>
+                        <ComboBox Text="09:00" BorderThickness="0" VerticalAlignment="Center" Width="80" Name="odVrijemeCombo" IsEditable="false"/>
                     </StackPanel>
                 </Border>
 
                 <Border Grid.Column="2" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="15" Padding="10,5">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="🕒" VerticalAlignment="Center" Margin="5,0,10,0"/>
-                        <TextBox Text="10:00" BorderThickness="0" VerticalAlignment="Center" Width="80" Name="doVrijemeText"/>
+                        <ComboBox Text="10:00" BorderThickness="0" VerticalAlignment="Center" Width="80" Name="doVrijemeCombo" IsEditable="false"/>
                     </StackPanel>
                 </Border>
             </Grid>

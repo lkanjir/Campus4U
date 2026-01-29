@@ -28,16 +28,35 @@ namespace Client.Presentation.Views.Spaces
         public ReservationView(Space prostor)
         {
             InitializeComponent();
+            PopuniVremena();
             TrenutniProstor = prostor;
             this.DataContext = TrenutniProstor;
         }
+
+        private void PopuniVremena()
+        {
+            var vremena = new List<string>();
+
+            for (int h = 0; h < 24; h++)
+            {
+                vremena.Add($"{h:00}:00");
+                vremena.Add($"{h:00}:15");
+            }
+
+            odVrijemeCombo.ItemsSource = vremena;
+            doVrijemeCombo.ItemsSource = vremena;
+
+            odVrijemeCombo.SelectedItem = "09:00";
+            doVrijemeCombo.SelectedItem = "10:00";
+        }
+
 
         public void BtnNatrag_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
 
-        public void BtnRezerviraj_Click(object sender, RoutedEventArgs e)
+        public async void BtnRezerviraj_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -47,8 +66,8 @@ namespace Client.Presentation.Views.Spaces
                 }
 
                 DateTime datum = Datum.SelectedDate.Value;
-                TimeSpan odVrijeme = TimeSpan.Parse(odVrijemeText.Text);
-                TimeSpan doVrijeme = TimeSpan.Parse(odVrijemeText.Text);
+                TimeSpan odVrijeme = TimeSpan.Parse((string)odVrijemeCombo.SelectedItem);
+                TimeSpan doVrijeme = TimeSpan.Parse((string)doVrijemeCombo.SelectedItem);
 
                 DateTime pocetak = datum.Add(odVrijeme);
                 DateTime kraj = datum.Add(doVrijeme);
@@ -58,14 +77,25 @@ namespace Client.Presentation.Views.Spaces
                     throw new Exception("Krajnje vrijeme mora biti nakon početnog vremena");
                 }
 
+                var trajanje = kraj - pocetak;
+                if (trajanje > TimeSpan.FromHours(3))
+                {
+                    throw new Exception("Rezervacija ne smije trajati duže od 3 sata.");
+                }
+
                 if (pocetak < DateTime.Now.AddMinutes(5))
                 {
                     throw new Exception("Rezervaciju morate napraviti najkasnije 5 minuta prije početka i ne može biti u prošlosti.");
                 }
 
                 int brojOsoba = int.Parse(TxtBrojOsoba.Text);
+                int zauzeto = await reservationRepository.DohvatiZauzetoMjesta(TrenutniProstor.ProstorId, pocetak, kraj);
+                int slobodno = TrenutniProstor.Kapacitet - zauzeto;
 
-                
+                if (brojOsoba > slobodno)
+                {
+                    throw new Exception("Nema dovoljno slobodnih mjesta za odabrani termin.");
+                }
 
                 Rezervacija novaRezervacija = new Rezervacija
                 (
@@ -74,10 +104,11 @@ namespace Client.Presentation.Views.Spaces
                     9,
                     pocetak,
                     kraj,
-                    "Aktivno"
+                    "Aktivno",
+                    brojOsoba
                 );
 
-                reservationRepository.SpremiRezervaciju(novaRezervacija);
+                await reservationRepository.SpremiRezervaciju(novaRezervacija);
                 MessageBox.Show("Uspješno ste rezervirali prostor.");
                 this.Close();
             }
