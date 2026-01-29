@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client.Presentation.Views.UserProfile"
         mc:Ignorable="d"
-        Title="UserProfileView" Height="450" Width="800">
+        Title="UserProfileView" Height="450" Width="800" Background="{StaticResource BrushBackground}">
     <Grid Margin="30,15,30,15">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -40,15 +40,47 @@
                     <TextBlock FontSize="20" HorizontalAlignment="Right" x:Name="txtUloga">Uloga:</TextBlock>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button x:Name="BtnUrediProfil" Click="BtnUrediProfil_OnClick"
-                                Width="120" Height="36"
-                                Margin="0 18 0 0"
-                                Style="{StaticResource SecondaryButton}">Uredi profil</Button>
-                        <Button x:Name="BtnIzbrisiProfil" 
-                            Width="120" Height="36"
-                            Margin="18,18,0,0"
-                            Style="{StaticResource SecondaryButton}">Izbrisi profil</Button>
+                       
                     </StackPanel>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button x:Name="BtnUrediProfil" Click="BtnUrediProfil_OnClick"
+                             Width="120" Height="36"
+                             Margin="0 18 0 0"
+                             Background="#fff" BorderBrush="#7A0C19" BorderThickness="2" Grid.Column="1" Grid.Row="0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="/Images/Profile/pen-icon.png" Width="18" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality" ></Image>
+                                <TextBlock Text="Uredi profil" VerticalAlignment="Center" Foreground="#7A0C19" FontWeight="Medium"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="BtnIzbrisiProfil"
+                             Width="120" Height="36"
+                             Margin="0,18,0,0"
+                             Background="#fff" BorderBrush="#7A0C19" BorderThickness="2" Grid.Column="1" Grid.Row="1">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="/Images/Profile/trash-icon.png" Width="18" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality" ></Image>
+                                <TextBlock Text="Izbrisi profil" VerticalAlignment="Center" Foreground="#7A0C19" FontWeight="Medium"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="BtnPromijeniLozinku" Click="BtnPromijeniLozinku_OnClick"
+                             Width="160" Height="36"
+                             Margin="0,18,18,0"
+                             Background="#fff" BorderBrush="#7A0C19" BorderThickness="2" Grid.Column="0" Grid.Row="1">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="/Images/Profile/key-icon.png" Width="18" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality" ></Image>
+                                <TextBlock Text="Promijeni lozinku" VerticalAlignment="Center" Foreground="#7A0C19" FontWeight="Medium"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
                 </StackPanel>
                 
             </Grid>

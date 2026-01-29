@@ -1,5 +1,7 @@
+﻿using Client.Application.Auth;
 using Client.Application.Users;
 using Client.Data.Users;
+using Client.Data.Auth;
 using DomainUserProfile = Client.Domain.Users.UserProfile;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -15,6 +17,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.Extensions.Configuration;
 
 namespace Client.Presentation.Views.UserProfile
 {
@@ -28,11 +31,22 @@ namespace Client.Presentation.Views.UserProfile
         private string? _selectedImagePath;
 
         private UserProfileService userProfileService;
+        private readonly IPasswordResetService passwordResetService;
         public UserProfileView(string? korisnikSub)
         {
             InitializeComponent();
             _korisnikSub = korisnikSub;
             Loaded += UserProfileView_Loaded;
+
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false)
+                .Build();
+
+            var options = config.GetSection("Auth0").Get<AuthOptions>();
+            if (options is null)
+                throw new InvalidOperationException("Problem u konfiguracijama");
+
+            passwordResetService = new Auth0PasswordResetService(options);
         }
 
         private async void UserProfileView_Loaded(object sender, RoutedEventArgs e)
@@ -62,7 +76,7 @@ namespace Client.Presentation.Views.UserProfile
                 txtEmail.Text = "E-mail:" + (string.IsNullOrWhiteSpace(profil.Email) ? " -" : " " + profil.Email);
                 txtBrojSobe.Text = "Broj sobe:" + (string.IsNullOrWhiteSpace(profil.BrojSobe) ? " -" : " " + profil.BrojSobe);
                 txtBrojTelefona.Text = "Broj telefona:" + (string.IsNullOrWhiteSpace(profil.BrojTelefona) ? " -" : " " + profil.BrojTelefona);
-                txtUloga.Text = "Uloga:" + (profil.UlogaId == 1 ? " Student" : " Administrator");
+                txtUloga.Text = "Uloga:" + (profil.UlogaId == 1 ? " Student" : "Osoblje");
             }
         }
 
@@ -99,6 +113,39 @@ namespace Client.Presentation.Views.UserProfile
                 _selectedImagePath = FileExplorer.FileName;
                 BitmapImage bitmap = new BitmapImage(new Uri(_selectedImagePath));
                 ProfileImageBrush.ImageSource = bitmap;
+            }
+        }
+
+        private async void BtnPromijeniLozinku_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_profil is null)
+            {
+                MessageBox.Show("Profil nije učitan.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(_profil.Email))
+            {
+                MessageBox.Show("Email nije naveden.");
+                return;
+            }
+
+            var button = sender as Button;
+            if (button is not null) button.IsEnabled = false;
+            try
+            {
+                var result = await passwordResetService.SendPasswordResetEmailAsync(_profil.Email);
+                if (result.IsSuccess)
+                    MessageBox.Show("Poslan je email za promjenu lozinke.");
+                else
+                    MessageBox.Show($"Slanje emaila nije uspjelo: {result.Error}");
+            }
+            finally
+            {
+                if (button is not null)
+                {
+                    button.IsEnabled = true;
+                }
             }
         }
     }

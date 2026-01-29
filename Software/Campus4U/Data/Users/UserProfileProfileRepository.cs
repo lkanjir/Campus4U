@@ -101,14 +101,5 @@ public class UserProfileProfileRepository : IUserProfileRepository
         // Implementacija æe se napraviti kada server bude spreman
         throw new NotImplementedException();
     }
-    public Task<bool> IzbrisiKorisnika(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> AzurirajOsobnePodatke(int id, string? noviEmail, string? novaLozinka)
-    {
-        throw new NotImplementedException();
-    }
 
 }
