@@ -1,3 +1,5 @@
+using Api.DI;
+using Api.Middleware;
 using Server.Application.Email;
 using Server.Data.Email;
 
@@ -9,8 +11,8 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
-builder.Services.AddSingleton<IEmailSender, EmailSender>();
+builder.Services.AddEmail(builder.Configuration);
+builder.Services.AddApplication();
 
 var app = builder.Build();
 
@@ -21,9 +23,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
+app.UseMiddleware<ValidationMiddleware>();
 app.MapControllers();
 
 app.Run();
