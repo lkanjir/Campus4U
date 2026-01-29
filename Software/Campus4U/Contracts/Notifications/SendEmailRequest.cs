@@ -1,5 +1,6 @@
 ﻿namespace Contracts.Notifications;
 
+//Luka Kanjir
 public sealed class SendEmailRequest
 {
     public required string ToEmail { get; init; }

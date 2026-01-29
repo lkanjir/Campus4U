@@ -1,5 +1,6 @@
 ﻿namespace Server.Data.Email;
 
+//Luka Kanjir
 public sealed class SmtpSettings
 {
     public required string Host { get; init; }
