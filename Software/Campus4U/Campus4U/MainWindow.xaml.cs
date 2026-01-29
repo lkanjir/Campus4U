@@ -7,6 +7,7 @@ using Client.Data.Auth;
 using Client.Data.Users;
 using Client.Domain.Auth;
 using Client.Presentation.Views;
+using Client.Presentation.Views.Fault;
 using Client.Presentation.Views.UserProfile;
 using Duende.IdentityModel.OidcClient.Browser;
 using Microsoft.Extensions.Configuration;
@@ -30,6 +31,10 @@ namespace Client.Presentation
         private readonly StudentView studentView = new();
         private readonly StaffView staffView = new();
         private readonly OnboardingView onboardingView = new();
+        
+        //TODO: treba maknuti, samo privremeno, do navigacije
+        private readonly PrijavaKvaraUserControl kvaroviView = new();
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -46,7 +51,7 @@ namespace Client.Presentation
             IBrowser browser = new SystemBrowser();
             IAuthProvider authProvider = new OidcProvider(options, browser);
             authService = new AuthService(authProvider, tokenStore);
-
+            
             IUserProfileRepository userProfileRepository = new UserProfileProfileRepository();
             userProfileService = new UserProfileService(userProfileRepository);
             onboardingView.Submitted += OnOnboardingSubmitted;
@@ -77,7 +82,7 @@ namespace Client.Presentation
                 if (!result.isSuccess)
                 {
                     requiresOnboarding = true;
-                    onboardingView.SetStatus(result.Error ?? "Greška kod spremanja profila");
+                    onboardingView.SetStatus(result.Error ?? "Greï¿½ka kod spremanja profila");
                     return;
                 }
 
@@ -86,7 +91,7 @@ namespace Client.Presentation
             catch (Exception)
             {
                 requiresOnboarding = true;
-                onboardingView.SetStatus("Greška kod spremanja profila");
+                onboardingView.SetStatus("Greï¿½ka kod spremanja profila");
             }
             finally
             {
@@ -121,12 +126,17 @@ namespace Client.Presentation
                 return;
             }
             
+            /*
             RoleContent.Content = currentRole switch
             {
                 "osoblje" => staffView,
                 "student" => studentView,
                 _ => "student"
             };
+            */
+
+            //TODO: treba maknuti, samo privremeno, do navigacije, i vratiti dio iznad
+            RoleContent.Content = kvaroviView;
         }
 
         private void SetStatus(string message)
@@ -143,7 +153,7 @@ namespace Client.Presentation
         private async Task RestoreAuthState()
         {
             SetBusy(true);
-            SetStatus("Uèitavanje sesije");
+            SetStatus("Uï¿½itavanje sesije");
             try
             {
                 var result = await authService.RestoreSessionAsync();
@@ -192,13 +202,13 @@ namespace Client.Presentation
                 currentId = 0;
                 staffView.KorisnikId = 0;
                 studentView.KorisnikId = 0;
-                SetStatus("Uspješna odjava");
+                SetStatus("Uspjeï¿½na odjava");
             }
             catch (Exception ex)
             {
                 isAuthenticated = false;
                 requiresOnboarding = false;
-                SetStatus($"Greška kod odjave: {ex.Message}");
+                SetStatus($"Greï¿½ka kod odjave: {ex.Message}");
             }
             finally
             {
@@ -255,6 +265,10 @@ namespace Client.Presentation
 
             var profile = await userProfileService.GetBySubAsync(currentSub);
             currentId = profile?.Id ?? 0;
+            
+            //TODO: treba maknuti, samo privremeno, do navigacije
+            kvaroviView.PostaviKorisnika(currentId);
+            
             staffView.KorisnikId = currentId;
             studentView.KorisnikId = currentId;
             if (profile is null || !profile.IsOnboardingComplete)
