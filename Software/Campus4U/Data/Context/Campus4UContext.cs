@@ -60,10 +60,17 @@ public partial class Campus4UContext : DbContext
             entity.Property(e => e.Prezime)
                 .HasMaxLength(255)
                 .HasColumnName("prezime");
+            entity.Property(e => e.KorisnickoIme)
+                .HasMaxLength(50)
+                .HasColumnName("korisnicko_ime");
             entity.Property(e => e.Sub)
                 .HasMaxLength(255)
                 .HasColumnName("sub");
             entity.Property(e => e.UlogaId).HasColumnName("uloga_id");
+            entity.Property(e => e.BrojTelefona)
+                .HasMaxLength(30)
+                .HasColumnName("broj_telefona");
+            entity.Property(e => e.SlikaProfila).HasMaxLength(500).HasColumnName("slika_profila");
 
             entity.HasOne(d => d.Uloga).WithMany(p => p.Korisnici)
                 .HasForeignKey(d => d.UlogaId)

@@ -9,4 +9,5 @@ public sealed record AuthOptions
     public required string PostLogoutRedirectUri { get; init; }
     public required string Scope { get; init; }
     public required string Audience { get; init; }
+    public required string Connection { get; init; }
 }

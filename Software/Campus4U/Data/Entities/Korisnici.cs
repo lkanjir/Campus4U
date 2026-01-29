@@ -15,9 +15,15 @@ public partial class Korisnici
 
     public string? Prezime { get; set; }
 
+    public string? KorisnickoIme { get; set; }
+
     public string Email { get; set; } = null!;
 
     public string? BrojSobe { get; set; }
+
+    public string? BrojTelefona { get; set; }
+
+    public string? SlikaProfila { get; set; }
 
     public virtual Uloge Uloga { get; set; } = null!;
 }

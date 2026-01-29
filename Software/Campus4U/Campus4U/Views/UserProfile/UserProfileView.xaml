@@ -1,0 +1,95 @@
+﻿<Window x:Class="Client.Presentation.Views.UserProfile.UserProfileView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Client.Presentation.Views.UserProfile"
+        mc:Ignorable="d"
+        Title="UserProfileView" Height="450" Width="800" Background="{StaticResource BrushBackground}">
+    <Grid Margin="30,15,30,15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Ellipse Grid.Column="0" Width="72" Height="72" Margin="12, 0,0,0" VerticalAlignment="Center" Stroke="#B0B0B0" StrokeThickness="2" Cursor="Hand" MouseLeftButtonUp="Ellipse_MouseLeftButtonUp" RenderOptions.BitmapScalingMode="HighQuality"  SnapsToDevicePixels="True" UseLayoutRounding="True">
+                <Ellipse.Fill>
+                    <ImageBrush x:Name="ProfileImageBrush" ImageSource="/Images/Profile/default-profile.png" Stretch="UniformToFill"/>
+                </Ellipse.Fill>
+            </Ellipse>
+
+            <Grid Grid.Column="1" Margin="19,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock FontSize="30" x:Name="txtImePrezime">Ime Prezime</TextBlock>
+                    <TextBlock FontSize="20" Foreground="#222" x:Name="txtKorIme">Korisničko ime:</TextBlock>
+                    <TextBlock FontSize="16" x:Name="txtEmail">E-mail:</TextBlock>
+                    <TextBlock FontSize="16" x:Name="txtBrojTelefona">Broj telefona:</TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                    <TextBlock FontSize="20" HorizontalAlignment="Right" x:Name="txtBrojSobe">Broj sobe:</TextBlock>
+                    <TextBlock FontSize="20" HorizontalAlignment="Right" x:Name="txtUloga">Uloga:</TextBlock>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                       
+                    </StackPanel>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button x:Name="BtnUrediProfil" Click="BtnUrediProfil_OnClick"
+                             Width="120" Height="36"
+                             Margin="0 18 0 0"
+                             Background="#fff" BorderBrush="#7A0C19" BorderThickness="2" Grid.Column="1" Grid.Row="0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="/Images/Profile/pen-icon.png" Width="18" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality" ></Image>
+                                <TextBlock Text="Uredi profil" VerticalAlignment="Center" Foreground="#7A0C19" FontWeight="Medium"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="BtnIzbrisiProfil"
+                             Width="120" Height="36"
+                             Margin="0,18,0,0"
+                             Background="#fff" BorderBrush="#7A0C19" BorderThickness="2" Grid.Column="1" Grid.Row="1">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="/Images/Profile/trash-icon.png" Width="18" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality" ></Image>
+                                <TextBlock Text="Izbrisi profil" VerticalAlignment="Center" Foreground="#7A0C19" FontWeight="Medium"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="BtnPromijeniLozinku" Click="BtnPromijeniLozinku_OnClick"
+                             Width="160" Height="36"
+                             Margin="0,18,18,0"
+                             Background="#fff" BorderBrush="#7A0C19" BorderThickness="2" Grid.Column="0" Grid.Row="1">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="/Images/Profile/key-icon.png" Width="18" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality" ></Image>
+                                <TextBlock Text="Promijeni lozinku" VerticalAlignment="Center" Foreground="#7A0C19" FontWeight="Medium"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+                
+            </Grid>
+
+        </Grid>
+        <Grid Grid.Row="1" Margin="0,30,0,0">
+            <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="24" FontWeight="Bold">
+               Moji Favoriti
+            </TextBlock>
+        </Grid>
+    </Grid>
+</Window>
