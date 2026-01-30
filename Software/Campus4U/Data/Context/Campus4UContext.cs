@@ -126,7 +126,7 @@ public partial class Campus4UContext : DbContext
 
         modelBuilder.Entity<Kvarovi>(entity =>
         {
-            entity.ToTable("kvarovi");
+            entity.ToTable("kvarovi", t => t.HasTrigger("trg_kvarovi_obavijesti_za_slanje"));
             entity.HasKey(e => e.KvarId);
 
             entity.HasOne(d => d.Korisnik)

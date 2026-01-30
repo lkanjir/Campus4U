@@ -1,4 +1,5 @@
 ﻿using Api.Middleware;
+using Api.Workers;
 using FluentValidation;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddValidatorsFromAssemblyContaining<ValidationMiddleware>(ServiceLifetime.Singleton);
         services.AddScoped<IEmailSender, EmailSender>();
+        services.AddHostedService<OutboxWorker>();
 
         return services;
     }
