@@ -21,13 +21,13 @@ public sealed class TriggerController(ITriggerControl control) : ControllerBase
         return Ok(new { enabled = control.Enabled });
     }
 
-    [HttpPost("kick")]
+    [HttpPost(ApiEndpoints.Triggers.Kick)]
     public IActionResult Kick()
     {
         control.Kick();
         return Ok(new { enabled = control.Enabled });
     }
-
+    
     [HttpGet(ApiEndpoints.Triggers.Status)]
     public IActionResult Status() => Ok(new { enabled = control.Enabled });
 }
