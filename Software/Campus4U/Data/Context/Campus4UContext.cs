@@ -3,6 +3,7 @@ using Client.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using Microsoft.Identity.Client.Kerberos;
 
 namespace Client.Data.Context;
 
@@ -93,6 +94,11 @@ public partial class Campus4UContext : DbContext
                 .HasColumnName("naziv_uloge");
         });
 
+        modelBuilder.Entity<Rezervacije>(entity =>
+        {
+            entity.ToTable("rezervacije", t => t.HasTrigger("trg_rezervacije_obavijesti_za_slanje"));
+        });
+
         modelBuilder.Entity<Dogadaji>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__dogadaji__3213E83FCAC6C6DB");
@@ -127,7 +133,7 @@ public partial class Campus4UContext : DbContext
 
         modelBuilder.Entity<Kvarovi>(entity =>
         {
-            entity.ToTable("kvarovi");
+            entity.ToTable("kvarovi", t => t.HasTrigger("trg_kvarovi_obavijesti_za_slanje"));
             entity.HasKey(e => e.KvarId);
 
             entity.HasOne(d => d.Korisnik)
