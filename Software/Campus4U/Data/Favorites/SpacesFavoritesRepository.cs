@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Client.Data.Favorites
 {
-    public class FavoritesRepository : IFavoritesRepository
+    public class SpacesFavoritesRepository : ISpacesFavoritesRepository
     {
         public async Task<bool> DodajFavoritaProstorijeAsync(int korisnikId, int prostorijaId)
         {
@@ -90,7 +90,7 @@ namespace Client.Data.Favorites
                           ).AsNoTracking().ToListAsync();
         }
 
-        public async Task<bool> ToggleFavorita(int korisnikId, int prostorId)
+        public async Task<bool> ToggleFavoritaProstora(int korisnikId, int prostorId)
         {
             await using var context = new Campus4UContext();
 

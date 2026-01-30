@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Client.Application.Favorites
 {
-    public class FavoritesService : IFavoritesService
+    public class SpacesFavoritesService : ISpacesFavoritesService
     {
-        private readonly IFavoritesRepository _repo;
+        private readonly ISpacesFavoritesRepository _repo;
 
-        public FavoritesService(IFavoritesRepository repo)
+        public SpacesFavoritesService(ISpacesFavoritesRepository repo)
         {
             _repo = repo;
         }
@@ -49,11 +49,11 @@ namespace Client.Application.Favorites
             return _repo.DohvatiKorisnikeZaProstorijuAsync(prostorijaId);
         }
 
-        public Task<bool> ToggleFavorita(int korisnikId, int prostorijaId)
+        public Task<bool> ToggleFavoritaProstora(int korisnikId, int prostorijaId)
         {
             ValidirajId(korisnikId, nameof(korisnikId));
             ValidirajId(prostorijaId, nameof(prostorijaId));
-            return _repo.ToggleFavorita(korisnikId, prostorijaId);
+            return _repo.ToggleFavoritaProstora(korisnikId, prostorijaId);
         }
     }
 }
