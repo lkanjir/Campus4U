@@ -25,12 +25,14 @@ namespace Client.Presentation.Views.Spaces
     {
         public Space TrenutniProstor { get; set; }
         public readonly ReservationRepository reservationRepository = new ReservationRepository();
-        public ReservationView(Space prostor)
+        private int idKorisnika;
+        public ReservationView(Space prostor, int idKorisnika)
         {
             InitializeComponent();
             PopuniVremena();
             TrenutniProstor = prostor;
             this.DataContext = TrenutniProstor;
+            this.idKorisnika = idKorisnika;
         }
 
         private void PopuniVremena()
@@ -101,7 +103,7 @@ namespace Client.Presentation.Views.Spaces
                 (
                     0,
                     TrenutniProstor,
-                    9, // Ovdje ide KorisnikID preuzet iz sesije
+                    idKorisnika,
                     pocetak,
                     kraj,
                     "Aktivno",

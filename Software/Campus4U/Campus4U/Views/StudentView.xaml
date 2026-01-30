@@ -8,5 +8,6 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
         Ovo je ekran kojeg će vidjeti studenti
+        <Button Click="BtnRezerviraj_Click">Rezerviraj</Button>
     </TextBlock>
 </UserControl>

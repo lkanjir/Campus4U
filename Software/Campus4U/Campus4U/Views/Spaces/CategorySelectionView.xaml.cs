@@ -20,21 +20,23 @@ namespace Client.Presentation.Views.Spaces
     /// </summary>
     public partial class CategorySelectionView : Window
     {
-        public CategorySelectionView()
+        private int korisnikID;
+        public CategorySelectionView(int korisnikID)
         {
             InitializeComponent();
+            this.korisnikID = korisnikID;
         }
 
         private void BtnUcionice_Click(object sender, RoutedEventArgs e)
         {
-            SpacesView spacesWindow = new SpacesView(TipProstora.Ucionica);
+            SpacesView spacesWindow = new SpacesView(TipProstora.Ucionica, korisnikID);
             spacesWindow.Show();
             this.Close();
         }
 
         private void BtnTeretane_Click(object sender, RoutedEventArgs e)
         {
-            SpacesView spacesWindow = new SpacesView(TipProstora.Teretana);
+            SpacesView spacesWindow = new SpacesView(TipProstora.Teretana, korisnikID);
             spacesWindow.Show();
             this.Close();
         }

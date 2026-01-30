@@ -26,14 +26,15 @@ namespace Client.Presentation.Views.Spaces
     {
         private readonly SpaceRepository prostorRepo;
         private readonly TipProstora tipProstora;
+        private int KorisnikID;
         
-        public SpacesView(TipProstora tip)
+        public SpacesView(TipProstora tip, int korisnikID)
         {
             InitializeComponent();
             prostorRepo = new SpaceRepository();
             Loaded += SpacesView_Loaded;
             tipProstora = tip;
-
+            this.KorisnikID = korisnikID;
         }
 
         private async void SpacesView_Loaded(object sender, RoutedEventArgs e)
@@ -43,7 +44,7 @@ namespace Client.Presentation.Views.Spaces
 
         private void BtnBack_Click(object sender, RoutedEventArgs e)
         {
-            CategorySelectionView categorySelectionView = new CategorySelectionView();
+            CategorySelectionView categorySelectionView = new CategorySelectionView(this.KorisnikID);
             categorySelectionView.Show();
             this.Close();
         }
@@ -59,7 +60,7 @@ namespace Client.Presentation.Views.Spaces
                 return;
             }
 
-            var pogled = new ReservationView(prostor)
+            var pogled = new ReservationView(prostor, this.KorisnikID)
             {
                 Owner = this
             };
