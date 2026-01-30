@@ -1,17 +1,17 @@
-﻿namespace Api;
+﻿namespace Api.Configuration;
 
 //Luka Kanjir
-public sealed class ApiEndpoints
+public static class ApiEndpoints
 {
     private const string apiBase = "/api";
 
-    public sealed class Notifications
+    public static class Notifications
     {
         private const string Base = $"{apiBase}/notifications";
         public const string Test = $"{Base}/test";
     }
 
-    public sealed class Triggers
+    public static class Triggers
     {
         private const string Base = $"{apiBase}/triggers";
         public const string Start = $"{Base}/start";

@@ -1,4 +1,5 @@
-﻿using Api.Workers;
+﻿using Api.Configuration;
+using Api.Workers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;

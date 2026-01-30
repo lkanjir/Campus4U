@@ -1,4 +1,5 @@
-﻿using Api.Mappers;
+﻿using Api.Configuration;
+using Api.Mappers;
 using Contracts.Notifications;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;

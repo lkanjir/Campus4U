@@ -1,7 +1,11 @@
-﻿using Api.Middleware;
+﻿using Api.Configuration;
+using Api.Middleware;
 using Api.Workers;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Server.Application.Email;
 using Server.Data;
 using Server.Data.Context;
@@ -50,6 +54,41 @@ public static class ServiceCollectionExtensions
 
         services.AddDbContext<Campus4UContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("Campus4U")));
+
+        return services;
+    }
+
+    public static IServiceCollection AddAuth0(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<Auth0Options>().Bind(configuration.GetSection("Auth0"))
+            .Validate(o => !string.IsNullOrWhiteSpace(o.Domain), "AUTH: Nedostaje Domain u appsettings.json")
+            .Validate(o => !string.IsNullOrWhiteSpace(o.Audience), "AUTH: Nedostaije Audience u appsettings.json")
+            .ValidateOnStart();
+
+        var auth0 = configuration.GetSection("Auth0").Get<Auth0Options>()!;
+        var audience = auth0.Audience!;
+        var domain = auth0.Domain!;
+        if (!domain.EndsWith("/")) domain += "/";
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+        {
+            options.Authority = domain;
+            options.Audience = auth0.Audience!;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = domain,
+                ValidateAudience = true,
+                ValidAudience = audience,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true
+            };
+        });
+
+        services.AddAuthorization(options =>
+        {
+            options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+        });
 
         return services;
     }
