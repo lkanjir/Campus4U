@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="Client.Presentation.Views.Templates.EventCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Client.Presentation.Views.Templates"
+             mc:Ignorable="d" 
+             Width="160"
+             VerticalAlignment="Top"
+             d:DesignHeight="250"
+             d:DesignWidth="160">
+    <Grid>
+        <Border Background="#fff" CornerRadius="10" SnapsToDevicePixels="True" ClipToBounds="True">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" CornerRadius="10,10,0,0" ClipToBounds="True" SnapsToDevicePixels="True">
+                    <Image x:Name="EventImage"
+                           Source="{Binding Image, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                           Stretch="UniformToFill"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Border>
+
+                <StackPanel Grid.Row="1" Margin="10">
+                    <TextBlock x:Name="EventTitle"
+                               FontSize="14"
+                               FontWeight="Bold"
+                               TextWrapping="Wrap"
+                               Text="{Binding Title, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue='Naziv dogadaja'}"/>
+                    <TextBlock x:Name="EventDate"
+                               FontSize="8"
+                               Foreground="#555"
+                               Margin="0,4,0,0"
+                               Text="{Binding Date, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue='Datum odrzavanja: N/A'}"/>
+                    <TextBlock x:Name="EventDescription"
+                               FontSize="10"
+                               TextWrapping="Wrap"
+                               Text="{Binding Description, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue='Opis nije naveden.'}"/>
+                    <Button Style="{StaticResource PrimaryButton}" Width="57" Height="26" FontSize="10" HorizontalAlignment="Left" Padding="4,2,4,2" Margin="0,5,0,0">Pogledaj</Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Border CornerRadius="10" BorderBrush="#7A0C19" BorderThickness="2" Background="Transparent" IsHitTestVisible="False" SnapsToDevicePixels="True"/>
+    </Grid>
+</UserControl>

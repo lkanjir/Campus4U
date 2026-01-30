@@ -1,11 +1,13 @@
 ﻿using Client.Application.Auth;
 using Client.Application.Users;
-using Client.Data.Users;
 using Client.Data.Auth;
-using DomainUserProfile = Client.Domain.Users.UserProfile;
+using Client.Data.Users;
+using Client.Domain.Templates;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +19,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Microsoft.Extensions.Configuration;
+using DomainUserProfile = Client.Domain.Users.UserProfile;
 
 namespace Client.Presentation.Views.UserProfile
 {
@@ -32,9 +34,12 @@ namespace Client.Presentation.Views.UserProfile
 
         private UserProfileService userProfileService;
         private readonly IPasswordResetService passwordResetService;
+        public ObservableCollection<FavoriteEventItem> FavoriteEvents { get; } = new();
+        public ObservableCollection<FavoriteSpaceItem> FavoriteSpaces { get; } = new();
         public UserProfileView(string? korisnikSub)
         {
             InitializeComponent();
+            DataContext = this;
             _korisnikSub = korisnikSub;
             Loaded += UserProfileView_Loaded;
 
@@ -47,6 +52,37 @@ namespace Client.Presentation.Views.UserProfile
                 throw new InvalidOperationException("Problem u konfiguracijama");
 
             passwordResetService = new Auth0PasswordResetService(options);
+            FavoriteEvents.Add(new FavoriteEventItem
+            {
+                Title = "Noć muzeja",
+                Date = "26.01.2026",
+                Description = "Posebne izložbe i slobodan ulaz u muzeje diljem grada."
+            });
+            FavoriteEvents.Add(new FavoriteEventItem
+            {
+                Title = "Studentski hackathon",
+                Date = "02.02.2026",
+                Description = "48-satno timsko natjecanje u razvoju softverskih rješenja."
+            });
+            FavoriteEvents.Add(new FavoriteEventItem
+            {
+                Title = "Predavanje: UI/UX trendovi",
+                Date = "05.02.2026",
+                Description = "Pregled novih trendova u dizajnu sučelja i korisničkog iskustva."
+            });
+
+            FavoriteSpaces.Add(new FavoriteSpaceItem
+            {
+                Title = "Studentski centar - Čitaonica",
+                Capacity = "50 mjesta",
+                Description = "Mirno mjesto za učenje s besplatnim Wi-Fi-jem i pristupom električnim utičnicama."
+            });
+            FavoriteSpaces.Add(new FavoriteSpaceItem
+            {
+                Title = "Fakultetska knjižnica",
+                Capacity = "100 mjesta",
+                Description = "Prostrana knjižnica s velikim izborom stručne literature i radnih stolova."
+            });
         }
 
         private async void UserProfileView_Loaded(object sender, RoutedEventArgs e)

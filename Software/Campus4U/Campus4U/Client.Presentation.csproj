@@ -69,6 +69,9 @@
     <Resource Include="Images\Profile\trash-icon.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+	<Resource Include="Images\no-img.png">
+		<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	</Resource>
   </ItemGroup>
 
 </Project>
