@@ -12,6 +12,6 @@ namespace Client.Domain.Spaces
         Dom Dom,
         TipProstora TipProstora,
         string? SlikaPutanja
-        );
+    );
     
 }
