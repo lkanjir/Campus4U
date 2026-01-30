@@ -26,4 +26,6 @@ public partial class Korisnici
     public string? KorisnickoIme { get; set; }
 
     public virtual ICollection<Kvarovi> Kvarovi { get; set; } = new List<Kvarovi>();
+
+    public virtual ICollection<Rezervacije> Rezervacije { get; set; } = new List<Rezervacije>();
 }

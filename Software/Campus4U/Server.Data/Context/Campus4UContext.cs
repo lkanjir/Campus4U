@@ -7,10 +7,6 @@ namespace Server.Data.Context;
 
 public partial class Campus4UContext : DbContext
 {
-    public Campus4UContext()
-    {
-    }
-
     public Campus4UContext(DbContextOptions<Campus4UContext> options)
         : base(options)
     {
@@ -24,8 +20,10 @@ public partial class Campus4UContext : DbContext
 
     public virtual DbSet<Prostori> Prostori { get; set; }
 
+    public virtual DbSet<Rezervacije> Rezervacije { get; set; }
+
     public virtual DbSet<VrsteKvarova> VrsteKvarova { get; set; }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Korisnici>(entity =>
@@ -154,6 +152,28 @@ public partial class Campus4UContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("slika_putanja");
             entity.Property(e => e.TipProstorijeId).HasColumnName("tip_prostorije_id");
+        });
+
+        modelBuilder.Entity<Rezervacije>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__rezervac__3214EC073B9B72D5");
+
+            entity.ToTable("rezervacije", tb => tb.HasTrigger("trg_rezervacije_obavijesti_za_slanje"));
+
+            entity.Property(e => e.DatumKreiranja).HasDefaultValueSql("(sysdatetime())");
+            entity.Property(e => e.Status)
+                .HasMaxLength(30)
+                .HasDefaultValue("Aktivna");
+
+            entity.HasOne(d => d.Korisnik).WithMany(p => p.Rezervacije)
+                .HasForeignKey(d => d.KorisnikId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_rezervacije_korisnici");
+
+            entity.HasOne(d => d.Prostor).WithMany(p => p.Rezervacije)
+                .HasForeignKey(d => d.ProstorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_rezervacije_prostori");
         });
 
         modelBuilder.Entity<VrsteKvarova>(entity =>

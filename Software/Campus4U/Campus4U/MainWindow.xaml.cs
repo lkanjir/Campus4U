@@ -8,6 +8,7 @@ using Client.Data.Users;
 using Client.Domain.Auth;
 using Client.Presentation.Views;
 using Client.Presentation.Views.Fault;
+using Client.Presentation.Views.Spaces;
 using Client.Presentation.Views.UserProfile;
 using Duende.IdentityModel.OidcClient.Browser;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +35,7 @@ namespace Client.Presentation
         
         //TODO: treba maknuti, samo privremeno, do navigacije
         private readonly PrijavaKvaraUserControl kvaroviView = new();
-        
+        private bool categoryWindowShown;
         public MainWindow()
         {
             InitializeComponent();
@@ -268,6 +269,15 @@ namespace Client.Presentation
             
             //TODO: treba maknuti, samo privremeno, do navigacije
             kvaroviView.PostaviKorisnika(currentId);
+            if (!categoryWindowShown)
+            {
+                categoryWindowShown = true;
+                var window = new CategorySelectionView(currentId)
+                {
+                    Owner = this
+                };
+                window.Show();
+            }
             
             staffView.KorisnikId = currentId;
             studentView.KorisnikId = currentId;

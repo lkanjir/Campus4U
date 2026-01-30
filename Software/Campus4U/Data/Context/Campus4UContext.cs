@@ -3,6 +3,7 @@ using Client.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using Microsoft.Identity.Client.Kerberos;
 
 namespace Client.Data.Context;
 
@@ -91,6 +92,11 @@ public partial class Campus4UContext : DbContext
             entity.Property(e => e.NazivUloge)
                 .HasMaxLength(50)
                 .HasColumnName("naziv_uloge");
+        });
+
+        modelBuilder.Entity<Rezervacije>(entity =>
+        {
+            entity.ToTable("rezervacije", t => t.HasTrigger("trg_rezervacije_obavijesti_za_slanje"));
         });
 
         modelBuilder.Entity<Dogadaji>(entity =>
