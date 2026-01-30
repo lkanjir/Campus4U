@@ -4,8 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client.Presentation.Views.UserProfile"
+        xmlns:templates="clr-namespace:Client.Presentation.Views.Templates"
         mc:Ignorable="d"
-        Title="UserProfileView" Height="450" Width="800" Background="{StaticResource BrushBackground}">
+        Title="UserProfileView" Height="800" Width="1200" Background="{StaticResource BrushBackground}"
+        WindowStartupLocation="CenterScreen">
     <Grid Margin="30,15,30,15">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -87,9 +89,33 @@
 
         </Grid>
         <Grid Grid.Row="1" Margin="0,30,0,0">
-            <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="24" FontWeight="Bold">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="24" FontWeight="Bold">
                Moji Favoriti
             </TextBlock>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl ItemsSource="{Binding FavoriteEvents}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Margin="0,15,0,0"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <templates:EventCard Title="{Binding Title}"
+                                 Date="{Binding Date}"
+                                 Description="{Binding Description}"
+                                 Margin="0,0,15,15"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
         </Grid>
+
     </Grid>
 </Window>
