@@ -21,6 +21,8 @@ public partial class Kvarovi
 
     public DateTime DatumPrijave { get; set; }
 
+    public string? SlikaPutanja { get; set; }
+
     public virtual Korisnici Korisnik { get; set; } = null!;
 
     public virtual Prostori Prostor { get; set; } = null!;
