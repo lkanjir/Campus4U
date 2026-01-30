@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Client.Presentation.Views.UserProfile"
         xmlns:templates="clr-namespace:Client.Presentation.Views.Templates"
         mc:Ignorable="d"
-        Title="UserProfileView" Height="800" Width="1200" Background="{StaticResource BrushBackground}"
+        Title="UserProfileView" Height="1000" Width="1300" Background="{StaticResource BrushBackground}"
         WindowStartupLocation="CenterScreen">
     <Grid Margin="30,15,30,15">
         <Grid.RowDefinitions>
@@ -91,6 +91,9 @@
         <Grid Grid.Row="1" Margin="0,30,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -98,7 +101,10 @@
                Moji Favoriti
             </TextBlock>
 
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <TextBlock Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold">
+                Događaji
+            </TextBlock>
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <ItemsControl ItemsSource="{Binding FavoriteEvents}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -111,6 +117,27 @@
                                  Date="{Binding Date}"
                                  Description="{Binding Description}"
                                  Margin="0,0,15,15"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <TextBlock Grid.Row="3" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold">
+                Prostorije
+            </TextBlock>
+            <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl ItemsSource="{Binding FavoriteSpaces}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Margin="0,15,0,0"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <templates:SpaceCard Title="{Binding Title}"
+                      Capacity="{Binding Capacity}"
+                      Description="{Binding Description}"
+                      Margin="0,0,15,15"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

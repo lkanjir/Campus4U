@@ -35,6 +35,7 @@ namespace Client.Presentation.Views.UserProfile
         private UserProfileService userProfileService;
         private readonly IPasswordResetService passwordResetService;
         public ObservableCollection<FavoriteEventItem> FavoriteEvents { get; } = new();
+        public ObservableCollection<FavoriteSpaceItem> FavoriteSpaces { get; } = new();
         public UserProfileView(string? korisnikSub)
         {
             InitializeComponent();
@@ -68,6 +69,19 @@ namespace Client.Presentation.Views.UserProfile
                 Title = "Predavanje: UI/UX trendovi",
                 Date = "05.02.2026",
                 Description = "Pregled novih trendova u dizajnu sučelja i korisničkog iskustva."
+            });
+
+            FavoriteSpaces.Add(new FavoriteSpaceItem
+            {
+                Title = "Studentski centar - Čitaonica",
+                Capacity = "50 mjesta",
+                Description = "Mirno mjesto za učenje s besplatnim Wi-Fi-jem i pristupom električnim utičnicama."
+            });
+            FavoriteSpaces.Add(new FavoriteSpaceItem
+            {
+                Title = "Fakultetska knjižnica",
+                Capacity = "100 mjesta",
+                Description = "Prostrana knjižnica s velikim izborom stručne literature i radnih stolova."
             });
         }
 
