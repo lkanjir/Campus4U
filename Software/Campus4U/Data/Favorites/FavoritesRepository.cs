@@ -90,7 +90,7 @@ namespace Client.Data.Favorites
                           ).AsNoTracking().ToListAsync();
         }
 
-        public async Task<bool> ProvjeriJeLiFavorit(int korisnikId, int prostorId)
+        public async Task<bool> ToggleFavorita(int korisnikId, int prostorId)
         {
             await using var context = new Campus4UContext();
 

@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Client.Application.Favorites
 {
-    public interface IFavoritesRepository
+    public interface IFavoritesService
     {
         Task<bool> DodajFavoritaProstorijeAsync(int korisnikId, int prostorijaId);
         Task<bool> UkloniFavoritaProstorijeAsync(int korisnikId, int prostorijaId);
         Task<List<Space>> DohvatiFavoriteKorisnikaAsync(int korisnikId);
         Task<List<UserProfile>> DohvatiKorisnikeZaProstorijuAsync(int prostorijaId);
-        Task<bool> ToggleFavorita(int korisnikId, int prostorId);
+        Task<bool> ToggleFavorita(int korisnikId, int prostorijaId);
     }
 }
