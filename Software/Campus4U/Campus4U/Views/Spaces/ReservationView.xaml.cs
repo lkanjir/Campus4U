@@ -101,7 +101,7 @@ namespace Client.Presentation.Views.Spaces
                 (
                     0,
                     TrenutniProstor,
-                    9,
+                    9, // Ovdje ide KorisnikID preuzet iz sesije
                     pocetak,
                     kraj,
                     "Aktivno",
