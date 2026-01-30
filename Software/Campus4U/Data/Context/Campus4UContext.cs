@@ -26,6 +26,7 @@ public partial class Campus4UContext : DbContext
 
     public virtual DbSet<DnevniJelovnik> DnevniJelovnik { get; set; }
     public virtual DbSet<Prostori> Prostori { get; set; }
+    public virtual DbSet<DogadajiFavoriti> DogadajiFavoriti { get; set; }
     public virtual DbSet<ProstoriFavoriti> ProstoriFavoriti { get; set; }
     public virtual DbSet<VrsteKvarova> VrsteKvarova { get; set; }
     public virtual DbSet<Kvarovi> Kvarovi { get; set; }
@@ -135,6 +136,25 @@ public partial class Campus4UContext : DbContext
                 .HasForeignKey(d => d.KorisnikId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("Fk_pf_korisnici");
+        });
+
+        modelBuilder.Entity<DogadajiFavoriti>(entity =>
+        {
+            entity.ToTable("Dogadaji_favoriti");
+            entity.HasKey(e => new { e.DogadajId, e.KorisnikId })
+                .HasName("Pk_dogadaj_favoriti");
+
+            entity.HasOne(d => d.Dogadaj)
+                .WithMany(p => p.DogadajiFavoriti)
+                .HasForeignKey(d => d.DogadajId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("Fk_df_dogadaji");
+
+            entity.HasOne(d => d.Korisnik)
+                .WithMany(p => p.DogadajiFavoriti)
+                .HasForeignKey(d => d.KorisnikId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("Fk_df_korisnici");
         });
 
         modelBuilder.Entity<VrsteKvarova>(entity =>

@@ -33,6 +33,5 @@ namespace Client.Data.Entities
         [Column("slika_putanja")]
         public string? SlikaPutanja { get; set; }
 
-        public virtual ICollection<ProstoriFavoriti> ProstoriFavoriti { get; set; } = new List<ProstoriFavoriti>();
     }
 }

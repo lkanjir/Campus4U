@@ -27,5 +27,7 @@ public partial class Korisnici
 
     public virtual Uloge Uloga { get; set; } = null!;
 
+    public virtual ICollection<DogadajiFavoriti> DogadajiFavoriti { get; set; } = new List<DogadajiFavoriti>();
+
     public virtual ICollection<ProstoriFavoriti> ProstoriFavoriti { get; set; } = new List<ProstoriFavoriti>();
 }
