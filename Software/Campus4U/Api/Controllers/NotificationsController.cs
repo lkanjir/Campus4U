@@ -8,7 +8,8 @@ namespace Api.Controllers;
 
 //Luka Kanjir
 [ApiController]
-public class NotificationsController(IEmailSender emailSender, IValidator<SendEmailRequest> validator) : ControllerBase
+public sealed class NotificationsController(IEmailSender emailSender, IValidator<SendEmailRequest> validator)
+    : ControllerBase
 {
     [HttpPost(ApiEndpoints.Notifications.Test)]
     public async Task<IActionResult> SendEmail([FromBody] SendEmailRequest request, CancellationToken cancellationToken)

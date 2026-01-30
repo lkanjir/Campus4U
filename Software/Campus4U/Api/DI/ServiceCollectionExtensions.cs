@@ -1,9 +1,7 @@
 ﻿using Api.Middleware;
 using Api.Workers;
 using FluentValidation;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
-using Server.Application;
 using Server.Application.Email;
 using Server.Data;
 using Server.Data.Context;
@@ -11,6 +9,7 @@ using Server.Data.Email;
 
 namespace Api.DI;
 
+//Luka Kanjir
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddEmail(this IServiceCollection services, IConfiguration configuration)
@@ -36,6 +35,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddValidatorsFromAssemblyContaining<ValidationMiddleware>(ServiceLifetime.Singleton);
         services.AddScoped<IEmailSender, EmailSender>();
+        services.AddSingleton<ITriggerControl, TriggerControl>();
         services.AddHostedService<OutboxWorker>();
 
         return services;

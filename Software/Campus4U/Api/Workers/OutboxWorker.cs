@@ -1,31 +1,48 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using Server.Application.Email;
 using Server.Data.Context;
-using Server.Data.Entities;
 
 namespace Api.Workers;
 
+//Luka Kanjir
 public static class Dogadjaji
 {
     public const string KvarPrijavljen = "kvar_prijavljen";
     public const string RezervacijaKreirana = "rezervacija_kreirana";
 }
 
+//Luka Kanjir
 public sealed class OutboxWorker(
+    ITriggerControl control,
     IServiceScopeFactory scopeFactory,
     IEmailSender emailSender,
     ILogger<OutboxWorker> logger) : BackgroundService
 {
-    private static readonly TimeSpan pollingInterval = TimeSpan.FromSeconds(10);
-    private const int batchSize = 10;
+    private static readonly TimeSpan pollingInterval = TimeSpan.FromSeconds(20);
+    private const int batchSize = 20;
 
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
-        using var timer = new PeriodicTimer(pollingInterval);
-        while (await timer.WaitForNextTickAsync(ct))
+        while (!ct.IsCancellationRequested)
         {
-            await ProcessBatchAsync(ct);
+            using var delayCtSource =  CancellationTokenSource.CreateLinkedTokenSource(ct);
+            var delayTask = Task.Delay(pollingInterval, delayCtSource.Token);
+            var signalTask = control.WaitForSignalAsync(ct);
+            
+            var completed = await Task.WhenAny(delayTask, signalTask);
+            if(completed == signalTask) delayCtSource.Cancel();
+            
+            if (!control.Enabled) continue;
+
+            try
+            {
+                await ProcessBatchAsync(ct);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Greška worker-a {greska}", ex.Message);
+                await Task.Delay(TimeSpan.FromSeconds(5), ct);
+            }
         }
     }
 
