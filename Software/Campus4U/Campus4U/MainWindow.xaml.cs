@@ -1,7 +1,3 @@
-using System.Net.Http;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Threading;
 using Client.Application.Auth;
 using Client.Application.Users;
 using Client.Data.Auth;
@@ -13,7 +9,10 @@ using Client.Presentation.Views.Spaces;
 using Client.Presentation.Views.UserProfile;
 using Duende.IdentityModel.OidcClient.Browser;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using System.Net.Http;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Client.Presentation
 {
@@ -117,7 +116,7 @@ namespace Client.Presentation
                 if (!result.isSuccess)
                 {
                     requiresOnboarding = true;
-                    onboardingView.SetStatus(result.Error ?? "Gre�ka kod spremanja profila");
+                    onboardingView.SetStatus(result.Error ?? "Greška kod spremanja profila");
                     return;
                 }
 
@@ -126,7 +125,7 @@ namespace Client.Presentation
             catch (Exception)
             {
                 requiresOnboarding = true;
-                onboardingView.SetStatus("Gre�ka kod spremanja profila");
+                onboardingView.SetStatus("Greška kod spremanja profila");
             }
             finally
             {
@@ -210,7 +209,7 @@ namespace Client.Presentation
                     case AuthSessionRestoreState.RefreshFailed:
                         isAuthenticated = false;
                         requiresOnboarding = false;
-                        SetStatus($"Sesija je istekla, greska kod osvjezavanja: {result.Error}");
+                        SetStatus($"Sesija je istekla, greška kod osvjezavanja: {result.Error}");
                         break;
                     default:
                         isAuthenticated = false;
@@ -238,13 +237,13 @@ namespace Client.Presentation
                 currentId = 0;
                 staffView.KorisnikId = 0;
                 studentView.KorisnikId = 0;
-                SetStatus("Uspje�na odjava");
+                SetStatus("Uspješna odjava");
             }
             catch (Exception ex)
             {
                 isAuthenticated = false;
                 requiresOnboarding = false;
-                SetStatus($"Gre�ka kod odjave: {ex.Message}");
+                SetStatus($"Greška kod odjave: {ex.Message}");
             }
             finally
             {

@@ -73,6 +73,7 @@ public class UserProfileProfileRepository : IUserProfileRepository
         
         await db.SaveChangesAsync(ct);
     }
+    /// Nikola Kihas
     public async Task<bool> AzurirajKorisnikaAsync(UserProfile profile)
     {
         await using var db = new Campus4UContext();
@@ -95,7 +96,7 @@ public class UserProfileProfileRepository : IUserProfileRepository
         var changed = await db.SaveChangesAsync();
         return changed > 0;
     }
-
+    /// Nikola Kihas
     public Task<bool> AzurirajProfilnuSlikuAsync(int id, string urlSlike)
     {
         // Implementacija æe se napraviti kada server bude spreman

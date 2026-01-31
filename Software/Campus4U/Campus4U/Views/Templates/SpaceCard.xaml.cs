@@ -19,6 +19,7 @@ namespace Client.Presentation.Views.Templates
     /// <summary>
     /// Interaction logic for SpaceCard.xaml
     /// </summary>
+    /// Nikola Kihas
     public partial class SpaceCard : UserControl
     {
         private static readonly ImageSource DefaultImage =
