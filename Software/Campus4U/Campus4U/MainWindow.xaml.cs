@@ -160,14 +160,14 @@ namespace Client.Presentation
                 return;
             }
 
-            /*
+            
             RoleContent.Content = currentRole switch
             {
                 "osoblje" => staffView,
                 "student" => studentView,
                 _ => "student"
             };
-            */
+            
 
             //TODO: treba maknuti, samo privremeno, do navigacije, i vratiti dio iznad
             //RoleContent.Content = kvaroviView;

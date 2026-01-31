@@ -137,6 +137,7 @@
                             <templates:SpaceCard Title="{Binding Title}"
                       Capacity="{Binding Capacity}"
                       Description="{Binding Description}"
+                      ImagePath="{Binding ImagePath}"
                       Margin="0,0,15,15"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

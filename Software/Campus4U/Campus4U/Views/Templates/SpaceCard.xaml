@@ -23,12 +23,12 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <Border Grid.Row="0" CornerRadius="10,10,0,0" ClipToBounds="True" SnapsToDevicePixels="True">
-                        <Image x:Name="SpaceImage"
-               Source="{Binding Image, RelativeSource={RelativeSource AncestorType=UserControl}}"
-               Stretch="UniformToFill"
-               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Border>
+                <Border Grid.Row="0" CornerRadius="10,10,0,0" ClipToBounds="True" SnapsToDevicePixels="True">
+                    <Image x:Name="SpaceImage"
+                           Source="{Binding ImagePath, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                           Stretch="UniformToFill"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Border>
 
                     <StackPanel Grid.Row="1" Margin="10">
                         <TextBlock x:Name="SpaceTitle"
