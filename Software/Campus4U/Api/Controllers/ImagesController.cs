@@ -10,11 +10,13 @@ public sealed class ImagesController(IImageService imageService) : ControllerBas
     [HttpPost(ApiEndpoints.Images.UploadEvent)]
     [RequestSizeLimit(10_485_760)]
     [Consumes("multipart/form-data")]
-    public async Task<IActionResult> UploadEvent([FromForm] IFormFile file, [FromForm] int eventId,
+    public async Task<IActionResult> UploadEvent([FromForm] IFormFile? file, [FromForm] int eventId,
         CancellationToken ct = default)
     {
+        if (file is null) return BadRequest("Slika je obavezna");
+        
         await using var stream = file.OpenReadStream();
-        var upload = new ImageUpload(stream, file.ContentType, file.Length);
+        var upload = new ImageUpload(stream, file.ContentType ?? string.Empty, file.Length);
 
         try
         {

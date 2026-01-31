@@ -43,7 +43,9 @@ public sealed class LocalFileStorage : IFileStorage
     {
         var safeRelative = relativePath.TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         var combined = Path.GetFullPath(Path.Combine(rootPath, safeRelative));
-        if (!combined.StartsWith(rootPath, StringComparison.Ordinal))
+        var relative = Path.GetRelativePath(rootPath, combined);
+        if (relative == ".." || relative.StartsWith(".." + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
+            Path.IsPathRooted(relative))
             throw new InvalidOperationException("Greška u sastavljanju putanje");
 
         return combined;
@@ -69,5 +71,14 @@ public sealed class LocalFileStorage : IFileStorage
         var contentType = ImageTools.GetContentTypeFromExtension(Path.GetExtension(fullPath)) ??
                           "application/octet-stream";
         return Task.FromResult<(Stream Content, string ContentType)?>((readStream, contentType));
+    }
+
+    public Task DeleteAsync(string relativePath, CancellationToken ct = default)
+    {
+        var fullPath = GetSafePath(relativePath);
+        if (File.Exists(fullPath))
+            File.Delete(fullPath);
+
+        return Task.CompletedTask;
     }
 }

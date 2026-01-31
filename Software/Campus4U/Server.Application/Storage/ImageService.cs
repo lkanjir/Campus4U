@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualBasic;
+﻿using Microsoft.Extensions.Logging;
 using Server.Application.Events;
 
 namespace Server.Application.Storage;
 
-public sealed class ImageService(IEventsRepository eventsRepository, IFileStorage storage, StorageOptions options)
+public sealed class ImageService(IEventsRepository eventsRepository, IFileStorage storage, StorageOptions options, ILogger<ImageService> logger)
     : IImageService
 {
     public async Task<string> UploadEventAsync(int eventId, ImageUpload upload, CancellationToken ct = default)
@@ -11,12 +11,32 @@ public sealed class ImageService(IEventsRepository eventsRepository, IFileStorag
         var info = await eventsRepository.GetImageInfoAsync(eventId, ct);
         if (info == null) throw new ImageException(ImageErrorCode.NotFound, "Event ne postoji");
 
+        var oldPath = info.ImagePath;
         var path = await SaveValidatedAsync(ImageType.Events, upload, ct);
 
         var saved = await eventsRepository.SetImagePathAsync(eventId, path, ct);
-        if (!saved) throw new ImageException(ImageErrorCode.NotFound, "Event ne postoji");
+        if (!saved)
+        {
+            await TryDeleteAsync(path, ct);
+            throw new ImageException(ImageErrorCode.NotFound, "Event ne postoji");
+        }
+
+        if (!string.IsNullOrWhiteSpace(oldPath) && !string.Equals(oldPath, path, StringComparison.Ordinal))
+            await TryDeleteAsync(oldPath, ct);
 
         return path;
+    }
+
+    private async Task TryDeleteAsync(string relativePath, CancellationToken ct)
+    {
+        try
+        {
+            await storage.DeleteAsync(relativePath, ct);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Brisanje slike nije uspjelo: {relativePath}", relativePath);
+        }
     }
 
     private async Task<string> SaveValidatedAsync(ImageType type, ImageUpload upload, CancellationToken ct)
