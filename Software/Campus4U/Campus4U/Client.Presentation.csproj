@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\Profile\calendar-icon.png" />
     <None Remove="Images\Spaces\teretana1.jpg" />
     <None Remove="Images\Spaces\teretanaLogo.jpg" />
     <None Remove="Images\Spaces\ucionica1.jpg" />
@@ -42,6 +43,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\Profile\calendar-icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\Spaces\teretana1.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
