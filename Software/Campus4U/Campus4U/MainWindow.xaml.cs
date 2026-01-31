@@ -10,15 +10,9 @@ using Client.Data.Users;
 using Client.Domain.Auth;
 using Client.Domain.Users;
 using Client.Presentation.Views;
-using Client.Presentation.Views.Fault;
-using Client.Presentation.Views.Spaces;
 using Client.Presentation.Views.UserProfile;
 using Duende.IdentityModel.OidcClient.Browser;
 using Microsoft.Extensions.Configuration;
-using System.Net.Http;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace Client.Presentation
 {
