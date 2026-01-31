@@ -14,6 +14,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Client.Presentation.Views.Spaces;
 using Client.Domain.Spaces;
+using Client.Application.Favorites;
+using Client.Data.Favorites;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Client.Presentation.Views.Spaces
 {
@@ -25,6 +29,7 @@ namespace Client.Presentation.Views.Spaces
     public partial class SpacesView : Window
     {
         private readonly SpaceRepository prostorRepo;
+        private readonly ISpacesFavoritesService _favoritesService;
         private readonly TipProstora tipProstora;
         private int KorisnikID;
         
@@ -32,6 +37,7 @@ namespace Client.Presentation.Views.Spaces
         {
             InitializeComponent();
             prostorRepo = new SpaceRepository();
+            _favoritesService = new SpacesFavoritesService(new SpacesFavoritesRepository());
             Loaded += SpacesView_Loaded;
             tipProstora = tip;
             this.KorisnikID = korisnikID;
@@ -39,7 +45,15 @@ namespace Client.Presentation.Views.Spaces
 
         private async void SpacesView_Loaded(object sender, RoutedEventArgs e)
         {
-            GridProstori.ItemsSource = await prostorRepo.DohvatiPoTipu(tipProstora);
+            var prostori = await prostorRepo.DohvatiPoTipu(tipProstora);
+            
+            var favoriteIds = new HashSet<int>();
+            if(KorisnikID > 0)
+            {
+                var favorites = await _favoritesService.DohvatiFavoriteKorisnikaAsync(KorisnikID);
+                favoriteIds = favorites.Select(f => f.ProstorId).ToHashSet();
+            }
+            GridProstori.ItemsSource = prostori.Select(p => new SpaceCardItem(p, favoriteIds.Contains(p.ProstorId))).ToList();
         }
 
         private void BtnBack_Click(object sender, RoutedEventArgs e)
@@ -66,6 +80,59 @@ namespace Client.Presentation.Views.Spaces
             };
 
             pogled.ShowDialog();
+        }
+        //Nikola Kihas
+        private sealed class SpaceCardItem : INotifyPropertyChanged
+        {
+            public Space Space { get; }
+            public string Naziv => Space.Naziv;
+            public Dom Dom => Space.Dom;
+            public int Kapacitet => Space.Kapacitet;
+            public string Oprema => Space.Oprema;
+            public string? SlikaPutanja => Space.SlikaPutanja;
+            private bool _isFavorite;
+            public bool IsFavorite
+            {
+                get => _isFavorite;
+                set
+                {
+                    if (_isFavorite == value) return;
+                    _isFavorite = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(FavoriteIconPath));
+                }
+            }
+
+            public string FavoriteIconPath => IsFavorite ? "/Images/Profile/favorite.png" : "/Images/Profile/not-favorite.png";
+
+            public SpaceCardItem(Space space, bool isFavorite)
+            {
+                Space = space;
+                _isFavorite = isFavorite;
+            }
+
+            public void SetFavorite(bool isFavorite)
+            {
+                IsFavorite = isFavorite;
+            }
+
+            public event PropertyChangedEventHandler? PropertyChanged;
+            protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+
+        
+        private async void BtnToggleFavorite_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (KorisnikID <= 0) return;
+            if (sender is not FrameworkElement element) return;
+            if (element.DataContext is not SpaceCardItem item) return;
+
+            var isFavorite = await _favoritesService.ToggleFavoritaProstora(KorisnikID, item.Space.ProstorId);
+            item.SetFavorite(isFavorite);
         }
     }
 }

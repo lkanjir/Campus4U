@@ -134,11 +134,13 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <templates:SpaceCard Title="{Binding Title}"
-                      Capacity="{Binding Capacity}"
-                      Description="{Binding Description}"
-                      ImagePath="{Binding ImagePath}"
-                      Margin="0,0,15,15"/>
+                            <templates:SpaceCard
+                                Title="{Binding Title}"
+                                Capacity="{Binding Capacity}"
+                                Description="{Binding Description}"
+                                ImagePath="{Binding ImagePath}"
+                                ReserveRequested="SpaceCard_ReserveRequested"
+                                Margin="0,0,15,15"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

@@ -1,8 +1,13 @@
 ﻿using Client.Application.Auth;
+using Client.Application.Favorites;
 using Client.Application.Users;
 using Client.Data.Auth;
+using Client.Data.Favorites;
 using Client.Data.Users;
+using Client.Domain.Spaces;
 using Client.Domain.Templates;
+using Client.Presentation.Views.Spaces;
+using Client.Presentation.Views.Templates;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -34,6 +39,7 @@ namespace Client.Presentation.Views.UserProfile
         private string? _selectedImagePath;
 
         private UserProfileService userProfileService;
+        private readonly ISpacesFavoritesService spacesFavoritesService;
         private readonly IPasswordResetService passwordResetService;
         public ObservableCollection<FavoriteEventItem> FavoriteEvents { get; } = new();
         public ObservableCollection<FavoriteSpaceItem> FavoriteSpaces { get; } = new();
@@ -43,6 +49,8 @@ namespace Client.Presentation.Views.UserProfile
             DataContext = this;
             _korisnikSub = korisnikSub;
             Loaded += UserProfileView_Loaded;
+            userProfileService = new UserProfileService(new UserProfileProfileRepository());
+            spacesFavoritesService = new SpacesFavoritesService(new SpacesFavoritesRepository());
 
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false)
@@ -70,19 +78,6 @@ namespace Client.Presentation.Views.UserProfile
                 Title = "Predavanje: UI/UX trendovi",
                 Date = "05.02.2026",
                 Description = "Pregled novih trendova u dizajnu sučelja i korisničkog iskustva."
-            });
-
-            FavoriteSpaces.Add(new FavoriteSpaceItem
-            {
-                Title = "Studentski centar - Čitaonica",
-                Capacity = "50 mjesta",
-                Description = "Mirno mjesto za učenje s besplatnim Wi-Fi-jem i pristupom električnim utičnicama."
-            });
-            FavoriteSpaces.Add(new FavoriteSpaceItem
-            {
-                Title = "Fakultetska knjižnica",
-                Capacity = "100 mjesta",
-                Description = "Prostrana knjižnica s velikim izborom stručne literature i radnih stolova."
             });
         }
 
@@ -114,6 +109,33 @@ namespace Client.Presentation.Views.UserProfile
                 txtBrojSobe.Text = "Broj sobe:" + (string.IsNullOrWhiteSpace(profil.BrojSobe) ? " -" : " " + profil.BrojSobe);
                 txtBrojTelefona.Text = "Broj telefona:" + (string.IsNullOrWhiteSpace(profil.BrojTelefona) ? " -" : " " + profil.BrojTelefona);
                 txtUloga.Text = "Uloga:" + (profil.UlogaId == 1 ? " Student" : "Osoblje");
+                await DohvatiFavoriteProstorijaAsync(profil.Id);
+            }
+        }
+
+        private async Task DohvatiFavoriteProstorijaAsync(int korisnikId)
+        {
+            try
+            {
+                List<Space> prostoriFavoriti = await spacesFavoritesService.DohvatiFavoriteKorisnikaAsync(korisnikId);
+                FavoriteSpaces.Clear();
+                foreach (var prostor in prostoriFavoriti)
+                {
+                    FavoriteSpaces.Add(new FavoriteSpaceItem
+                    {
+                        Title = prostor.Naziv,
+                        Capacity = prostor.Kapacitet.ToString(),
+                        Description = prostor.Opis,
+                        ImagePath = prostor.SlikaPutanja ?? string.Empty,
+                        Space = prostor,
+                        KorisnikId = _profil?.Id
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greška pri dohvaćanju favorita prostorija: {ex.Message}",
+                    "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -184,6 +206,16 @@ namespace Client.Presentation.Views.UserProfile
                     button.IsEnabled = true;
                 }
             }
+        }
+
+        private void SpaceCard_ReserveRequested(object sender, SpaceCardReserveEventArgs e)
+        {
+            if (e.Prostor == null || e.KorisnikId is null || e.KorisnikId <= 0) return;
+            var pogled = new ReservationView(e.Prostor, e.KorisnikId.Value)
+            {
+                Owner = this
+            };
+            pogled.ShowDialog();
         }
     }
 }

@@ -84,6 +84,12 @@
 	<Resource Include="Images\logout-icon.png">
 		<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	</Resource>
+	<Resource Include="Images\Profile\not-favorite.png">
+		<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	</Resource>
+	<Resource Include="Images\Profile\favorite.png">
+		<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	</Resource>
   </ItemGroup>
 
 </Project>
