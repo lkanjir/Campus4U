@@ -85,7 +85,7 @@ namespace Client.Data.Spaces
                 r.VrijemeDo,
                 r.Status,
                 r.BrojOsoba,
-                r.DatumKreiranja.Day
+                r.DatumKreiranja
             )).ToList();
 
             return rezervacije;
