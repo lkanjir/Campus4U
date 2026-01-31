@@ -3,6 +3,7 @@ using Client.Application.Users;
 using Client.Data.Auth;
 using Client.Data.Users;
 using Client.Domain.Auth;
+using Client.Domain.Users;
 using Client.Presentation.Views;
 using Client.Presentation.Views.Fault;
 using Client.Presentation.Views.Spaces;
@@ -137,6 +138,7 @@ namespace Client.Presentation
         {
             BtnLogin.IsEnabled = !isBusy && !isAuthenticated;
             BtnLogout.IsEnabled = !isBusy && isAuthenticated;
+            BtnFault.IsEnabled = !isBusy && isAuthenticated;
 
             PanelHeader.Visibility = isAuthenticated ? Visibility.Visible : Visibility.Collapsed;
             RoleContent.Visibility = isAuthenticated ? Visibility.Visible : Visibility.Collapsed;
@@ -144,6 +146,11 @@ namespace Client.Presentation
 
             if (isAuthenticated) ApplyRoleContent();
             else RoleContent.Content = null;
+
+            if (!isAuthenticated)
+            {
+                SetHeaderUserInfo(null, null);
+            }
         }
 
         private void ApplyRoleContent()
@@ -303,6 +310,7 @@ namespace Client.Presentation
 
             var profile = await userProfileService.GetBySubAsync(currentSub);
             currentId = profile?.Id ?? 0;
+            SetHeaderUserInfo(profile, currentEmail);
 
             //TODO: treba maknuti, samo privremeno, do navigacije
             //kvaroviView.PostaviKorisnika(currentId);
@@ -323,6 +331,21 @@ namespace Client.Presentation
                 requiresOnboarding = true;
                 onboardingView.SetInitialValues(profile?.Ime, profile?.Prezime, currentEmail, profile?.BrojSobe);
             }
+        }
+
+        private void SetHeaderUserInfo(UserProfile? profile, string? fallbackEmail)
+        {
+            var ime = profile?.Ime?.Trim() ?? string.Empty;
+            var prezime = profile?.Prezime?.Trim() ?? string.Empty;
+            var fullName = $"{ime} {prezime}".Trim();
+
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                fullName = "Nepoznati korisnik";
+            }
+
+            UserFirstLastName.Text = fullName;
+            UserEmail.Text = string.IsNullOrWhiteSpace(profile?.Email) ? (fallbackEmail ?? string.Empty) : profile!.Email;
         }
 
         private void SetIdentity(string? sub, string? email)
