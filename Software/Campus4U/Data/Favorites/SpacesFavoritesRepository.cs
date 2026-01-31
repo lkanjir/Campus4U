@@ -11,7 +11,7 @@ using System.Net.NetworkInformation;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
-
+/// Nikola Kihas
 namespace Client.Data.Favorites
 {
     public class SpacesFavoritesRepository : ISpacesFavoritesRepository

@@ -19,6 +19,7 @@ namespace Client.Presentation.Views.Templates
     /// <summary>
     /// Interaction logic for EventCard.xaml
     /// </summary>
+    /// Nikola Kihas
     public partial class EventCard : UserControl
     {
         private static readonly ImageSource DefaultImage =

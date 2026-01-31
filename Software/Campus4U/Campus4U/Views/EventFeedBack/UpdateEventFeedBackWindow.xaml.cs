@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using Client.Application.EventFeedBack;
 using Client.Data.EventFeedBack;
 
+/// Nikola Kihas
 namespace Client.Presentation.Views.EventFeedBack
 {
     public partial class UpdateEventFeedBackWindow : Window

@@ -35,6 +35,7 @@ public class UserProfileService(IUserProfileRepository profileRepository)
         return new SaveUserProfileResult(true, null);
     }
 
+    /// Nikola Kihas
     public async Task<SaveUserProfileResult> AzurirajProfilAsync(UserProfile profile, string? ime, string? prezime, string? korisnickoIme, string? brojSobe, string? brojTelefona)
     {
         if (profile.Id <= 0)
