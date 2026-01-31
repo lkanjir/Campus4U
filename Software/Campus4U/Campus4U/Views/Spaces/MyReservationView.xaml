@@ -117,10 +117,32 @@
                                         </Style>
                                     </Border.Style>
 
-                                    <TextBlock Text="{Binding Status}"
-                                               Foreground="White"
-                                               FontWeight="SemiBold"
-                                               FontSize="12"/>
+                                    <TextBlock FontWeight="SemiBold"
+           FontSize="12">
+                                        <TextBlock.Text>
+                                            <Binding Path="PrikazStatusa"/>
+                                        </TextBlock.Text>
+
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="White"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding PrikazStatusa}" Value="Aktivno">
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding PrikazStatusa}" Value="Prošlo">
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding PrikazStatusa}" Value="Otkazano">
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                 </Border>
                             </Grid>
                         </Border>
