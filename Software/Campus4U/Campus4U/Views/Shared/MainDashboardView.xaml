@@ -1,0 +1,190 @@
+<UserControl x:Class="Client.Presentation.Views.Shared.SpacesDashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:templates="clr-namespace:Client.Presentation.Views.Templates"
+             xmlns:menu="clr-namespace:Client.Presentation.Views.Menu"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="1" Grid.Column="1" Background="Transparent" CornerRadius="10" SnapsToDevicePixels="True">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="18"
+                                  ShadowDepth="8"
+                                  Opacity="0.5"/>
+            </Border.Effect>
+
+            <Border Background="White" CornerRadius="10" SnapsToDevicePixels="true" ClipToBounds="True" Margin="10">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="Pregledajte prostorije preka kategoriji" FontSize="20" FontWeight="Bold"
+                               Margin="0,0,0,10" HorizontalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button x:Name="BtnKategorijaUcionice"
+                                Margin="5"
+                                Cursor="Hand"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                MaxWidth="250"
+                                MaxHeight="450"
+                                Click="BtnKategorijaUcionice_Click">
+
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="White" CornerRadius="20">
+                                        <Border.Effect>
+                                            <DropShadowEffect BlurRadius="20" ShadowDepth="5" Opacity="0.15" Color="#AAAFB5"/>
+                                        </Border.Effect>
+
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="2*"/>
+                                                <RowDefinition Height="1*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <Border Grid.Row="0" CornerRadius="20,20,0,0" ClipToBounds="True">
+                                                <Image Source="pack://application:,,,/Images/Spaces/ucionicaLogo.jpg"
+                                                       Stretch="UniformToFill" Width="auto"/>
+                                            </Border>
+
+                                            <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <TextBlock Text="UCIONICE"
+                                                           FontSize="24"
+                                                           FontWeight="Bold"
+                                                           Foreground="#333"
+                                                           HorizontalAlignment="Center"/>
+
+                                                <TextBlock Text="Ucenje"
+                                                           FontSize="14"
+                                                           Foreground="Gray"
+                                                           Margin="0,5,0,0"
+                                                           HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Opacity" Value="0.9"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <Button x:Name="BtnKategorijaTeretane"
+                                Margin="5"
+                                Cursor="Hand"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                MaxWidth="250"
+                                MaxHeight="450"
+                                Click="BtnKategorijaTeretane_Click">
+
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="White" CornerRadius="20">
+                                        <Border.Effect>
+                                            <DropShadowEffect BlurRadius="20" ShadowDepth="5" Opacity="0.15" Color="#AAAFB5"/>
+                                        </Border.Effect>
+
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="2*"/>
+                                                <RowDefinition Height="1*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <Border Grid.Row="0" CornerRadius="20,20,0,0" ClipToBounds="True">
+                                                <Image Source="pack://application:,,,/Images/Spaces/teretanaLogo.jpg"
+                                                       Stretch="UniformToFill"/>
+                                            </Border>
+
+                                            <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <TextBlock Text="TERETANE"
+                                                           FontSize="24"
+                                                           FontWeight="Bold"
+                                                           Foreground="#333"
+                                                           HorizontalAlignment="Center"/>
+
+                                                <TextBlock Text="Sport i rekreacija"
+                                                           FontSize="14"
+                                                           Foreground="Gray"
+                                                           Margin="0,5,0,0"
+                                                           HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Opacity" Value="0.9"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Border>
+
+        <Border Grid.Row="0" Grid.Column="1" Background="Transparent" CornerRadius="10" SnapsToDevicePixels="True">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="18"
+                                  ShadowDepth="4"
+                                  Opacity="0.25"/>
+            </Border.Effect>
+
+            <Border Background="White" CornerRadius="10" SnapsToDevicePixels="true" ClipToBounds="True" Margin="10">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="Rezervirajte ucionice" FontSize="20" FontWeight="Bold"
+                               Margin="0,0,0,10" HorizontalAlignment="Center"/>
+                    <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl ItemsSource="{Binding SpacesForCards}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Margin="0,15,0,0"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <templates:SpaceCard
+                                        Title="{Binding Title}"
+                                        Capacity="{Binding Capacity}"
+                                        Description="{Binding Description}"
+                                        ImagePath="{Binding ImagePath}"
+                                        Margin="10">
+                                        <templates:SpaceCard.LayoutTransform>
+                                            <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                        </templates:SpaceCard.LayoutTransform>
+                                    </templates:SpaceCard>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+        </Border>
+
+        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Background="Transparent" CornerRadius="10" SnapsToDevicePixels="True">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="18"
+                                  ShadowDepth="4"
+                                  Opacity="0.25"/>
+            </Border.Effect>
+
+            <Border Background="White" CornerRadius="10" SnapsToDevicePixels="true" ClipToBounds="True" Margin="10">
+                <menu:JelovnikUserControl/>
+            </Border>
+        </Border>
+    </Grid>
+</UserControl>

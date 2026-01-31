@@ -64,9 +64,8 @@
            <ContentControl x:Name="RoleContent" Visibility="Collapsed"/>
            <Border x:Name="PanelSignedOut" Style="{StaticResource Card}" Padding="28">
                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                   <TextBlock Text="LOGO" Margin="0 14 0 0" Style="{StaticResource HeadingText}" TextAlignment="Center"/>
-                   <TextBlock Text="Campus4U" Margin="0 14 0 0" Style="{StaticResource HeadingText}" TextAlignment="Center"/>
-                   <Button x:Name="BtnLogin" Click="BtnLogin_OnClick" 
+                    <Image Source="/Images/Logo/Full.png" Height="80" RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Center"/>
+                    <Button x:Name="BtnLogin" Click="BtnLogin_OnClick" 
                            Width="180" Height="44"
                            Margin="0 18 0 0"
                            Style="{StaticResource PrimaryButton}">Prijava</Button>
