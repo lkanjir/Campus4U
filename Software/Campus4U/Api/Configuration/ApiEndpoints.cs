@@ -19,4 +19,11 @@ public static class ApiEndpoints
         public const string Kick = $"{Base}/kick";
         public const string Status = $"{Base}/status";
     }
+
+    public static class Images
+    {
+        private const string Base = $"{apiBase}/images";
+        public const string UploadEvent = $"{Base}/events";
+        public const string GetEvent =  $"{Base}/events/{{eventId:int}}";
+    }
 }
