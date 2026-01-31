@@ -15,5 +15,13 @@ public sealed class ImageService(IImageSource source, ImageCache cache, TimeSpan
         return payload;
     }
 
+    public async Task UploadProfileImageAsync(int userId, ImageUpload upload, CancellationToken ct = default)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(userId);
+
+        await source.UploadProfileImageAsync(upload, ct);
+        cache.Invalidate(new ImageKey(ImageType.Profile, userId));
+    }
+
     public void InvalidateProfile(int userId) => cache.Invalidate(new ImageKey(ImageType.Profile, userId));
 }

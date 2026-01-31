@@ -4,24 +4,13 @@ using Client.Data.Auth;
 using Client.Data.Users;
 using Client.Domain.Templates;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Client.Application.Images;
 using Client.Data.Images;
 using DomainUserProfile = Client.Domain.Users.UserProfile;
@@ -38,6 +27,7 @@ namespace Client.Presentation.Views.UserProfile
         private DomainUserProfile? _profil;
         private string? _selectedImagePath;
         private readonly IImageService imageService;
+
         private static readonly ImageSource DefaultProfileImage = new BitmapImage(
             new Uri("pack://application:,,,/Images/Profile/default-profile.png",
                 UriKind.Absolute));
@@ -69,7 +59,7 @@ namespace Client.Presentation.Views.UserProfile
             var tokenStore = new SecureTokenStore();
             imageService = new ImageService(new ImageApiClient(apiBaseUrl, tokenStore), new ImageCache(),
                 TimeSpan.FromMinutes(20));
-            
+
             passwordResetService = new Auth0PasswordResetService(options);
             FavoriteEvents.Add(new FavoriteEventItem
             {
@@ -126,7 +116,7 @@ namespace Client.Presentation.Views.UserProfile
             {
                 _profil = profil;
                 await LoadProfileImage(profil.Id);
-                
+
                 string imePrezime = (profil.Ime ?? "") + " " + (profil.Prezime ?? "");
                 txtImePrezime.Text = imePrezime;
                 txtKorIme.Text = "Korisnicko ime:" +
@@ -194,6 +184,8 @@ namespace Client.Presentation.Views.UserProfile
 
         private void Ellipse_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (_profil is null) return;
+
             var FileExplorer = new Microsoft.Win32.OpenFileDialog
             {
                 Title = "Odaberi sliku profila",
@@ -204,10 +196,51 @@ namespace Client.Presentation.Views.UserProfile
             if (FileExplorer.ShowDialog() == true)
             {
                 _selectedImagePath = FileExplorer.FileName;
-                BitmapImage bitmap = new BitmapImage(new Uri(_selectedImagePath));
-                ProfileImageBrush.ImageSource = bitmap;
+                _ = UploadProfileImageAsync(_selectedImagePath);
             }
         }
+
+        private async Task UploadProfileImageAsync(string filePath)
+        {
+            try
+            {
+                var fileInfo = new FileInfo(filePath);
+                const long maxBytes = 10 * 1024 * 1024;
+                if (fileInfo.Length is <= 0 or > maxBytes)
+                {
+                    MessageBox.Show("Slika je prevelika ili nema slike (max 10MB).");
+                    return;
+                }
+
+                var contentType = GetContentType(fileInfo.Extension);
+                if (contentType is null)
+                {
+                    MessageBox.Show("Nepodržan format slike.");
+                    return;
+                }
+
+                var bytes = await File.ReadAllBytesAsync(filePath);
+                await using var stream = new MemoryStream(bytes, writable: false);
+                var upload = new ImageUpload(stream, contentType, bytes.LongLength, fileInfo.Name);
+                await imageService.UploadProfileImageAsync(_profil!.Id, upload);
+
+                ProfileImageBrush.ImageSource = CreateImageSource(bytes);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greška pri uploadu slike.");
+            }
+        }
+
+        private static string? GetContentType(string extension) =>
+            extension.Trim().ToLowerInvariant() switch
+            {
+                ".jpg" => "image/jpeg",
+                ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".webp" => "image/webp",
+                _ => null
+            };
 
         private async void BtnPromijeniLozinku_OnClick(object sender, RoutedEventArgs e)
         {

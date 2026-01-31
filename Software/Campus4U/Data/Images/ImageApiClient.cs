@@ -37,4 +37,23 @@ public sealed class ImageApiClient : IImageSource
         var bytes = await response.Content.ReadAsByteArrayAsync(ct);
         return new ImagePayload(bytes, contentType);
     }
+
+    public async Task UploadProfileImageAsync(ImageUpload upload, CancellationToken ct = default)
+    {
+        var token = await tokenStore.ReadAsync();
+        if (string.IsNullOrWhiteSpace(token?.AccessToken)) throw new InvalidOperationException("Nema access tokena");
+
+        if (upload.Content.CanSeek) upload.Content.Position = 0;
+        using var content = new MultipartFormDataContent();
+        var fileContent = new StreamContent(upload.Content);
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue(upload.ContentType);
+        content.Add(fileContent, "file", upload.FileName);
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, "api/images/profiles");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
+        request.Content = content;
+        
+        using var response = await http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct);
+        response.EnsureSuccessStatusCode();
+    }
 }

@@ -13,3 +13,6 @@ public enum ImageType
     Event,
     Fault
 }
+
+//Luka Kanjir
+public sealed record ImageUpload(Stream Content, string ContentType, long Length, string FileName);
