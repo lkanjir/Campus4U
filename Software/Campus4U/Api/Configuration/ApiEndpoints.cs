@@ -25,5 +25,7 @@ public static class ApiEndpoints
         private const string Base = $"{apiBase}/images";
         public const string UploadEvent = $"{Base}/events";
         public const string GetEvent =  $"{Base}/events/{{eventId:int}}";
+        public const string UploadFault = $"{Base}/faults";
+        public const string GetFault =  $"{Base}/faults/{{faultId:int}}";
     }
 }

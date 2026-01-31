@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Server.Application.Events;
+using Server.Application.Repositories;
 using Server.Data.Context;
 
-namespace Server.Data.Events;
+namespace Server.Data.RepoImplementations;
 
 public sealed class EventsRepository(Campus4UContext db) : IEventsRepository
 {

@@ -5,16 +5,17 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Server.Application.Email;
-using Server.Application.Events;
+using Server.Application.Repositories;
 using Server.Application.Storage;
 using Server.Data;
 using Server.Data.Context;
 using Server.Data.Email;
-using Server.Data.Events;
+using Server.Data.RepoImplementations;
 using Server.Data.Storage;
 
 namespace Api.DI;
@@ -49,6 +50,8 @@ public static class ServiceCollectionExtensions
         services.AddHostedService<OutboxWorker>();
         services.AddScoped<IImageService, ImageService>();
         services.AddScoped<IEventsRepository, EventsRepository>();
+        services.AddScoped<IFaultsRepository, FaultsRepository>();
+        services.AddScoped<IUsersRepository, UsersRepository>();
 
         return services;
     }

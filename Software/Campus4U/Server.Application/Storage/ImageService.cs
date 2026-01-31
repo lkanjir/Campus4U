@@ -1,9 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
-using Server.Application.Events;
+using Server.Application.Repositories;
 
 namespace Server.Application.Storage;
 
-public sealed class ImageService(IEventsRepository eventsRepository, IFileStorage storage, StorageOptions options, ILogger<ImageService> logger)
+public sealed class ImageService(
+    IEventsRepository eventsRepository,
+    IFaultsRepository faultsRepository,
+    IUsersRepository usersRepository,
+    IFileStorage storage,
+    StorageOptions options,
+    ILogger<ImageService> logger)
     : IImageService
 {
     public async Task<string> UploadEventAsync(int eventId, ImageUpload upload, CancellationToken ct = default)
@@ -66,6 +72,52 @@ public sealed class ImageService(IEventsRepository eventsRepository, IFileStorag
             throw new ImageException(ImageErrorCode.NotFound, "Slika ne postoji");
 
         var result = await storage.OpenReadAsync(info.ImagePath, ct);
+        if (result is null) throw new ImageException(ImageErrorCode.NotFound, "Slika ne postoji");
+
+        return new ImageContent(result.Value.Content, result.Value.ContentType);
+    }
+
+    public async Task<string> UploadFaultAsync(int faultId, ImageUpload upload, string userSub,
+        CancellationToken ct = default)
+    {
+        var user = await usersRepository.GetBySubAsync(userSub, ct);
+        if (user is null)
+            throw new ImageException(ImageErrorCode.Unauthorized, "Nemate pravo pristupa slici, prijavite se");
+
+        var fault = await faultsRepository.GetImageInfoAsync(faultId, ct);
+        if (fault is null) throw new ImageException(ImageErrorCode.NotFound, "Slika ne postoji");
+        if (!CanAccessFault(user, fault)) throw new ImageException(ImageErrorCode.Forbidden, "Zabranjen pristup");
+
+        var oldPath = fault.ImagePath;
+        var path = await SaveValidatedAsync(ImageType.Faults, upload, ct);
+        var saved = await faultsRepository.SetImagePathAsync(faultId, path, ct);
+        if (!saved)
+        {
+            await TryDeleteAsync(path, ct);
+            throw new ImageException(ImageErrorCode.NotFound, "Kvar ne postoji");
+        }
+
+        if (!string.IsNullOrWhiteSpace(oldPath) && !string.Equals(oldPath, path, StringComparison.Ordinal))
+            await TryDeleteAsync(oldPath, ct);
+
+        return path;
+    }
+
+    private static bool CanAccessFault(UserAuthInfo user, FaultImageInfo fault) =>
+        user.UserId == fault.OwnerUserId || user.IsStaff;
+
+    public async Task<ImageContent> GetFaultImageAsync(int faultId, string userSub, CancellationToken ct = default)
+    {
+        var user = await usersRepository.GetBySubAsync(userSub, ct);
+        if (user is null)
+            throw new ImageException(ImageErrorCode.Unauthorized, "Nemate pravo pristupa slici, prijavite se");
+
+        var fault = await faultsRepository.GetImageInfoAsync(faultId, ct);
+        if (fault is null || string.IsNullOrWhiteSpace(fault.ImagePath))
+            throw new ImageException(ImageErrorCode.NotFound, "Slika ne postoji");
+        if (!CanAccessFault(user, fault)) throw new ImageException(ImageErrorCode.Forbidden, "Zabranjen pristup");
+
+        var result = await storage.OpenReadAsync(fault.ImagePath, ct);
         if (result is null) throw new ImageException(ImageErrorCode.NotFound, "Slika ne postoji");
 
         return new ImageContent(result.Value.Content, result.Value.ContentType);
