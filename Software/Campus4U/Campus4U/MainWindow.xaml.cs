@@ -49,8 +49,6 @@ namespace Client.Presentation
         private string accessToken;
         private bool triggersStarted;
 
-        //TODO: treba maknuti, samo privremeno, do navigacije
-        //private readonly PrijavaKvaraUserControl kvaroviView = new();
         private bool categoryWindowShown;
 
         public MainWindow()
@@ -96,7 +94,7 @@ namespace Client.Presentation
             }
             catch (Exception ex)
             {
-               // MessageBox.Show($"TRIGGER GRESKA: {ex.Message}");
+                MessageBox.Show($"TRIGGER GRESKA: {ex.Message}");
             }
         }
 
@@ -173,17 +171,13 @@ namespace Client.Presentation
                 return;
             }
 
-            
+
             RoleContent.Content = currentRole switch
             {
                 "osoblje" => staffView,
                 "student" => studentView,
                 _ => "student"
             };
-            
-
-            //TODO: treba maknuti, samo privremeno, do navigacije, i vratiti dio iznad
-            //RoleContent.Content = kvaroviView;
         }
 
         private void SetStatus(string message)
@@ -321,18 +315,6 @@ namespace Client.Presentation
             currentId = profile?.Id ?? 0;
             SetHeaderUserInfo(profile, currentEmail);
 
-            //TODO: treba maknuti, samo privremeno, do navigacije
-            //kvaroviView.PostaviKorisnika(currentId);
-            //if (!categoryWindowShown)
-            //{
-            //    categoryWindowShown = true;
-            //    var window = new CategorySelectionView(currentId)
-            //    {
-            //        Owner = this
-            //    };
-            //    window.Show();
-            //}
-
             staffView.KorisnikId = currentId;
             studentView.KorisnikId = currentId;
             if (profile is null || !profile.IsOnboardingComplete)
@@ -354,7 +336,9 @@ namespace Client.Presentation
             }
 
             UserFirstLastName.Text = fullName;
-            UserEmail.Text = string.IsNullOrWhiteSpace(profile?.Email) ? (fallbackEmail ?? string.Empty) : profile!.Email;
+            UserEmail.Text = string.IsNullOrWhiteSpace(profile?.Email)
+                ? (fallbackEmail ?? string.Empty)
+                : profile!.Email;
         }
 
         private void SetIdentity(string? sub, string? email)
@@ -390,7 +374,7 @@ namespace Client.Presentation
             }
             catch
             {
-                //MessageBox.Show("Greska kod pokretanja triggera");
+                MessageBox.Show("Greska kod pokretanja triggera");
             }
         }
 
