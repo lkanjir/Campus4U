@@ -8,7 +8,8 @@
         Title="MainWindow" Height="450" Width="800" 
         Loaded="MainWindow_OnLoaded"
         Background="{StaticResource BrushBackground}"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized">
    <Grid Margin="24">
        <Grid.RowDefinitions>
            <RowDefinition Height="Auto"/>

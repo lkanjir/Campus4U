@@ -8,45 +8,47 @@
              Width="160"
              VerticalAlignment="Top"
              d:DesignHeight="250"
-             d:DesignWidth="160">
-    <Grid>
-        <Border Background="#fff" CornerRadius="10" SnapsToDevicePixels="True" ClipToBounds="True">
+             d:DesignWidth="176">
+    <Grid Background="Transparent">
+        <Border Background="Transparent" CornerRadius="10" SnapsToDevicePixels="True">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="18"
                           ShadowDepth="4"
                           Opacity="0.25"/>
             </Border.Effect>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="100"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <Border Background="White" CornerRadius="10" SnapsToDevicePixels="true" ClipToBounds="True">
+                <Grid Width="160">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="100"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <Border Grid.Row="0" CornerRadius="10,10,0,0" ClipToBounds="True" SnapsToDevicePixels="True">
-                    <Image x:Name="EventImage"
+                    <Border Grid.Row="0" CornerRadius="10,10,0,0" ClipToBounds="True" SnapsToDevicePixels="True">
+                        <Image x:Name="EventImage"
                            Source="{Binding Image, RelativeSource={RelativeSource AncestorType=UserControl}}"
                            Stretch="UniformToFill"
                            RenderOptions.BitmapScalingMode="HighQuality"/>
-                </Border>
+                    </Border>
 
-                <StackPanel Grid.Row="1" Margin="10">
-                    <TextBlock x:Name="EventTitle"
-                               FontSize="14"
-                               FontWeight="Bold"
-                               TextWrapping="Wrap"
-                               Text="{Binding Title, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue='Naziv dogadaja'}"/>
-                    <TextBlock x:Name="EventDate"
-                               FontSize="8"
-                               Foreground="#555"
-                               Margin="0,4,0,0"
-                               Text="{Binding Date, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue='Datum odrzavanja: N/A'}"/>
-                    <TextBlock x:Name="EventDescription"
-                               FontSize="10"
-                               TextWrapping="Wrap"
-                               Text="{Binding Description, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue='Opis nije naveden.'}"/>
-                    <Button Style="{StaticResource PrimaryButton}" Width="57" Height="26" FontSize="10" HorizontalAlignment="Left" Padding="4,2,4,2" Margin="0,5,0,0">Pogledaj</Button>
-                </StackPanel>
-            </Grid>
+                    <StackPanel Grid.Row="1" Margin="10">
+                        <TextBlock x:Name="EventTitle"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            TextWrapping="Wrap"
+                            Text="{Binding Title, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue='Naziv dogadaja'}"/>
+                        <TextBlock x:Name="EventDate"
+                           FontSize="8"
+                           Foreground="#555"
+                           Margin="0,4,0,0"
+                           Text="{Binding Date, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue='Datum odrzavanja: N/A'}"/>
+                        <TextBlock x:Name="EventDescription"
+                           FontSize="10"
+                           TextWrapping="Wrap"
+                           Text="{Binding Description, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue='Opis nije naveden.'}"/>
+                        <Button Style="{StaticResource PrimaryButton}" Width="57" Height="26" FontSize="10" HorizontalAlignment="Left" Padding="4,2,4,2" Margin="0,5,0,0">Pogledaj</Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
         </Border>
     </Grid>
 </UserControl>
