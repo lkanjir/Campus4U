@@ -12,7 +12,7 @@ public sealed class UsersRepository(Campus4UContext db) : IUsersRepository
     {
         return await (from k in db.Korisnici.AsNoTracking()
                 where k.Sub == sub
-                select new UserAuthInfo(k.Id, k.Uloga.NazivUloge == StaffRoleName))
+                select new UserAuthInfo(k.Id, k.Uloga.NazivUloge == StaffRoleName, k.SlikaPutanja))
             .FirstOrDefaultAsync(ct);
     }
 
@@ -24,5 +24,11 @@ public sealed class UsersRepository(Campus4UContext db) : IUsersRepository
         user.SlikaPutanja = imagePath;
         await db.SaveChangesAsync(ct);
         return true;
+    }
+
+    public async Task<string?> GetProfileImagePathAsync(int userId, CancellationToken ct = default)
+    {
+        return await (from k in db.Korisnici.AsNoTracking() where k.Id == userId select k.SlikaPutanja)
+            .FirstOrDefaultAsync(ct);
     }
 }

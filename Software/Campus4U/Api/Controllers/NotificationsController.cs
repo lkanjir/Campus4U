@@ -2,12 +2,14 @@
 using Api.Mappers;
 using Contracts.Notifications;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Application.Email;
 
 namespace Api.Controllers;
 
 //Luka Kanjir
+[Authorize]
 [ApiController]
 public sealed class NotificationsController(IEmailSender emailSender, IValidator<SendEmailRequest> validator)
     : ControllerBase

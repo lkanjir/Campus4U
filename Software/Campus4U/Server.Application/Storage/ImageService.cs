@@ -123,6 +123,39 @@ public sealed class ImageService(
         return new ImageContent(result.Value.Content, result.Value.ContentType);
     }
 
+    public async Task<string> UploadProfileAsync(ImageUpload upload, string userSub, CancellationToken ct = default)
+    {
+        var user = await usersRepository.GetBySubAsync(userSub, ct);
+        if (user is null)
+            throw new ImageException(ImageErrorCode.Unauthorized, "Nemate pravo pristupa slici, prijavite se");
+
+        var oldPath = user.ProfileImagePath;
+        var path = await SaveValidatedAsync(ImageType.Profiles, upload, ct);
+        var saved = await usersRepository.SetProfileImagePathAsync(user.UserId, path, ct);
+        if (!saved)
+        {
+            await TryDeleteAsync(path, ct);
+            throw new ImageException(ImageErrorCode.NotFound, "Korisnik ne postoji");
+        }
+
+        if (!string.IsNullOrWhiteSpace(oldPath) && !string.Equals(oldPath, path, StringComparison.Ordinal))
+            await TryDeleteAsync(oldPath, ct);
+
+        return path;
+    }
+
+    public async Task<ImageContent> GetProfileImageAsync(int userId, CancellationToken ct = default)
+    {
+        var path = await usersRepository.GetProfileImagePathAsync(userId, ct);
+        if (string.IsNullOrWhiteSpace(path))
+            throw new ImageException(ImageErrorCode.NotFound, "Slika ne postoji");
+
+        var result = await storage.OpenReadAsync(path, ct);
+        if (result is null) throw new ImageException(ImageErrorCode.NotFound, "Slika ne postoji");
+
+        return new ImageContent(result.Value.Content, result.Value.ContentType);
+    }
+
     private async Task<Stream> PrepareStreamAsync(ImageUpload upload, CancellationToken ct = default)
     {
         var stream = upload.Content;

@@ -11,6 +11,8 @@ public interface IImageService
 {
     Task<string> UploadEventAsync(int eventId, ImageUpload upload, CancellationToken ct = default);
     Task<ImageContent> GetEventImageAsync(int eventId, CancellationToken ct = default);
-    Task<string> UploadFaultAsync(int faultId, ImageUpload upload, string userSub, CancellationToken ct = default); 
+    Task<string> UploadFaultAsync(int faultId, ImageUpload upload, string userSub, CancellationToken ct = default);
     Task<ImageContent> GetFaultImageAsync(int faultId, string userSub, CancellationToken ct = default);
+    Task<string> UploadProfileAsync(ImageUpload upload, string userSub, CancellationToken ct = default);
+    Task<ImageContent> GetProfileImageAsync(int userId, CancellationToken ct = default);
 }

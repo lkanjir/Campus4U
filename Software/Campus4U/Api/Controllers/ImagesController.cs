@@ -6,6 +6,8 @@ using Server.Application.Storage;
 
 namespace Api.Controllers;
 
+//Luka Kanjir
+[Authorize]
 [ApiController]
 public sealed class ImagesController(IImageService imageService, ILogger<ImagesController> logger) : ControllerBase
 {
@@ -51,8 +53,8 @@ public sealed class ImagesController(IImageService imageService, ILogger<ImagesC
     public async Task<IActionResult> UploadFault([FromForm] IFormFile? file, [FromForm] int faultId,
         CancellationToken ct = default)
     {
-        if(file is null) return BadRequest("Slika je obavezna");
-        
+        if (file is null) return BadRequest("Slika je obavezna");
+
         var sub = GetSub();
         if (string.IsNullOrWhiteSpace(sub)) return Unauthorized();
 
@@ -87,11 +89,49 @@ public sealed class ImagesController(IImageService imageService, ILogger<ImagesC
         }
     }
 
+    [HttpPost(ApiEndpoints.Images.UploadProfile)]
+    [RequestSizeLimit(10_485_760)]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadProfile([FromForm] IFormFile? file, CancellationToken ct = default)
+    {
+        if (file is null) return BadRequest("Slika je obavezna");
+
+        var sub = GetSub();
+        if (string.IsNullOrWhiteSpace(sub)) return Unauthorized();
+
+        await using var stream = file.OpenReadStream();
+        var upload = new ImageUpload(stream, file.ContentType ?? string.Empty, file.Length);
+
+        try
+        {
+            var path = await imageService.UploadProfileAsync(upload, sub, ct);
+            return Ok(new { path });
+        }
+        catch (ImageException ex)
+        {
+            return MapImageError(ex);
+        }
+    }
+
+    [HttpGet(ApiEndpoints.Images.GetProfile)]
+    public async Task<IActionResult> GetProfile(int userId, CancellationToken ct = default)
+    {
+        try
+        {
+            var result = await imageService.GetProfileImageAsync(userId, ct);
+            return File(result.Content, result.ContentType, enableRangeProcessing: true);
+        }
+        catch (ImageException ex)
+        {
+            return MapImageError(ex);
+        }
+    }
+
     private string? GetSub()
     {
         var sub = User.FindFirst("sub")?.Value;
         var nameId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        logger.LogInformation("GetSub daje sub = {sub}, nameId = {nameId}",sub,nameId);
+        logger.LogDebug("GetSub daje sub = {sub}, nameId = {nameId}", sub, nameId);
 
         return sub ?? nameId;
     }
