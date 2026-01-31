@@ -59,5 +59,36 @@ namespace Client.Data.Spaces
 
             return zauzeto;
         }
+
+        public async Task<List<Rezervacija>> DohvatiRezervacijeKorisnika(int korisnikId)
+        {
+            await using var db = new Campus4UContext();
+            var rezervacijeEntities = await db.Rezervacije
+                .Include(r => r.Prostor)
+                .Where(r => r.KorisnikId == korisnikId)
+                .ToListAsync();
+
+            var rezervacije = rezervacijeEntities.Select(r => new Rezervacija(
+                r.Id,
+                new Space(
+                    r.Prostor.Id,
+                    r.Prostor.Naziv,
+                    r.Prostor.Kapacitet,
+                    r.Prostor.Opremljenost,
+                    r.Prostor.Opis,
+                    (Dom)r.Prostor.DomId,
+                    (TipProstora)r.Prostor.TipProstorijeId,
+                    r.Prostor.SlikaPutanja
+                ),
+                r.KorisnikId,
+                r.VrijemeOd,
+                r.VrijemeDo,
+                r.Status,
+                r.BrojOsoba,
+                r.DatumKreiranja.Day
+            )).ToList();
+
+            return rezervacije;
+        }
     }
 }
