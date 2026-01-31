@@ -24,5 +24,10 @@ namespace Client.Presentation.Views.Spaces
         {
             InitializeComponent();
         }
+
+        private async void FiltrirajRezervacije_Click(object sender, RoutedEventArgs e)
+        {
+            // Implement filtering logic here
+        }
     }
 }

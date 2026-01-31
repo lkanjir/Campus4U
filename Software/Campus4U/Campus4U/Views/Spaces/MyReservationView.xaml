@@ -6,9 +6,59 @@
       xmlns:local="clr-namespace:Client.Presentation.Views.Spaces"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="MyReservationView">
+      Title="Moje rezervacije"
+      Background="{StaticResource BrushBackground}"
+      WindowStartupLocation="CenterScreen">
 
-    <Grid>
-        
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
+            <StackPanel.Resources>
+                <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                    <Setter Property="Width" Value="120"/>
+                    <Setter Property="Height" Value="40"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="FontWeight" Value="Medium"/>
+                    <Setter Property="Margin" Value="5,0"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="RadioButton">
+                                <Border x:Name="border" 
+                                    Background="White" 
+                                    BorderBrush="#7A0C19" 
+                                    BorderThickness="2" 
+                                    CornerRadius="5">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="#7A0C19"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                    <Trigger Property="IsChecked" Value="False">
+                                        <Setter TargetName="border" Property="Background" Value="White"/>
+                                        <Setter Property="Foreground" Value="#7A0C19"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </StackPanel.Resources>
+
+            <RadioButton Content="Aktivno" IsChecked="True" x:Name="BtnAktivno" Click="FiltrirajRezervacije_Click"/>
+            <RadioButton Content="Prošlo" x:Name="BtnProslo" Click="FiltrirajRezervacije_Click"/>
+            <RadioButton Content="Otkazano" x:Name="BtnOtkazano" Click="FiltrirajRezervacije_Click"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1">
+            <ItemsControl x:Name="ReservationsItemsControl">
+            </ItemsControl>
+        </ScrollViewer>
     </Grid>
 </Window>
