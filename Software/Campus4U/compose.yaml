@@ -1,5 +1,9 @@
-﻿services:
+﻿volumes:
+  images-data:
+
+services:
   api:
+    user: "0"
     image: api
     build:
       context: .
@@ -14,3 +18,10 @@
       Smtp__FromEmail: ${SMTP_FROM_EMAIL}
       Smtp__FromName: ${SMTP_FROM_NAME}
       ConnectionStrings__Campus4U: ${CONNECTION_STRING}
+      Storage__RootPath: /data/images
+      Storage__MaxBytes: 10485760
+      Storage__AllowedTypes__0: image/jpeg
+      Storage__AllowedTypes__1: image/png
+      Storage__AllowedTypes__2: image/webp
+    volumes:
+      - images-data:/data/images

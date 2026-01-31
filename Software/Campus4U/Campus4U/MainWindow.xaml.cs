@@ -1,4 +1,9 @@
 using Client.Application.Auth;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
 using Client.Application.Users;
 using Client.Data.Auth;
 using Client.Data.Users;
@@ -41,6 +46,7 @@ namespace Client.Presentation
         };
 
         private readonly HttpClient http;
+        private string accessToken;
         private bool triggersStarted;
 
         //TODO: treba maknuti, samo privremeno, do navigacije
@@ -205,6 +211,7 @@ namespace Client.Presentation
                         isAuthenticated = true;
                         SetRoleFromToken(result.Token?.Role);
                         SetIdentity(result.Token?.Sub, result.Token?.Email);
+                        SetAccessToken(result.Token?.AccessToken);
                         await RefreshOnboardingStateAsync();
                         await EnsureTriggersStartedAsync();
                         break;
@@ -255,6 +262,7 @@ namespace Client.Presentation
             finally
             {
                 SetBusy(false);
+                SetAccessToken(null);
                 triggerTimer.Stop();
                 triggersStarted = false;
             }
@@ -278,6 +286,7 @@ namespace Client.Presentation
                     isAuthenticated = true;
                     SetRoleFromToken(result.Role);
                     SetIdentity(result.Sub, result.Email);
+                    SetAccessToken(result.AccessToken);
                     await RefreshOnboardingStateAsync();
                     await EnsureTriggersStartedAsync();
                     SetStatus(string.Empty);
@@ -392,6 +401,18 @@ namespace Client.Presentation
             await StartTriggersAsync();
             triggerTimer.Start();
             triggersStarted = true;
+        }
+
+        private void SetAccessToken(string? token)
+        {
+            accessToken = string.IsNullOrWhiteSpace(token) ? null : token;
+            if (accessToken is null)
+            {
+                http.DefaultRequestHeaders.Authorization = null;
+                return;
+            }
+
+            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         }
     }
 }

@@ -12,20 +12,175 @@ public partial class Campus4UContext : DbContext
     {
     }
 
+    public virtual DbSet<DnevniJelovnik> DnevniJelovnik { get; set; }
+
+    public virtual DbSet<Dogadaji> Dogadaji { get; set; }
+
+    public virtual DbSet<Domovi> Domovi { get; set; }
+
+    public virtual DbSet<Jela> Jela { get; set; }
+
+    public virtual DbSet<Komentari> Komentari { get; set; }
+
+    public virtual DbSet<KomentariDogadaja> KomentariDogadaja { get; set; }
+
     public virtual DbSet<Korisnici> Korisnici { get; set; }
 
     public virtual DbSet<Kvarovi> Kvarovi { get; set; }
 
     public virtual DbSet<ObavijestiZaSlanje> ObavijestiZaSlanje { get; set; }
 
+    public virtual DbSet<Objave> Objave { get; set; }
+
     public virtual DbSet<Prostori> Prostori { get; set; }
 
     public virtual DbSet<Rezervacije> Rezervacije { get; set; }
+
+    public virtual DbSet<TipoviProstora> TipoviProstora { get; set; }
+
+    public virtual DbSet<Uloge> Uloge { get; set; }
 
     public virtual DbSet<VrsteKvarova> VrsteKvarova { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<DnevniJelovnik>(entity =>
+        {
+            entity.HasKey(e => e.JelovnikId).HasName("PK__DnevniJe__9868A9F769FB27E1");
+
+            entity.ToTable("dnevni_jelovnik");
+
+            entity.HasIndex(e => e.Datum, "UQ_DnevniJelovnik_Datum").IsUnique();
+
+            entity.Property(e => e.JelovnikId).HasColumnName("jelovnik_id");
+            entity.Property(e => e.DanUTjednu).HasColumnName("dan_u_tjednu");
+            entity.Property(e => e.Datum).HasColumnName("datum");
+            entity.Property(e => e.ZadnjeAzurirano)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("zadnje_azurirano");
+        });
+
+        modelBuilder.Entity<Dogadaji>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__dogadaji__3213E83FCAC6C6DB");
+
+            entity.ToTable("dogadaji");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Naslov)
+                .HasMaxLength(255)
+                .HasColumnName("naslov");
+            entity.Property(e => e.Opis)
+                .HasMaxLength(1000)
+                .HasColumnName("opis");
+            entity.Property(e => e.Slika)
+                .HasMaxLength(2000)
+                .HasColumnName("slika");
+            entity.Property(e => e.SlikaPutanja)
+                .HasMaxLength(500)
+                .HasColumnName("slika_putanja");
+            entity.Property(e => e.VrijemeDogadaja).HasColumnName("vrijeme_dogadaja");
+            entity.Property(e => e.VrijemeObjave).HasColumnName("vrijeme_objave");
+
+            entity.HasMany(d => d.Korisnik).WithMany(p => p.Dogadaj)
+                .UsingEntity<Dictionary<string, object>>(
+                    "DogadajiFavoriti",
+                    r => r.HasOne<Korisnici>().WithMany()
+                        .HasForeignKey("KorisnikId")
+                        .HasConstraintName("FK_df_korisnici"),
+                    l => l.HasOne<Dogadaji>().WithMany()
+                        .HasForeignKey("DogadajId")
+                        .HasConstraintName("FK_df_dogadaji"),
+                    j =>
+                    {
+                        j.HasKey("DogadajId", "KorisnikId").HasName("PK_dogadaj_favoriti");
+                        j.ToTable("dogadaji_favoriti");
+                        j.IndexerProperty<int>("DogadajId").HasColumnName("dogadaj_id");
+                        j.IndexerProperty<int>("KorisnikId").HasColumnName("korisnik_id");
+                    });
+        });
+
+        modelBuilder.Entity<Domovi>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__domovi__3213E83F959815D8");
+
+            entity.ToTable("domovi");
+
+            entity.HasIndex(e => e.NazivDoma, "UQ__domovi__364940CE26A79BFE").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.NazivDoma)
+                .HasMaxLength(50)
+                .HasColumnName("naziv_doma");
+        });
+
+        modelBuilder.Entity<Jela>(entity =>
+        {
+            entity.HasKey(e => e.JeloId).HasName("PK__Jela__A93B7080FCC3F758");
+
+            entity.ToTable("jela");
+
+            entity.Property(e => e.JeloId).HasColumnName("jelo_id");
+            entity.Property(e => e.JelovnikId).HasColumnName("jelovnik_id");
+            entity.Property(e => e.Kategorija)
+                .HasMaxLength(50)
+                .HasColumnName("kategorija");
+            entity.Property(e => e.Naziv)
+                .HasMaxLength(255)
+                .HasColumnName("naziv");
+
+            entity.HasOne(d => d.Jelovnik).WithMany(p => p.Jela)
+                .HasForeignKey(d => d.JelovnikId)
+                .HasConstraintName("FK_Jela_DnevniJelovnik");
+        });
+
+        modelBuilder.Entity<Komentari>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__komentar__3213E83F476DEF1D");
+
+            entity.ToTable("komentari");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AutorId).HasColumnName("autor_id");
+            entity.Property(e => e.ObjavaId).HasColumnName("objava_id");
+            entity.Property(e => e.Sadrzaj).HasColumnName("sadrzaj");
+
+            entity.HasOne(d => d.Autor).WithMany(p => p.Komentari)
+                .HasForeignKey(d => d.AutorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__komentari__autor__37A5467C");
+
+            entity.HasOne(d => d.Objava).WithMany(p => p.Komentari)
+                .HasForeignKey(d => d.ObjavaId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__komentari__objav__36B12243");
+        });
+
+        modelBuilder.Entity<KomentariDogadaja>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__komentar__3213E83F08A035D5");
+
+            entity.ToTable("komentari_dogadaja");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Datum).HasColumnName("datum");
+            entity.Property(e => e.DogadajId).HasColumnName("dogadaj_id");
+            entity.Property(e => e.Komentar)
+                .HasMaxLength(1000)
+                .HasColumnName("komentar");
+            entity.Property(e => e.KorisnikId).HasColumnName("korisnik_id");
+            entity.Property(e => e.Ocjena).HasColumnName("ocjena");
+
+            entity.HasOne(d => d.Dogadaj).WithMany(p => p.KomentariDogadaja)
+                .HasForeignKey(d => d.DogadajId)
+                .HasConstraintName("FK_kd_dogadaji");
+
+            entity.HasOne(d => d.Korisnik).WithMany(p => p.KomentariDogadaja)
+                .HasForeignKey(d => d.KorisnikId)
+                .HasConstraintName("FK_kd_korisnici");
+        });
+
         modelBuilder.Entity<Korisnici>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__korisnic__3213E83F54EBF408");
@@ -58,10 +213,18 @@ public partial class Campus4UContext : DbContext
             entity.Property(e => e.SlikaProfila)
                 .HasMaxLength(500)
                 .HasColumnName("slika_profila");
+            entity.Property(e => e.SlikaPutanja)
+                .HasMaxLength(500)
+                .HasColumnName("slika_putanja");
             entity.Property(e => e.Sub)
                 .HasMaxLength(255)
                 .HasColumnName("sub");
             entity.Property(e => e.UlogaId).HasColumnName("uloga_id");
+
+            entity.HasOne(d => d.Uloga).WithMany(p => p.Korisnici)
+                .HasForeignKey(d => d.UlogaId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__korisnici__uloga__2C3393D0");
         });
 
         modelBuilder.Entity<Kvarovi>(entity =>
@@ -79,6 +242,9 @@ public partial class Campus4UContext : DbContext
             entity.Property(e => e.KorisnikId).HasColumnName("korisnik_id");
             entity.Property(e => e.Opis).HasColumnName("opis");
             entity.Property(e => e.ProstorId).HasColumnName("prostor_id");
+            entity.Property(e => e.SlikaPutanja)
+                .HasMaxLength(500)
+                .HasColumnName("slika_putanja");
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
                 .HasDefaultValue("Aktivan")
@@ -130,6 +296,51 @@ public partial class Campus4UContext : DbContext
                 .HasColumnName("zadnja_greska");
         });
 
+        modelBuilder.Entity<Objave>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__objave__3213E83F7BB0EC33");
+
+            entity.ToTable("objave");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AutorId).HasColumnName("autor_id");
+            entity.Property(e => e.DatumVrijemeDogadjaja)
+                .HasColumnType("datetime")
+                .HasColumnName("datum_vrijeme_dogadjaja");
+            entity.Property(e => e.DatumVrijemeObjave)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("datum_vrijeme_objave");
+            entity.Property(e => e.Naslov)
+                .HasMaxLength(255)
+                .HasColumnName("naslov");
+            entity.Property(e => e.Sadrzaj).HasColumnName("sadrzaj");
+
+            entity.HasOne(d => d.Autor).WithMany(p => p.Objave)
+                .HasForeignKey(d => d.AutorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__objave__autor_id__300424B4");
+
+            entity.HasMany(d => d.Korisnik).WithMany(p => p.Objava)
+                .UsingEntity<Dictionary<string, object>>(
+                    "Interesi",
+                    r => r.HasOne<Korisnici>().WithMany()
+                        .HasForeignKey("KorisnikId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__interes__korisni__33D4B598"),
+                    l => l.HasOne<Objave>().WithMany()
+                        .HasForeignKey("ObjavaId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__interes__objava___32E0915F"),
+                    j =>
+                    {
+                        j.HasKey("ObjavaId", "KorisnikId").HasName("PK__interes__759A98B1B12CD6D9");
+                        j.ToTable("interesi");
+                        j.IndexerProperty<int>("ObjavaId").HasColumnName("objava_id");
+                        j.IndexerProperty<int>("KorisnikId").HasColumnName("korisnik_id");
+                    });
+        });
+
         modelBuilder.Entity<Prostori>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__prostori__3213E83FFAE8E726");
@@ -152,6 +363,33 @@ public partial class Campus4UContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("slika_putanja");
             entity.Property(e => e.TipProstorijeId).HasColumnName("tip_prostorije_id");
+
+            entity.HasOne(d => d.Dom).WithMany(p => p.Prostori)
+                .HasForeignKey(d => d.DomId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_prostori_domovi");
+
+            entity.HasOne(d => d.TipProstorije).WithMany(p => p.Prostori)
+                .HasForeignKey(d => d.TipProstorijeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_prostori_tipovi");
+
+            entity.HasMany(d => d.Korisnik).WithMany(p => p.Prostor)
+                .UsingEntity<Dictionary<string, object>>(
+                    "ProstoriFavoriti",
+                    r => r.HasOne<Korisnici>().WithMany()
+                        .HasForeignKey("KorisnikId")
+                        .HasConstraintName("FK_pf_korisnici"),
+                    l => l.HasOne<Prostori>().WithMany()
+                        .HasForeignKey("ProstorId")
+                        .HasConstraintName("FK_pf_prostori"),
+                    j =>
+                    {
+                        j.HasKey("ProstorId", "KorisnikId");
+                        j.ToTable("prostori_favoriti");
+                        j.IndexerProperty<int>("ProstorId").HasColumnName("prostor_id");
+                        j.IndexerProperty<int>("KorisnikId").HasColumnName("korisnik_id");
+                    });
         });
 
         modelBuilder.Entity<Rezervacije>(entity =>
@@ -174,6 +412,34 @@ public partial class Campus4UContext : DbContext
                 .HasForeignKey(d => d.ProstorId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_rezervacije_prostori");
+        });
+
+        modelBuilder.Entity<TipoviProstora>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__tipovi_p__3213E83F4069A873");
+
+            entity.ToTable("tipovi_prostora");
+
+            entity.HasIndex(e => e.Naziv, "UQ__tipovi_p__F07241F3375A7E55").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Naziv)
+                .HasMaxLength(50)
+                .HasColumnName("naziv");
+        });
+
+        modelBuilder.Entity<Uloge>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("uloge_pk");
+
+            entity.ToTable("uloge");
+
+            entity.HasIndex(e => e.NazivUloge, "UQ__uloge__690D1BE5F0F82B00").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.NazivUloge)
+                .HasMaxLength(50)
+                .HasColumnName("naziv_uloge");
         });
 
         modelBuilder.Entity<VrsteKvarova>(entity =>
