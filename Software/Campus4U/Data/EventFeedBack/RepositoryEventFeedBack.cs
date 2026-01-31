@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+/// Nikola Kihas
 namespace Client.Data.EventFeedBack
 {
     public sealed class RepositoryEventFeedBack : IRepositoryEventFeedBack

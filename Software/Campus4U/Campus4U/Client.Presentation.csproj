@@ -72,6 +72,18 @@
 	<Resource Include="Images\no-img.png">
 		<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	</Resource>
+	<Resource Include="Images\Logo\full.png">
+		<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	</Resource>
+	<Resource Include="Images\Logo\Emblem.png">
+		<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	</Resource>
+	<Resource Include="Images\fault-icon.png">
+		<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	</Resource>
+	<Resource Include="Images\logout-icon.png">
+		<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	</Resource>
   </ItemGroup>
 
 </Project>

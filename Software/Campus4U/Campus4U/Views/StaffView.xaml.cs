@@ -1,24 +1,26 @@
-using Client.Presentation.Views.EventFeedBack;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Client.Presentation.Views;
 
 public partial class StaffView : UserControl
 {
-    public int KorisnikId { get; set; }
+    private int _korisnikId;
 
     public StaffView()
     {
         InitializeComponent();
     }
 
-    private void BtnEventFeedback_OnClick(object sender, System.Windows.RoutedEventArgs e)
+    public int KorisnikId
     {
-        var window = new SimulacijaDogadajaKomentarWindow(KorisnikId)
+        get => _korisnikId;
+        set
         {
-            Owner = Window.GetWindow(this)
-        };
-        window.Show();
+            _korisnikId = value;
+            if (Dashboard != null)
+            {
+                Dashboard.KorisnikId = value;
+            }
+        }
     }
 }

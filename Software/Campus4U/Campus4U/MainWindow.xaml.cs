@@ -1,19 +1,24 @@
+using Client.Application.Auth;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Client.Application.Auth;
 using Client.Application.Users;
 using Client.Data.Auth;
 using Client.Data.Users;
 using Client.Domain.Auth;
+using Client.Domain.Users;
 using Client.Presentation.Views;
 using Client.Presentation.Views.Fault;
 using Client.Presentation.Views.Spaces;
 using Client.Presentation.Views.UserProfile;
 using Duende.IdentityModel.OidcClient.Browser;
 using Microsoft.Extensions.Configuration;
+using System.Net.Http;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Client.Presentation
 {
@@ -45,7 +50,7 @@ namespace Client.Presentation
         private bool triggersStarted;
 
         //TODO: treba maknuti, samo privremeno, do navigacije
-        private readonly PrijavaKvaraUserControl kvaroviView = new();
+        //private readonly PrijavaKvaraUserControl kvaroviView = new();
         private bool categoryWindowShown;
 
         public MainWindow()
@@ -91,7 +96,7 @@ namespace Client.Presentation
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"TRIGGER GRESKA: {ex.Message}");
+               // MessageBox.Show($"TRIGGER GRESKA: {ex.Message}");
             }
         }
 
@@ -118,7 +123,7 @@ namespace Client.Presentation
                 if (!result.isSuccess)
                 {
                     requiresOnboarding = true;
-                    onboardingView.SetStatus(result.Error ?? "Gre�ka kod spremanja profila");
+                    onboardingView.SetStatus(result.Error ?? "Greška kod spremanja profila");
                     return;
                 }
 
@@ -127,7 +132,7 @@ namespace Client.Presentation
             catch (Exception)
             {
                 requiresOnboarding = true;
-                onboardingView.SetStatus("Gre�ka kod spremanja profila");
+                onboardingView.SetStatus("Greška kod spremanja profila");
             }
             finally
             {
@@ -139,6 +144,7 @@ namespace Client.Presentation
         {
             BtnLogin.IsEnabled = !isBusy && !isAuthenticated;
             BtnLogout.IsEnabled = !isBusy && isAuthenticated;
+            BtnFault.IsEnabled = !isBusy && isAuthenticated;
 
             PanelHeader.Visibility = isAuthenticated ? Visibility.Visible : Visibility.Collapsed;
             RoleContent.Visibility = isAuthenticated ? Visibility.Visible : Visibility.Collapsed;
@@ -146,6 +152,11 @@ namespace Client.Presentation
 
             if (isAuthenticated) ApplyRoleContent();
             else RoleContent.Content = null;
+
+            if (!isAuthenticated)
+            {
+                SetHeaderUserInfo(null, null);
+            }
         }
 
         private void ApplyRoleContent()
@@ -162,17 +173,17 @@ namespace Client.Presentation
                 return;
             }
 
-            /*
+            
             RoleContent.Content = currentRole switch
             {
                 "osoblje" => staffView,
                 "student" => studentView,
                 _ => "student"
             };
-            */
+            
 
             //TODO: treba maknuti, samo privremeno, do navigacije, i vratiti dio iznad
-            RoleContent.Content = kvaroviView;
+            //RoleContent.Content = kvaroviView;
         }
 
         private void SetStatus(string message)
@@ -212,7 +223,7 @@ namespace Client.Presentation
                     case AuthSessionRestoreState.RefreshFailed:
                         isAuthenticated = false;
                         requiresOnboarding = false;
-                        SetStatus($"Sesija je istekla, greska kod osvjezavanja: {result.Error}");
+                        SetStatus($"Sesija je istekla, greška kod osvjezavanja: {result.Error}");
                         break;
                     default:
                         isAuthenticated = false;
@@ -240,13 +251,13 @@ namespace Client.Presentation
                 currentId = 0;
                 staffView.KorisnikId = 0;
                 studentView.KorisnikId = 0;
-                SetStatus("Uspje�na odjava");
+                SetStatus("Uspješna odjava");
             }
             catch (Exception ex)
             {
                 isAuthenticated = false;
                 requiresOnboarding = false;
-                SetStatus($"Gre�ka kod odjave: {ex.Message}");
+                SetStatus($"Greška kod odjave: {ex.Message}");
             }
             finally
             {
@@ -308,18 +319,19 @@ namespace Client.Presentation
 
             var profile = await userProfileService.GetBySubAsync(currentSub);
             currentId = profile?.Id ?? 0;
+            SetHeaderUserInfo(profile, currentEmail);
 
             //TODO: treba maknuti, samo privremeno, do navigacije
-            kvaroviView.PostaviKorisnika(currentId);
-            if (!categoryWindowShown)
-            {
-                categoryWindowShown = true;
-                var window = new CategorySelectionView(currentId)
-                {
-                    Owner = this
-                };
-                window.Show();
-            }
+            //kvaroviView.PostaviKorisnika(currentId);
+            //if (!categoryWindowShown)
+            //{
+            //    categoryWindowShown = true;
+            //    var window = new CategorySelectionView(currentId)
+            //    {
+            //        Owner = this
+            //    };
+            //    window.Show();
+            //}
 
             staffView.KorisnikId = currentId;
             studentView.KorisnikId = currentId;
@@ -328,6 +340,21 @@ namespace Client.Presentation
                 requiresOnboarding = true;
                 onboardingView.SetInitialValues(profile?.Ime, profile?.Prezime, currentEmail, profile?.BrojSobe);
             }
+        }
+
+        private void SetHeaderUserInfo(UserProfile? profile, string? fallbackEmail)
+        {
+            var ime = profile?.Ime?.Trim() ?? string.Empty;
+            var prezime = profile?.Prezime?.Trim() ?? string.Empty;
+            var fullName = $"{ime} {prezime}".Trim();
+
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                fullName = "Nepoznati korisnik";
+            }
+
+            UserFirstLastName.Text = fullName;
+            UserEmail.Text = string.IsNullOrWhiteSpace(profile?.Email) ? (fallbackEmail ?? string.Empty) : profile!.Email;
         }
 
         private void SetIdentity(string? sub, string? email)
@@ -363,7 +390,7 @@ namespace Client.Presentation
             }
             catch
             {
-                MessageBox.Show("Greska kod pokretanja triggera");
+                //MessageBox.Show("Greska kod pokretanja triggera");
             }
         }
 

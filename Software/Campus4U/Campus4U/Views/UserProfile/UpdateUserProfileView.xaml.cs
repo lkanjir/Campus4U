@@ -19,6 +19,7 @@ namespace Client.Presentation.Views.UserProfile
     /// <summary>
     /// Interaction logic for UpdateUserProfile.xaml
     /// </summary>
+    /// Nikola Kihas
     public partial class UpdateUserProfile : Window
     {
         private readonly DomainUserProfile _profile;
