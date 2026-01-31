@@ -26,6 +26,7 @@ namespace Client.Presentation.Views.UserProfile
     /// <summary>
     /// Interaction logic for UserProfileView.xaml
     /// </summary>
+    /// Nikola Kihas
     public partial class UserProfileView : Window
     {
         private readonly string? _korisnikSub;

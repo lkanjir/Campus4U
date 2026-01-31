@@ -2,7 +2,7 @@ using Client.Data.EventFeedBack;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+/// Nikola Kihas
 namespace Client.Application.EventFeedBack
 {
     public sealed class EventFeedBackService : IEventFeedBackService

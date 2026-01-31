@@ -1,20 +1,26 @@
-using Client.Presentation.Views.Spaces;
 using System.Windows.Controls;
 
 namespace Client.Presentation.Views;
 
 public partial class StudentView : UserControl
 {
-    public int KorisnikId { get; set; }
+    private int _korisnikId;
 
     public StudentView()
     {
         InitializeComponent();
     }
 
-    private void BtnRezerviraj_Click(object sender, EventArgs e)
+    public int KorisnikId
     {
-        CategorySelectionView reservationView = new CategorySelectionView(KorisnikId);
-        reservationView.Show();
+        get => _korisnikId;
+        set
+        {
+            _korisnikId = value;
+            if (Dashboard != null)
+            {
+                Dashboard.KorisnikId = value;
+            }
+        }
     }
 }

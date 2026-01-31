@@ -1,5 +1,5 @@
 ﻿namespace Client.Application.EventFeedBack;
-
+/// Nikola Kihas
 public sealed record EventFeedbackComment(
     int Id,
     DateTime Datum,

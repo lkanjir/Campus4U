@@ -8,6 +8,8 @@ public interface IUserProfileRepository
     Task<UserProfile?> GetBySubAsync(string sub, CancellationToken ct = default);
     Task<int?> GetRoleIdByNameAsync(string roleName, CancellationToken ct = default);
     Task SaveAsync(UserProfile profile, CancellationToken ct = default);
+
+    /// Nikola Kihas
     Task<bool> AzurirajKorisnikaAsync(UserProfile profile);
     Task<bool> AzurirajProfilnuSlikuAsync(int id, string urlSlike);
 }
