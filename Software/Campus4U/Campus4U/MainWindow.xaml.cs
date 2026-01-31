@@ -43,7 +43,7 @@ namespace Client.Presentation
         private bool triggersStarted;
 
         //TODO: treba maknuti, samo privremeno, do navigacije
-        private readonly PrijavaKvaraUserControl kvaroviView = new();
+        //private readonly PrijavaKvaraUserControl kvaroviView = new();
         private bool categoryWindowShown;
 
         public MainWindow()
@@ -89,7 +89,7 @@ namespace Client.Presentation
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"TRIGGER GRESKA: {ex.Message}");
+               // MessageBox.Show($"TRIGGER GRESKA: {ex.Message}");
             }
         }
 
@@ -170,7 +170,7 @@ namespace Client.Presentation
             */
 
             //TODO: treba maknuti, samo privremeno, do navigacije, i vratiti dio iznad
-            RoleContent.Content = kvaroviView;
+            //RoleContent.Content = kvaroviView;
         }
 
         private void SetStatus(string message)
@@ -305,16 +305,16 @@ namespace Client.Presentation
             currentId = profile?.Id ?? 0;
 
             //TODO: treba maknuti, samo privremeno, do navigacije
-            kvaroviView.PostaviKorisnika(currentId);
-            if (!categoryWindowShown)
-            {
-                categoryWindowShown = true;
-                var window = new CategorySelectionView(currentId)
-                {
-                    Owner = this
-                };
-                window.Show();
-            }
+            //kvaroviView.PostaviKorisnika(currentId);
+            //if (!categoryWindowShown)
+            //{
+            //    categoryWindowShown = true;
+            //    var window = new CategorySelectionView(currentId)
+            //    {
+            //        Owner = this
+            //    };
+            //    window.Show();
+            //}
 
             staffView.KorisnikId = currentId;
             studentView.KorisnikId = currentId;
@@ -358,7 +358,7 @@ namespace Client.Presentation
             }
             catch
             {
-                MessageBox.Show("Greska kod pokretanja triggera");
+                //MessageBox.Show("Greska kod pokretanja triggera");
             }
         }
 

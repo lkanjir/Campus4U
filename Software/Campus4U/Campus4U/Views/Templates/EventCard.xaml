@@ -11,6 +11,11 @@
              d:DesignWidth="160">
     <Grid>
         <Border Background="#fff" CornerRadius="10" SnapsToDevicePixels="True" ClipToBounds="True">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="18"
+                          ShadowDepth="4"
+                          Opacity="0.25"/>
+            </Border.Effect>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="100"/>
@@ -43,7 +48,5 @@
                 </StackPanel>
             </Grid>
         </Border>
-
-        <Border CornerRadius="10" BorderBrush="#7A0C19" BorderThickness="2" Background="Transparent" IsHitTestVisible="False" SnapsToDevicePixels="True"/>
     </Grid>
 </UserControl>
