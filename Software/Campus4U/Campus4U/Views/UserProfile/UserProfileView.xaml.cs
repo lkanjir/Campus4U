@@ -1,8 +1,13 @@
 ﻿using Client.Application.Auth;
+using Client.Application.Favorites;
 using Client.Application.Users;
 using Client.Data.Auth;
+using Client.Data.Favorites;
 using Client.Data.Users;
+using Client.Domain.Spaces;
 using Client.Domain.Templates;
+using Client.Presentation.Views.Spaces;
+using Client.Presentation.Views.Templates;
 using Microsoft.Extensions.Configuration;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -35,7 +40,9 @@ namespace Client.Presentation.Views.UserProfile
                 UriKind.Absolute));
 
         private UserProfileService userProfileService;
+        private readonly ISpacesFavoritesService spacesFavoritesService;
         private readonly IPasswordResetService passwordResetService;
+        private readonly IAccountDeletionService accountDeletionService;
         public ObservableCollection<FavoriteEventItem> FavoriteEvents { get; } = new();
         public ObservableCollection<FavoriteSpaceItem> FavoriteSpaces { get; } = new();
 
@@ -45,6 +52,9 @@ namespace Client.Presentation.Views.UserProfile
             DataContext = this;
             _korisnikSub = korisnikSub;
             Loaded += UserProfileView_Loaded;
+            Activated += UserProfileView_Activated;
+            userProfileService = new UserProfileService(new UserProfileProfileRepository());
+            spacesFavoritesService = new SpacesFavoritesService(new SpacesFavoritesRepository());
 
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false)
@@ -63,6 +73,12 @@ namespace Client.Presentation.Views.UserProfile
                 TimeSpan.FromMinutes(20));
 
             passwordResetService = new Auth0PasswordResetService(options);
+
+            var managementOptions = config.GetSection("Auth0Management").Get<Auth0ManagementOptions>();
+            if (managementOptions is null)
+                throw new InvalidOperationException("Auth0Management konfiguracija nedostaje.");
+
+            accountDeletionService = new Auth0AccountDeletionService(managementOptions);
             FavoriteEvents.Add(new FavoriteEventItem
             {
                 Title = "Noć muzeja",
@@ -81,19 +97,6 @@ namespace Client.Presentation.Views.UserProfile
                 Date = "05.02.2026",
                 Description = "Pregled novih trendova u dizajnu sučelja i korisničkog iskustva."
             });
-
-            FavoriteSpaces.Add(new FavoriteSpaceItem
-            {
-                Title = "Studentski centar - Čitaonica",
-                Capacity = "50 mjesta",
-                Description = "Mirno mjesto za učenje s besplatnim Wi-Fi-jem i pristupom električnim utičnicama."
-            });
-            FavoriteSpaces.Add(new FavoriteSpaceItem
-            {
-                Title = "Fakultetska knjižnica",
-                Capacity = "100 mjesta",
-                Description = "Prostrana knjižnica s velikim izborom stručne literature i radnih stolova."
-            });
         }
 
         private async void UserProfileView_Loaded(object sender, RoutedEventArgs e)
@@ -105,6 +108,12 @@ namespace Client.Presentation.Views.UserProfile
             }
 
             await UcitajPodatkeProfilaAsync(_korisnikSub);
+        }
+
+        private async void UserProfileView_Activated(object? sender, EventArgs e)
+        {
+            if (_profil is null) return;
+            await DohvatiFavoriteProstorijaAsync(_profil.Id);
         }
 
         private async Task UcitajPodatkeProfilaAsync(string korisnikSub)
@@ -131,6 +140,33 @@ namespace Client.Presentation.Views.UserProfile
                                            ? " -"
                                            : " " + profil.BrojTelefona);
                 txtUloga.Text = "Uloga:" + (profil.UlogaId == 1 ? " Student" : "Osoblje");
+                await DohvatiFavoriteProstorijaAsync(profil.Id);
+            }
+        }
+
+        private async Task DohvatiFavoriteProstorijaAsync(int korisnikId)
+        {
+            try
+            {
+                List<Space> prostoriFavoriti = await spacesFavoritesService.DohvatiFavoriteKorisnikaAsync(korisnikId);
+                FavoriteSpaces.Clear();
+                foreach (var prostor in prostoriFavoriti)
+                {
+                    FavoriteSpaces.Add(new FavoriteSpaceItem
+                    {
+                        Title = prostor.Naziv,
+                        Capacity = prostor.Kapacitet.ToString(),
+                        Description = prostor.Opis,
+                        ImagePath = prostor.SlikaPutanja ?? string.Empty,
+                        Space = prostor,
+                        KorisnikId = _profil?.Id
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greška pri dohvaćanju favorita prostorija: {ex.Message}",
+                    "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -277,6 +313,52 @@ namespace Client.Presentation.Views.UserProfile
             }
         }
 
+        private async void BtnIzbrisiProfil_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(_korisnikSub))
+            {
+                MessageBox.Show("Korisnički ID nije dostupan.");
+                return;
+            }
+
+            var potvrda = MessageBox.Show(
+                "Jesi li siguran da želiš izbrisati profil? Ova radnja je trajna.",
+                "Potvrda brisanja",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (potvrda != MessageBoxResult.Yes) return;
+
+            var result = await accountDeletionService.DeleteAccountAsync(_korisnikSub);
+            if (result.IsSuccess)
+            {
+                if (_profil is not null)
+                {
+                    await userProfileService.ObrisiKorisnikaIzBazeAsync(_profil.Id);
+                }
+                new SecureTokenStore().Clear();
+                MessageBox.Show("Profil je obrisan.");
+                System.Windows.Application.Current.Shutdown();
+            }
+            else
+            {
+                MessageBox.Show(result.Error ?? "Brisanje nije uspjelo.");
+            }
+        }
+
+        private async void SpaceCard_ReserveRequested(object sender, SpaceCardReserveEventArgs e)
+        {
+            if (e.Prostor == null || e.KorisnikId is null || e.KorisnikId <= 0) return;
+            var pogled = new ReservationView(e.Prostor, e.KorisnikId.Value)
+            {
+                Owner = this
+            };
+            pogled.ShowDialog();
+            if (_profil is not null)
+            {
+                await DohvatiFavoriteProstorijaAsync(_profil.Id);
+            }
+        }
         private void BtnMojeRezervacije_OnClick(object sender, RoutedEventArgs e)
         {
             if (_korisnikSub == null)

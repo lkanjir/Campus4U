@@ -11,5 +11,5 @@ public interface IUserProfileRepository
 
     /// Nikola Kihas
     Task<bool> AzurirajKorisnikaAsync(UserProfile profile);
-    Task<bool> AzurirajProfilnuSlikuAsync(int id, string urlSlike);
+    Task<bool> ObrisiKorisnikaIzBazeAsync(int id);
 }

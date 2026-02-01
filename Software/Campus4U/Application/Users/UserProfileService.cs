@@ -64,4 +64,13 @@ public class UserProfileService(IUserProfileRepository profileRepository)
         if(!stanje) return new SaveUserProfileResult(false, "Neuspješna izmjena podataka korisnika");
         return new SaveUserProfileResult(true, null);
     }
+
+    public async Task<bool> ObrisiKorisnikaIzBazeAsync(int id)
+    {
+        if (id <= 0)
+        {
+            return false;
+        }
+        return await profileRepository.ObrisiKorisnikaIzBazeAsync(id);
+    }
 }

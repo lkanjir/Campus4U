@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:templates="clr-namespace:Client.Presentation.Views.Templates"
              xmlns:menu="clr-namespace:Client.Presentation.Views.Menu"
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="800">
@@ -140,37 +139,14 @@
         <Border Grid.Row="0" Grid.Column="1" Background="Transparent" CornerRadius="10" SnapsToDevicePixels="True">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="18"
-                                  ShadowDepth="4"
-                                  Opacity="0.25"/>
+                           ShadowDepth="4"
+                           Opacity="0.25"/>
             </Border.Effect>
 
             <Border Background="White" CornerRadius="10" SnapsToDevicePixels="true" ClipToBounds="True" Margin="10">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="Rezervirajte ucionice" FontSize="20" FontWeight="Bold"
-                               Margin="0,0,0,10" HorizontalAlignment="Center"/>
-                    <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ItemsControl ItemsSource="{Binding SpacesForCards}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel Margin="0,15,0,0"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <templates:SpaceCard
-                                        Title="{Binding Title}"
-                                        Capacity="{Binding Capacity}"
-                                        Description="{Binding Description}"
-                                        ImagePath="{Binding ImagePath}"
-                                        Margin="10">
-                                        <templates:SpaceCard.LayoutTransform>
-                                            <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
-                                        </templates:SpaceCard.LayoutTransform>
-                                    </templates:SpaceCard>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                        Margin="0,0,0,10" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Border>
         </Border>

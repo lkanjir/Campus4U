@@ -24,14 +24,28 @@
                 </Grid.ColumnDefinitions>
                 <Image Source="/Images/Logo/Full.png" Height="50" RenderOptions.BitmapScalingMode="HighQuality" VerticalAlignment="Center" HorizontalAlignment="Left"></Image>
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button x:Name="BtnPosts" Click="BtnPosts_OnClick"
+                            Style="{StaticResource SecondaryButton}"
+                            Width="140">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left">Oglasnik</TextBlock>
+                        </StackPanel>
+                    </Button>
                     <Button  x:Name="BtnFault" 
-                        Style="{StaticResource SecondaryButton}" 
-                        IsEnabled="False"
-                        Width="140">
+                             Style="{StaticResource SecondaryButton}" 
+                             IsEnabled="False"
+                             Width="140">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="/Images/fault-icon.png" Height="24" Width="24" Margin="0,0,5,0" VerticalAlignment="Center" HorizontalAlignment="Left" RenderOptions.BitmapScalingMode="HighQuality"/>
                             <TextBlock x:Name="TxtFaults" VerticalAlignment="Center" HorizontalAlignment="Left">Prijavi kvar</TextBlock>
                         </StackPanel>
+                    </Button>
+                    <Button x:Name="BtnUpravljanjeKvarovima"
+                        Style="{StaticResource SecondaryButton}"
+                        Width="200"
+                        Margin="8,0,0,0"
+                        Click="BtnUpravljanjeKvarovima_OnClick">
+                        <TextBlock Text="Upravljanje kvarovima (test)" VerticalAlignment="Center"/>
                     </Button>
                     <Button  x:Name="BtnLogout" Click="BtnLogout_OnClick" 
                         Style="{StaticResource SecondaryButton}" 
@@ -47,7 +61,7 @@
                                  VerticalAlignment="Center" Stroke="#B0B0B0" StrokeThickness="2" Cursor="Hand"
                                  MouseLeftButtonUp="BtnProfilKorisnika_OnClick" RenderOptions.BitmapScalingMode="HighQuality"  SnapsToDevicePixels="True" UseLayoutRounding="True">
                             <Ellipse.Fill>
-                                <ImageBrush ImageSource="/Images/Profile/default-profile.png" Stretch="UniformToFill"/>
+                                <ImageBrush x:Name="ProfileImgBrush" ImageSource="/Images/Profile/default-profile.png" Stretch="UniformToFill"/>
                             </Ellipse.Fill>
                         </Ellipse>
                         <StackPanel Margin="5,0,0,0">

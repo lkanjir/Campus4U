@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Client.Domain.Spaces;
+using Client.Domain.Templates;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.IO;
 
 namespace Client.Presentation.Views.Templates
 {
@@ -22,6 +12,7 @@ namespace Client.Presentation.Views.Templates
     /// Nikola Kihas
     public partial class SpaceCard : UserControl
     {
+
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register(nameof(Title), typeof(string), typeof(SpaceCard), new PropertyMetadata(string.Empty));
 
@@ -33,6 +24,7 @@ namespace Client.Presentation.Views.Templates
 
         public static readonly DependencyProperty ImagePathProperty =
             DependencyProperty.Register(nameof(ImagePath), typeof(string), typeof(SpaceCard), new PropertyMetadata(string.Empty));
+
         public SpaceCard()
         {
             InitializeComponent();
@@ -61,5 +53,27 @@ namespace Client.Presentation.Views.Templates
             get => (string)GetValue(ImagePathProperty);
             set => SetValue(ImagePathProperty, value);
         }
+
+        public event EventHandler<SpaceCardReserveEventArgs>? ReserveRequested;
+
+        private void BtnRezervirajProstoriju_Click(object sender, RoutedEventArgs e)
+        {
+            var item = DataContext as FavoriteSpaceItem;
+            if (item?.Space == null) return;
+
+            ReserveRequested?.Invoke(this, new SpaceCardReserveEventArgs(item.Space, item.KorisnikId));
+        }
+    }
+
+    public sealed class SpaceCardReserveEventArgs : EventArgs
+    {
+        public SpaceCardReserveEventArgs(Space? prostor, int? korisnikId)
+        {
+            Prostor = prostor;
+            KorisnikId = korisnikId;
+        }
+
+        public Space? Prostor { get; }
+        public int? KorisnikId { get; }
     }
 }

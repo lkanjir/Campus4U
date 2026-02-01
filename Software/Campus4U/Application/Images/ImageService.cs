@@ -4,8 +4,6 @@ public sealed class ImageService(IImageSource source, ImageCache cache, TimeSpan
 {
     public async Task<ImagePayload?> GetProfileImageAsync(int userId, CancellationToken ct = default)
     {
-        if (userId <= 0) return null;
-
         var key = new ImageKey(ImageType.Profile, userId);
         if (cache.TryGet(key, out var cached)) return cached;
 
