@@ -1,4 +1,9 @@
 using Client.Application.Auth;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
 using Client.Application.Users;
 using Client.Data.Auth;
 using Client.Data.Users;
@@ -41,10 +46,9 @@ namespace Client.Presentation
         };
 
         private readonly HttpClient http;
+        private string accessToken;
         private bool triggersStarted;
 
-        //TODO: treba maknuti, samo privremeno, do navigacije
-        //private readonly PrijavaKvaraUserControl kvaroviView = new();
         private bool categoryWindowShown;
 
         public MainWindow()
@@ -90,7 +94,7 @@ namespace Client.Presentation
             }
             catch (Exception ex)
             {
-               // MessageBox.Show($"TRIGGER GRESKA: {ex.Message}");
+                MessageBox.Show($"TRIGGER GRESKA: {ex.Message}");
             }
         }
 
@@ -167,17 +171,13 @@ namespace Client.Presentation
                 return;
             }
 
-            
+
             RoleContent.Content = currentRole switch
             {
                 "osoblje" => staffView,
                 "student" => studentView,
                 _ => "student"
             };
-            
-
-            //TODO: treba maknuti, samo privremeno, do navigacije, i vratiti dio iznad
-            //RoleContent.Content = kvaroviView;
         }
 
         private void SetStatus(string message)
@@ -205,6 +205,7 @@ namespace Client.Presentation
                         isAuthenticated = true;
                         SetRoleFromToken(result.Token?.Role);
                         SetIdentity(result.Token?.Sub, result.Token?.Email);
+                        SetAccessToken(result.Token?.AccessToken);
                         await RefreshOnboardingStateAsync();
                         await EnsureTriggersStartedAsync();
                         break;
@@ -255,6 +256,7 @@ namespace Client.Presentation
             finally
             {
                 SetBusy(false);
+                SetAccessToken(null);
                 triggerTimer.Stop();
                 triggersStarted = false;
             }
@@ -278,6 +280,7 @@ namespace Client.Presentation
                     isAuthenticated = true;
                     SetRoleFromToken(result.Role);
                     SetIdentity(result.Sub, result.Email);
+                    SetAccessToken(result.AccessToken);
                     await RefreshOnboardingStateAsync();
                     await EnsureTriggersStartedAsync();
                     SetStatus(string.Empty);
@@ -312,18 +315,6 @@ namespace Client.Presentation
             currentId = profile?.Id ?? 0;
             SetHeaderUserInfo(profile, currentEmail);
 
-            //TODO: treba maknuti, samo privremeno, do navigacije
-            //kvaroviView.PostaviKorisnika(currentId);
-            //if (!categoryWindowShown)
-            //{
-            //    categoryWindowShown = true;
-            //    var window = new CategorySelectionView(currentId)
-            //    {
-            //        Owner = this
-            //    };
-            //    window.Show();
-            //}
-
             staffView.KorisnikId = currentId;
             studentView.KorisnikId = currentId;
             if (profile is null || !profile.IsOnboardingComplete)
@@ -345,7 +336,9 @@ namespace Client.Presentation
             }
 
             UserFirstLastName.Text = fullName;
-            UserEmail.Text = string.IsNullOrWhiteSpace(profile?.Email) ? (fallbackEmail ?? string.Empty) : profile!.Email;
+            UserEmail.Text = string.IsNullOrWhiteSpace(profile?.Email)
+                ? (fallbackEmail ?? string.Empty)
+                : profile!.Email;
         }
 
         private void SetIdentity(string? sub, string? email)
@@ -373,6 +366,18 @@ namespace Client.Presentation
             profileView.Show();
         }
 
+        private void BtnFault_OnClick(object sender, RoutedEventArgs e)
+        {
+            var prijavaKvara = new PrijavaKvaraUserControl();
+            prijavaKvara.PostaviKorisnika(currentId);
+            RoleContent.Content = prijavaKvara;
+        }
+
+        private void BtnUpravljanjeKvarovima_OnClick(object sender, RoutedEventArgs e)
+        {
+            RoleContent.Content = new UpravljanjeKvarovimaUserControl();
+        }
+
         private async Task StartTriggersAsync()
         {
             try
@@ -381,7 +386,7 @@ namespace Client.Presentation
             }
             catch
             {
-                //MessageBox.Show("Greska kod pokretanja triggera");
+                MessageBox.Show("Greska kod pokretanja triggera");
             }
         }
 
@@ -392,6 +397,18 @@ namespace Client.Presentation
             await StartTriggersAsync();
             triggerTimer.Start();
             triggersStarted = true;
+        }
+
+        private void SetAccessToken(string? token)
+        {
+            accessToken = string.IsNullOrWhiteSpace(token) ? null : token;
+            if (accessToken is null)
+            {
+                http.DefaultRequestHeaders.Authorization = null;
+                return;
+            }
+
+            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         }
     }
 }

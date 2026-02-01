@@ -29,5 +29,8 @@ namespace Client.Data.Entities
         public string Status { get; set; } = null!;
         [Column("BrojOsoba")]
         public int BrojOsoba { get; set; }
+
+        [ForeignKey("ProstorId")]
+        public virtual Prostori Prostor { get; set; } = null!;
     }
 }

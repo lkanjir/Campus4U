@@ -58,8 +58,6 @@ namespace Client.Presentation.Views.Spaces
 
         private void BtnBack_Click(object sender, RoutedEventArgs e)
         {
-            CategorySelectionView categorySelectionView = new CategorySelectionView(this.KorisnikID);
-            categorySelectionView.Show();
             this.Close();
         }
 

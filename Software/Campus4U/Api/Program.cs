@@ -14,6 +14,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddEmail(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddDatabase(builder.Configuration);
+builder.Services.AddAuth0(builder.Configuration);
+builder.Services.AddStorage(builder.Configuration);
 
 var app = builder.Build();
 
@@ -23,7 +25,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<ValidationMiddleware>();
 app.MapControllers();

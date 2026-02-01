@@ -1,11 +1,18 @@
-﻿services:
+﻿volumes:
+  images-data:
+  caddy_data:
+  caddy_config:
+
+services:
   api:
+    user: "0"
     image: api
     build:
       context: .
       dockerfile: Api/Dockerfile
-    ports:
-      - "8080:8080"
+    restart: unless-stopped
+    expose:
+      - "8080"
     environment:
       Smtp__Host: smtp.gmail.com
       Smtp__Port: 587
@@ -14,3 +21,28 @@
       Smtp__FromEmail: ${SMTP_FROM_EMAIL}
       Smtp__FromName: ${SMTP_FROM_NAME}
       ConnectionStrings__Campus4U: ${CONNECTION_STRING}
+      Storage__RootPath: /data/images
+      Storage__MaxBytes: 10485760
+      Storage__AllowedTypes__0: image/jpeg
+      Storage__AllowedTypes__1: image/png
+      Storage__AllowedTypes__2: image/webp
+    volumes:
+      - images-data:/data/images
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        
+  caddy: 
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api

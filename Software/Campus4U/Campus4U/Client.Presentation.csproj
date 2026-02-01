@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\Profile\calendar-icon.png" />
     <None Remove="Images\Spaces\teretana1.jpg" />
     <None Remove="Images\Spaces\teretanaLogo.jpg" />
     <None Remove="Images\Spaces\ucionica1.jpg" />
@@ -27,6 +28,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.1" />
+    <PackageReference Include="QuestPDF" Version="2025.12.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,6 +44,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\Profile\calendar-icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\Spaces\teretana1.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

@@ -25,7 +25,23 @@ public partial class Korisnici
 
     public string? KorisnickoIme { get; set; }
 
+    public string? SlikaPutanja { get; set; }
+
+    public virtual ICollection<Komentari> Komentari { get; set; } = new List<Komentari>();
+
+    public virtual ICollection<KomentariDogadaja> KomentariDogadaja { get; set; } = new List<KomentariDogadaja>();
+
     public virtual ICollection<Kvarovi> Kvarovi { get; set; } = new List<Kvarovi>();
 
+    public virtual ICollection<Objave> Objave { get; set; } = new List<Objave>();
+
     public virtual ICollection<Rezervacije> Rezervacije { get; set; } = new List<Rezervacije>();
+
+    public virtual Uloge Uloga { get; set; } = null!;
+
+    public virtual ICollection<Dogadaji> Dogadaj { get; set; } = new List<Dogadaji>();
+
+    public virtual ICollection<Objave> Objava { get; set; } = new List<Objave>();
+
+    public virtual ICollection<Prostori> Prostor { get; set; } = new List<Prostori>();
 }

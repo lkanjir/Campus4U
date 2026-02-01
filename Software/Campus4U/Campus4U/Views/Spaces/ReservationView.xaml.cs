@@ -112,7 +112,8 @@ namespace Client.Presentation.Views.Spaces
                     pocetak,
                     kraj,
                     "Aktivno",
-                    brojOsoba
+                    brojOsoba,
+                    DateTime.Now
                 );
 
                 await reservationRepository.SpremiRezervaciju(novaRezervacija);

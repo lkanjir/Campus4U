@@ -59,5 +59,60 @@ namespace Client.Data.Spaces
 
             return zauzeto;
         }
+
+        public async Task<List<Rezervacija>> DohvatiRezervacijeKorisnika(int korisnikId)
+        {
+            await using var db = new Campus4UContext();
+            var rezervacijeEntities = await db.Rezervacije
+                .Include(r => r.Prostor)
+                .Where(r => r.KorisnikId == korisnikId)
+                .ToListAsync();
+
+            var sada = DateTime.Now;
+
+            var rezervacije = rezervacijeEntities.Select(r =>
+            {
+                var status = r.Status;
+
+                if (status != "Otkazano")
+                {
+                    status = (r.VrijemeDo < sada) ? "Prošlo" : "Aktivno";
+                }
+
+                return new Rezervacija(
+                    r.Id,
+                    new Space(
+                        r.Prostor.Id,
+                        r.Prostor.Naziv,
+                        r.Prostor.Kapacitet,
+                        r.Prostor.Opremljenost,
+                        r.Prostor.Opis,
+                        (Dom)r.Prostor.DomId,
+                        (TipProstora)r.Prostor.TipProstorijeId,
+                        r.Prostor.SlikaPutanja
+                    ),
+                    r.KorisnikId,
+                    r.VrijemeOd,
+                    r.VrijemeDo,
+                    status,
+                    r.BrojOsoba,
+                    r.DatumKreiranja
+                );
+            }).ToList();
+
+            return rezervacije;
+        }
+
+        public async Task OtkaziRezervaciju(int rezervacijaId)
+        {
+            await using var db = new Campus4UContext();
+            var rezervacija = await db.Rezervacije
+                .FirstOrDefaultAsync(r => r.Id == rezervacijaId);
+            if (rezervacija != null)
+            {
+                rezervacija.Status = "Otkazano";
+                await db.SaveChangesAsync();
+            }
+        }
     }
 }

@@ -21,7 +21,13 @@ public partial class Prostori
 
     public string? SlikaPutanja { get; set; }
 
+    public virtual Domovi Dom { get; set; } = null!;
+
     public virtual ICollection<Kvarovi> Kvarovi { get; set; } = new List<Kvarovi>();
 
     public virtual ICollection<Rezervacije> Rezervacije { get; set; } = new List<Rezervacije>();
+
+    public virtual TipoviProstora TipProstorije { get; set; } = null!;
+
+    public virtual ICollection<Korisnici> Korisnik { get; set; } = new List<Korisnici>();
 }

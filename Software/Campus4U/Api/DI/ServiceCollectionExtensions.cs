@@ -1,11 +1,22 @@
-﻿using Api.Middleware;
+﻿using Api.Configuration;
+using Api.Middleware;
 using Api.Workers;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.WebSockets;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Server.Application.Email;
+using Server.Application.Repositories;
+using Server.Application.Storage;
 using Server.Data;
 using Server.Data.Context;
 using Server.Data.Email;
+using Server.Data.RepoImplementations;
+using Server.Data.Storage;
 
 namespace Api.DI;
 
@@ -37,6 +48,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEmailSender, EmailSender>();
         services.AddSingleton<ITriggerControl, TriggerControl>();
         services.AddHostedService<OutboxWorker>();
+        services.AddScoped<IImageService, ImageService>();
+        services.AddScoped<IEventsRepository, EventsRepository>();
+        services.AddScoped<IFaultsRepository, FaultsRepository>();
+        services.AddScoped<IUsersRepository, UsersRepository>();
 
         return services;
     }
@@ -50,6 +65,63 @@ public static class ServiceCollectionExtensions
 
         services.AddDbContext<Campus4UContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("Campus4U")));
+
+        return services;
+    }
+
+    public static IServiceCollection AddAuth0(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<Auth0Options>().Bind(configuration.GetSection("Auth0"))
+            .Validate(o => !string.IsNullOrWhiteSpace(o.Domain), "AUTH: Nedostaje Domain u appsettings.json")
+            .Validate(o => !string.IsNullOrWhiteSpace(o.Audience), "AUTH: Nedostaije Audience u appsettings.json")
+            .ValidateOnStart();
+
+        var auth0 = configuration.GetSection("Auth0").Get<Auth0Options>()!;
+        var audience = auth0.Audience!;
+        var domain = auth0.Domain!;
+        if (!domain.EndsWith("/")) domain += "/";
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+        {
+            options.Authority = domain;
+            options.Audience = auth0.Audience!;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = domain,
+                ValidateAudience = true,
+                ValidAudience = audience,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true
+            };
+        });
+
+        services.AddAuthorization(options =>
+        {
+            options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+        });
+
+        return services;
+    }
+
+    public static IServiceCollection AddStorage(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<StorageOptions>().Bind(configuration.GetSection("Storage"))
+            .Validate(o => !string.IsNullOrWhiteSpace(o.RootPath),
+                "Storage: RootPath mora biti definiran u appsettings.json.")
+            .Validate(o => o.MaxBytes > 0, "Storage: MaxBytes mora biti > 0 u appsettings.json.")
+            .Validate(o => o.AllowedTypes.Length > 0,
+                "Storage: AllowedTypes mora imati barem 1 tip u  appsettings.json.")
+            .ValidateOnStart();
+
+        services.AddSingleton(sp => sp.GetRequiredService<IOptions<StorageOptions>>().Value);
+        services.AddSingleton<IFileStorage, LocalFileStorage>();
+
+        services.Configure<FormOptions>(options =>
+        {
+            var maxBytes = configuration.GetSection("Storage").GetValue<long>("MaxBytes");
+            if (maxBytes > 0) options.MultipartBodyLengthLimit = maxBytes;
+        });
 
         return services;
     }
