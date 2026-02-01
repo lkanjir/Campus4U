@@ -49,6 +49,7 @@ namespace Client.Presentation.Views.UserProfile
             DataContext = this;
             _korisnikSub = korisnikSub;
             Loaded += UserProfileView_Loaded;
+            Activated += UserProfileView_Activated;
             userProfileService = new UserProfileService(new UserProfileProfileRepository());
             spacesFavoritesService = new SpacesFavoritesService(new SpacesFavoritesRepository());
 
@@ -90,6 +91,12 @@ namespace Client.Presentation.Views.UserProfile
             }
 
             await UcitajPodatkeProfilaAsync(_korisnikSub);
+        }
+
+        private async void UserProfileView_Activated(object? sender, EventArgs e)
+        {
+            if (_profil is null) return;
+            await DohvatiFavoriteProstorijaAsync(_profil.Id);
         }
 
         private async Task UcitajPodatkeProfilaAsync(string korisnikSub)
@@ -208,7 +215,7 @@ namespace Client.Presentation.Views.UserProfile
             }
         }
 
-        private void SpaceCard_ReserveRequested(object sender, SpaceCardReserveEventArgs e)
+        private async void SpaceCard_ReserveRequested(object sender, SpaceCardReserveEventArgs e)
         {
             if (e.Prostor == null || e.KorisnikId is null || e.KorisnikId <= 0) return;
             var pogled = new ReservationView(e.Prostor, e.KorisnikId.Value)
@@ -216,6 +223,10 @@ namespace Client.Presentation.Views.UserProfile
                 Owner = this
             };
             pogled.ShowDialog();
+            if (_profil is not null)
+            {
+                await DohvatiFavoriteProstorijaAsync(_profil.Id);
+            }
         }
     }
 }

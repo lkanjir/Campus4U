@@ -63,7 +63,7 @@ namespace Client.Presentation.Views.Spaces
             this.Close();
         }
 
-        private void BtnRezerviraj_Click(object sender, RoutedEventArgs e)
+        private async void BtnRezerviraj_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Button gumb)
             {
@@ -80,6 +80,7 @@ namespace Client.Presentation.Views.Spaces
             };
 
             pogled.ShowDialog();
+            await OsvjeziFavoriteIkoneAsync();
         }
         //Nikola Kihas
         private sealed class SpaceCardItem : INotifyPropertyChanged
@@ -133,6 +134,20 @@ namespace Client.Presentation.Views.Spaces
 
             var isFavorite = await _favoritesService.ToggleFavoritaProstora(KorisnikID, item.Space.ProstorId);
             item.SetFavorite(isFavorite);
+        }
+
+        private async Task OsvjeziFavoriteIkoneAsync()
+        {
+            var favorites = await _favoritesService.DohvatiFavoriteKorisnikaAsync(KorisnikID);
+            var favoriteIds = favorites.Select(f => f.ProstorId).ToHashSet();
+
+            if (GridProstori.ItemsSource is IEnumerable<SpaceCardItem> items)
+            {
+                foreach (var item in items)
+                {
+                    item.SetFavorite(favoriteIds.Contains(item.Space.ProstorId));
+                }
+            }
         }
     }
 }
