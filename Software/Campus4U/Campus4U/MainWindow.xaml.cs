@@ -1,4 +1,5 @@
 using Client.Application.Auth;
+using Client.Application.Images;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Windows;
@@ -6,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using Client.Application.Users;
 using Client.Data.Auth;
+using Client.Data.Images;
 using Client.Data.Users;
 using Client.Domain.Auth;
 using Client.Domain.Users;
@@ -15,6 +17,9 @@ using Client.Presentation.Views.Posts;
 using Client.Presentation.Views.UserProfile;
 using Duende.IdentityModel.OidcClient.Browser;
 using Microsoft.Extensions.Configuration;
+using System.IO;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Client.Presentation
 {
@@ -31,6 +36,9 @@ namespace Client.Presentation
 
         private IAuthService authService;
         private UserProfileService userProfileService;
+
+        private readonly IImageService _imageService;
+        private static readonly ImageSource DefaultProfileImage = new BitmapImage(new Uri("pack://application:,,,/Images/Profile/default-profile.png", UriKind.Absolute));
 
         private readonly StudentView studentView = new();
         private readonly StaffView staffView = new();
@@ -74,6 +82,8 @@ namespace Client.Presentation
             userProfileService = new UserProfileService(userProfileRepository);
             onboardingView.Submitted += OnOnboardingSubmitted;
 
+            _imageService = new ImageService(new ImageApiClient(apiBaseUrl, tokenStore), new ImageCache(), TimeSpan.FromMinutes(20));
+
             triggerTimer.Tick += TriggerTimerOnTick;
 
             SetStatus(string.Empty);
@@ -107,9 +117,8 @@ namespace Client.Presentation
             onboardingView.SetStatus(string.Empty);
             try
             {
-                // "" => brojTelefona, slikaProfila, korIme nisu obavezni za onboarding
                 var result = await userProfileService.SaveAsync(currentSub, currentEmail, e.Ime, e.Prezime, e.BrojSobe,
-                    "", "", "",
+                    e.BrojTelefona, null, e.KorisnickoIme ?? "",
                     currentRole);
 
                 if (!result.isSuccess)
@@ -117,6 +126,15 @@ namespace Client.Presentation
                     requiresOnboarding = true;
                     onboardingView.SetStatus(result.Error ?? "Greška kod spremanja profila");
                     return;
+                }
+
+                if(!string.IsNullOrWhiteSpace(e.ProfileImagePath))
+                {
+                    var savedProfile = await userProfileService.GetBySubAsync(currentSub);
+                    if(savedProfile?.Id > 0)
+                    {
+                        await UploadOnboardingProfileImageAsync(savedProfile.Id, e.ProfileImagePath);
+                    }
                 }
 
                 requiresOnboarding = false;
@@ -130,6 +148,40 @@ namespace Client.Presentation
             {
                 SetBusy(false);
             }
+        }
+
+        private async Task UploadOnboardingProfileImageAsync(int id, string profileImagePath)
+        {
+            var fileInfo = new FileInfo(profileImagePath);
+            const long maxBytes = 10 * 1024 * 1024; // 10 MB
+            if (fileInfo.Length is <= 0 or > maxBytes) return;
+
+            var contentType = GetImageContentType(fileInfo.Extension);
+            if(contentType is null) return;
+
+            var bytes = await File.ReadAllBytesAsync(profileImagePath);
+            await using var stream = new MemoryStream(bytes, writable: false);
+            var upload = new ImageUpload(stream, contentType, bytes.LongLength, fileInfo.Name);
+
+            await _imageService.UploadProfileImageAsync(id, upload);
+            _imageService.InvalidateProfile(id);
+            await LoadHeaderProfileImageAsync(id);
+        }
+
+        private static string? GetImageContentType(string extension)
+        {
+            switch (extension.Trim().ToLowerInvariant())
+            {
+                case ".jpg":
+                case ".jpeg":
+                    return "image/jpeg";
+                case ".png":
+                    return "image/png";
+                case ".webp":
+                    return "image/webp";
+                default:
+                    return null;
+            }   
         }
 
         private void ApplyUiState()
@@ -308,13 +360,14 @@ namespace Client.Presentation
             var profile = await userProfileService.GetBySubAsync(currentSub);
             currentId = profile?.Id ?? 0;
             SetHeaderUserInfo(profile, currentEmail);
+            await LoadHeaderProfileImageAsync(currentId);
 
             staffView.KorisnikId = currentId;
             studentView.KorisnikId = currentId;
             if (profile is null || !profile.IsOnboardingComplete)
             {
                 requiresOnboarding = true;
-                onboardingView.SetInitialValues(profile?.Ime, profile?.Prezime, currentEmail, profile?.BrojSobe);
+                onboardingView.SetInitialValues(profile?.Ime, profile?.Prezime, currentEmail, profile?.BrojSobe, profile?.KorisnickoIme, profile?.BrojTelefona);
             }
         }
 
@@ -326,7 +379,7 @@ namespace Client.Presentation
 
             if (string.IsNullOrWhiteSpace(fullName))
             {
-                fullName = "Nepoznati korisnik";
+                fullName = "Dobrodosli!";
             }
 
             UserFirstLastName.Text = fullName;
@@ -356,6 +409,11 @@ namespace Client.Presentation
             var profileView = new UserProfileView(currentSub)
             {
                 Owner = this
+            };
+            profileView.Closed += async (_, __) =>
+            {
+                _imageService.InvalidateProfile(currentId);
+                await LoadHeaderProfileImageAsync(currentId);
             };
             profileView.Show();
         }
@@ -405,6 +463,40 @@ namespace Client.Presentation
             http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         }
 
+        private async Task LoadHeaderProfileImageAsync(int userId)
+        {
+            if(userId <= 0)
+            {
+                ProfileImgBrush.ImageSource = DefaultProfileImage;
+                return;
+            }
+            try
+            {
+                var payload = await _imageService.GetProfileImageAsync(userId);
+                if(payload is null)
+                {
+                    ProfileImgBrush.ImageSource = DefaultProfileImage;
+                    return;
+                }
+                ProfileImgBrush.ImageSource = CreateImageSource(payload.Bytes);
+            }
+            catch
+            {
+                ProfileImgBrush.ImageSource = DefaultProfileImage;
+            }
+        }
+
+        private static ImageSource CreateImageSource(byte[] bytes)
+        {
+            using var stream = new MemoryStream(bytes);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.StreamSource = stream;
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return bitmap;
+         }
         private void BtnPosts_OnClick(object sender, RoutedEventArgs e)
         {
             if (!isAuthenticated)

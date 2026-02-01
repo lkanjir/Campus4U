@@ -42,6 +42,7 @@ namespace Client.Presentation.Views.UserProfile
         private UserProfileService userProfileService;
         private readonly ISpacesFavoritesService spacesFavoritesService;
         private readonly IPasswordResetService passwordResetService;
+        private readonly IAccountDeletionService accountDeletionService;
         public ObservableCollection<FavoriteEventItem> FavoriteEvents { get; } = new();
         public ObservableCollection<FavoriteSpaceItem> FavoriteSpaces { get; } = new();
 
@@ -72,6 +73,12 @@ namespace Client.Presentation.Views.UserProfile
                 TimeSpan.FromMinutes(20));
 
             passwordResetService = new Auth0PasswordResetService(options);
+
+            var managementOptions = config.GetSection("Auth0Management").Get<Auth0ManagementOptions>();
+            if (managementOptions is null)
+                throw new InvalidOperationException("Auth0Management konfiguracija nedostaje.");
+
+            accountDeletionService = new Auth0AccountDeletionService(managementOptions);
             FavoriteEvents.Add(new FavoriteEventItem
             {
                 Title = "Noć muzeja",
@@ -303,6 +310,39 @@ namespace Client.Presentation.Views.UserProfile
                 {
                     button.IsEnabled = true;
                 }
+            }
+        }
+
+        private async void BtnIzbrisiProfil_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(_korisnikSub))
+            {
+                MessageBox.Show("Korisnički ID nije dostupan.");
+                return;
+            }
+
+            var potvrda = MessageBox.Show(
+                "Jesi li siguran da želiš izbrisati profil? Ova radnja je trajna.",
+                "Potvrda brisanja",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (potvrda != MessageBoxResult.Yes) return;
+
+            var result = await accountDeletionService.DeleteAccountAsync(_korisnikSub);
+            if (result.IsSuccess)
+            {
+                if (_profil is not null)
+                {
+                    await userProfileService.ObrisiKorisnikaIzBazeAsync(_profil.Id);
+                }
+                new SecureTokenStore().Clear();
+                MessageBox.Show("Profil je obrisan.");
+                System.Windows.Application.Current.Shutdown();
+            }
+            else
+            {
+                MessageBox.Show(result.Error ?? "Brisanje nije uspjelo.");
             }
         }
 

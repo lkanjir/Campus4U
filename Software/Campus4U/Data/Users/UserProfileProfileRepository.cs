@@ -1,10 +1,11 @@
-using System.Diagnostics;
 using Client.Application.Users;
 using Client.Data.Context;
 using Client.Data.Entities;
 using Client.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using System.Diagnostics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Client.Data.Users;
 
@@ -97,10 +98,20 @@ public class UserProfileProfileRepository : IUserProfileRepository
         return changed > 0;
     }
     /// Nikola Kihas
-    public Task<bool> AzurirajProfilnuSlikuAsync(int id, string urlSlike)
+    public async Task<bool> ObrisiKorisnikaIzBazeAsync(int id)
     {
-        // Implementacija æe se napraviti kada server bude spreman
-        throw new NotImplementedException();
+        await using var db = new Campus4UContext();
+        var entity = await(from u in db.Korisnici
+                           where u.Id == id
+                           select u).FirstOrDefaultAsync();
+        if (entity is null)
+        {
+            return false;
+        }
+
+        db.Korisnici.Remove(entity);
+        db.SaveChanges();
+        return true;
     }
 
 }

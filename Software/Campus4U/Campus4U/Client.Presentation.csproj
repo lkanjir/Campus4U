@@ -95,6 +95,9 @@
 	<Resource Include="Images\Profile\favorite.png">
 		<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	</Resource>
+	<Resource Include="Images\upload-image.png">
+		<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	</Resource>
   </ItemGroup>
 
 </Project>
