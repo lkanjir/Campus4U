@@ -11,14 +11,10 @@ using Client.Domain.Auth;
 using Client.Domain.Users;
 using Client.Presentation.Views;
 using Client.Presentation.Views.Fault;
-using Client.Presentation.Views.Spaces;
+using Client.Presentation.Views.Posts;
 using Client.Presentation.Views.UserProfile;
 using Duende.IdentityModel.OidcClient.Browser;
 using Microsoft.Extensions.Configuration;
-using System.Net.Http;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace Client.Presentation
 {
@@ -48,8 +44,6 @@ namespace Client.Presentation
         private readonly HttpClient http;
         private string accessToken;
         private bool triggersStarted;
-
-        private bool categoryWindowShown;
 
         public MainWindow()
         {
@@ -409,6 +403,19 @@ namespace Client.Presentation
             }
 
             http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        }
+
+        private void BtnPosts_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!isAuthenticated)
+            {
+                MessageBox.Show("Morate biti prijavljeni");
+                return;
+            }
+
+            var isStaff = string.Equals(currentRole, "osoblje", StringComparison.OrdinalIgnoreCase);
+            var window = new PostsWindow(currentId, isStaff) { Owner = this };
+            window.Show();
         }
     }
 }

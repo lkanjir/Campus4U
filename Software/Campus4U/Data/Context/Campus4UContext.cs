@@ -36,8 +36,9 @@ public partial class Campus4UContext : DbContext
     public virtual DbSet<Rezervacije> Rezervacije { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=31.147.206.65;Database=RPP2025_13_DB;User Id=RPP2025_13_User;Password=\"Qic6;,R&oi{drR?r\";TrustServerCertificate=True;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https: //go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer(
+            "Server=31.147.206.65;Database=RPP2025_13_DB;User Id=RPP2025_13_User;Password=\"Qic6;,R&oi{drR?r\";TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -104,6 +105,13 @@ public partial class Campus4UContext : DbContext
         modelBuilder.Entity<Dogadaji>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__dogadaji__3213E83FCAC6C6DB");
+        });
+
+        modelBuilder.Entity<Dogadaji>(entity =>
+        {
+            entity.HasOne(d => d.Autor).WithMany(p => p.Dogadaji)
+                .HasForeignKey(d => d.AutorId)
+                .HasConstraintName("FK_dogadaji_korisnici_autor");
         });
 
         modelBuilder.Entity<KomentariDogadaja>(entity =>

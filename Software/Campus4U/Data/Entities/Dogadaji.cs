@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Client.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Client.Data.Context.Entities;
@@ -35,6 +36,12 @@ public partial class Dogadaji
     [Column("slika")]
     [MaxLength(2000)]
     public byte[] Slika { get; set; }
+    
+    [Column("autor_id")]
+    public int AutorId { get; set; }
+    
+    [ForeignKey("AutorId")]
+    public virtual Korisnici Autor { get; set; }
 
     [InverseProperty("Dogadaj")]
     public virtual ICollection<KomentariDogadaja> KomentariDogadaja { get; set; } = new List<KomentariDogadaja>();
