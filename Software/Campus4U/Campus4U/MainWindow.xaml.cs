@@ -375,7 +375,13 @@ namespace Client.Presentation
 
         private void BtnFault_OnClick(object sender, RoutedEventArgs e)
         {
-            // Privremeno za testiranje - prikazuje UpravljanjeKvarovimaUserControl
+            var prijavaKvara = new PrijavaKvaraUserControl();
+            prijavaKvara.PostaviKorisnika(currentId);
+            RoleContent.Content = prijavaKvara;
+        }
+
+        private void BtnUpravljanjeKvarovima_OnClick(object sender, RoutedEventArgs e)
+        {
             RoleContent.Content = new UpravljanjeKvarovimaUserControl();
         }
 

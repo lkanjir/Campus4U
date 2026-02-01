@@ -4,6 +4,9 @@ using Client.Data.Fault;
 using Client.Data.Spaces;
 using Client.Domain.Fault;
 using Client.Domain.Spaces;
+using Client.Presentation.Services;
+using Microsoft.Win32;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -100,10 +103,48 @@ namespace Client.Presentation.Views.Fault
             await UcitajPodatke();
         }
 
-        private void BtnExport_Click(object sender, RoutedEventArgs e)
+        private async void BtnExport_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: statistika
-            MessageBox.Show("Export statistike - u razvoju", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            try
+            {
+                var stats = await _faultService.DohvatiStatistiku();
+
+                var saveDialog = new SaveFileDialog
+                {
+                    Filter = "PDF datoteke (*.pdf)|*.pdf",
+                    DefaultExt = ".pdf",
+                    FileName = $"Statistika_kvarova_{DateTime.Now:yyyyMMdd_HHmmss}.pdf"
+                };
+
+                if (saveDialog.ShowDialog() == true)
+                {
+                    PrikaziStatus("Generiranje PDF-a...");
+                    var logoBytes = FaultStatisticsPdfExporter.LoadLogoFromResources();
+                    await Task.Run(() => FaultStatisticsPdfExporter.Export(stats, saveDialog.FileName, logoBytes));
+                    SakrijStatus();
+
+                    var result = MessageBox.Show(
+                        "PDF uspješno generiran!\n\nŽelite li otvoriti datoteku?",
+                        "Uspjeh",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Information);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = saveDialog.FileName,
+                            UseShellExecute = true
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greška kod exporta: {ex.Message}",
+                    "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
+                SakrijStatus();
+            }
         }
 
         private void Filter_Changed(object sender, SelectionChangedEventArgs e)
@@ -190,10 +231,29 @@ namespace Client.Presentation.Views.Fault
             }
         }
 
-        private void OtvoriDetaljeKvara(int kvarId)
+        private async void OtvoriDetaljeKvara(int kvarId)
         {
-            // TODO: DetaljiKvaraWindow moram jos
-            MessageBox.Show($"Detalji kvara #{kvarId} - u razvoju", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            try
+            {
+                var kvar = await _faultService.DohvatiKvarPoId(kvarId);
+                if (kvar == null)
+                {
+                    MessageBox.Show("Kvar nije pronađen.", "Greška", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                var detaljiWindow = new DetaljiKvaraWindow(kvar, _faultService);
+                detaljiWindow.Owner = Window.GetWindow(this);
+                detaljiWindow.StatusPromijenjen += async (s, args) =>
+                {
+                    await PrimjeniFiltere();
+                };
+                detaljiWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greška kod otvaranja detalja: {ex.Message}", "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

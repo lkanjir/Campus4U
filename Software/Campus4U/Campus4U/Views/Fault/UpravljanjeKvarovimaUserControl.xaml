@@ -148,13 +148,12 @@
                           GridLinesVisibility="None"
                           BorderThickness="0"
                           Background="Transparent"
-                          RowBackground="White"
-                          AlternatingRowBackground="#FAFAFA"
                           CanUserAddRows="False"
                           CanUserDeleteRows="False"
                           CanUserReorderColumns="False"
                           CanUserResizeRows="False"
                           SelectionUnit="FullRow"
+                          AlternationCount="2"
                           MouseDoubleClick="DgKvarovi_MouseDoubleClick">
 
                     <DataGrid.ColumnHeaderStyle>
@@ -168,15 +167,29 @@
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
 
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="White"/>
+                            <Style.Triggers>
+                                <Trigger Property="AlternationIndex" Value="1">
+                                    <Setter Property="Background" Value="#FAFAFA"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#E8F4FD"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+
                     <DataGrid.CellStyle>
                         <Style TargetType="DataGridCell">
-                            <Setter Property="Padding" Value="12,8"/>
                             <Setter Property="BorderThickness" Value="0"/>
                             <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Focusable" Value="False"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="DataGridCell">
-                                        <Border Padding="{TemplateBinding Padding}"
+                                        <Border Padding="12,8"
                                                 Background="{TemplateBinding Background}">
                                             <ContentPresenter VerticalAlignment="Center"/>
                                         </Border>
@@ -198,11 +211,11 @@
                         <DataGridTextColumn Header="Datum prijave" Binding="{Binding DatumPrijave, StringFormat=d.M.yyyy.}" Width="120"/>
 
                         
-                        <DataGridTemplateColumn Header="Status" Width="120">
+                        <DataGridTemplateColumn Header="Status" Width="100">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Border x:Name="StatusBorder" CornerRadius="4" Padding="8,4" HorizontalAlignment="Left">
-                                        <TextBlock x:Name="StatusText" Text="{Binding Status}" FontSize="12" FontWeight="Medium"/>
+                                    <Border x:Name="StatusBorder" CornerRadius="4" Padding="8,4" HorizontalAlignment="Left" MinWidth="75">
+                                        <TextBlock x:Name="StatusText" Text="{Binding Status}" FontSize="12" FontWeight="Medium" TextAlignment="Center"/>
                                     </Border>
                                     <DataTemplate.Triggers>
                                         <DataTrigger Binding="{Binding Status}" Value="Aktivan">
@@ -223,7 +236,7 @@
                         </DataGridTemplateColumn>
 
                        
-                        <DataGridTemplateColumn Header="Akcija" Width="80">
+                        <DataGridTemplateColumn Header="Akcija" Width="60">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="•••"
@@ -232,6 +245,8 @@
                                             FontWeight="Bold"
                                             FontSize="14"
                                             Cursor="Hand"
+                                            Padding="0"
+                                            HorizontalAlignment="Center"
                                             Click="BtnAkcija_Click"
                                             Tag="{Binding KvarId}">
                                         <Button.ContextMenu>
