@@ -31,6 +31,8 @@ public partial class Korisnici
     public virtual ICollection<DogadajiFavoriti> DogadajiFavoriti { get; set; } = new List<DogadajiFavoriti>();
 
     public virtual ICollection<ProstoriFavoriti> ProstoriFavoriti { get; set; } = new List<ProstoriFavoriti>();
-    
+
     public virtual ICollection<Dogadaji> Dogadaji { get; set; } = new List<Dogadaji>();
+
+    public virtual ICollection<ObavijestiPostavke> ObavijestiPostavke { get; set; } = new List<ObavijestiPostavke>();
 }
