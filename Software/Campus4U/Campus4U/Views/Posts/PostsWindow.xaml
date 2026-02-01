@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:Client.Presentation.Views.Posts"
+        xmlns:eventfb="clr-namespace:Client.Presentation.Views.EventFeedBack"
         mc:Ignorable="d"
         Title="Oglasnik" Height="800" Width="1200"
         Background="{StaticResource BrushBackground}"
@@ -59,7 +60,8 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="2*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
@@ -71,7 +73,9 @@
                     <TextBlock x:Name="TxtBody" TextWrapping="Wrap"></TextBlock>
                 </ScrollViewer>
 
-                <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0 12 0 0">
+                <eventfb:EventFeedBackUserControl x:Name="EventFeedbackControl" Grid.Row="4" Margin="0,12,12,0" Visibility="Collapsed"/>
+                
+                <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0 12 0 0">
                     <Button x:Name="BtnToggleInterests" Width="140" Height="34" Style="{StaticResource PrimaryButton}"
                             Click="BtnToggleInterests_OnClick">
                         Zanima me

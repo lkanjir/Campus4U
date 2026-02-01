@@ -152,5 +152,20 @@ namespace Client.Presentation.Views.EventFeedBack
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public async Task LoadAsync(int dogadajId, int korisnikId)
+        {
+            DogadajId = dogadajId;
+            KorisnikId = korisnikId;
+            await PonovoUcitajKomentareAsync(DogadajId);
+        }
+
+        public void Clear()
+        {
+            Comments.Clear();
+            Poruka = string.Empty;
+            txtKomentar.Text = string.Empty;
+            cboOcjena.SelectedIndex = -1;
+        }
     }
 }

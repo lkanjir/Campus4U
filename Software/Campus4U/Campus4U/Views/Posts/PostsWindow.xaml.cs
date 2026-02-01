@@ -8,6 +8,7 @@ using Client.Domain.Posts;
 
 namespace Client.Presentation.Views.Posts;
 
+//Luka Kanjir
 public partial class PostsWindow : Window
 {
     private readonly int userId;
@@ -95,7 +96,6 @@ public partial class PostsWindow : Window
             if (currentPost is null)
             {
                 ClearDetails();
-                ClearDetails();
                 return;
             }
 
@@ -110,12 +110,28 @@ public partial class PostsWindow : Window
             TxtBody.Text = currentPost.Sadrzaj;
 
             await UpdateInterestsStateAsync();
+            await UpdateCommentsAsync();
             UpdateActionButtons();
         }
         catch (Exception ex)
         {
             MessageBox.Show($"Greska kod učitavanja objave");
         }
+    }
+
+    private async Task UpdateCommentsAsync()
+    {
+        if (currentPost is null || currentPost.DatumVrijemeDogadaja == default)
+        {
+            EventFeedbackControl.Clear();
+            EventFeedbackControl.IsEnabled = false;
+            EventFeedbackControl.Visibility = Visibility.Collapsed;
+            return;
+        }
+
+        EventFeedbackControl.Visibility = Visibility.Visible;
+        EventFeedbackControl.IsEnabled = true;
+        await EventFeedbackControl.LoadAsync(currentPost.Id, userId);
     }
 
     private async Task UpdateInterestsStateAsync()
@@ -149,6 +165,9 @@ public partial class PostsWindow : Window
         TxtBody.Text = string.Empty;
         BtnToggleInterests.IsEnabled = false;
         TxtInterestStatus.Text = string.Empty;
+        EventFeedbackControl.Clear();
+        EventFeedbackControl.IsEnabled = false;
+        EventFeedbackControl.Visibility = Visibility.Collapsed;
         UpdateActionButtons();
     }
 
