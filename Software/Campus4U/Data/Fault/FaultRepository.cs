@@ -49,6 +49,7 @@ namespace Client.Data.Fault
                 .Include(k => k.Prostor)
                 .Include(k => k.VrstaKvara)
                 .Include(k => k.Korisnik)
+                .OrderByDescending(k => k.DatumPrijave)
                 .Select(k => new FaultReport(
                     k.KvarId,
                     k.KorisnikId,
@@ -62,7 +63,6 @@ namespace Client.Data.Fault
                     k.VrstaKvara.Naziv,
                     (k.Korisnik.Ime + " " + k.Korisnik.Prezime).Trim()
                 ))
-                .OrderByDescending(k => k.DatumPrijave)
                 .ToListAsync();
         }
 
@@ -119,6 +119,7 @@ namespace Client.Data.Fault
                 upit = upit.Where(k => k.DatumPrijave <= doDatuma.Value);
 
             return await upit
+                .OrderByDescending(k => k.DatumPrijave)
                 .Select(k => new FaultReport(
                     k.KvarId,
                     k.KorisnikId,
@@ -132,7 +133,6 @@ namespace Client.Data.Fault
                     k.VrstaKvara.Naziv,
                     (k.Korisnik.Ime + " " + k.Korisnik.Prezime).Trim()
                 ))
-                .OrderByDescending(k => k.DatumPrijave)
                 .ToListAsync();
         }
 

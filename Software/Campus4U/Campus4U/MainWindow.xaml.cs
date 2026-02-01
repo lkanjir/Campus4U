@@ -373,6 +373,12 @@ namespace Client.Presentation
             profileView.Show();
         }
 
+        private void BtnFault_OnClick(object sender, RoutedEventArgs e)
+        {
+            // Privremeno za testiranje - prikazuje UpravljanjeKvarovimaUserControl
+            RoleContent.Content = new UpravljanjeKvarovimaUserControl();
+        }
+
         private async Task StartTriggersAsync()
         {
             try

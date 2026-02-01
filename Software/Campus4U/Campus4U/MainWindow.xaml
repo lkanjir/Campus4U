@@ -24,10 +24,11 @@
                 </Grid.ColumnDefinitions>
                 <Image Source="/Images/Logo/Full.png" Height="50" RenderOptions.BitmapScalingMode="HighQuality" VerticalAlignment="Center" HorizontalAlignment="Left"></Image>
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button  x:Name="BtnFault" 
-                        Style="{StaticResource SecondaryButton}" 
+                    <Button  x:Name="BtnFault"
+                        Style="{StaticResource SecondaryButton}"
                         IsEnabled="False"
-                        Width="140">
+                        Width="140"
+                        Click="BtnFault_OnClick">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="/Images/fault-icon.png" Height="24" Width="24" Margin="0,0,5,0" VerticalAlignment="Center" HorizontalAlignment="Left" RenderOptions.BitmapScalingMode="HighQuality"/>
                             <TextBlock x:Name="TxtFaults" VerticalAlignment="Center" HorizontalAlignment="Left">Prijavi kvar</TextBlock>
