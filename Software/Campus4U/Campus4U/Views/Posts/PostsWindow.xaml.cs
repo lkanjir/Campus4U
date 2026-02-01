@@ -129,7 +129,7 @@ public partial class PostsWindow
 
             ShowDetails();
             await UpdateInterestsStateAsync();
-            await UpdateEventImageAsync();
+            await UpdateEventImageAsync(selectedId);
             await UpdateCommentsAsync();
             UpdateActionButtons();
         }
@@ -139,20 +139,18 @@ public partial class PostsWindow
         }
     }
 
-    private async Task UpdateEventImageAsync()
+    private async Task UpdateEventImageAsync(int selectedId)
     {
-        if (_currentPost is null)
-        {
-            HideDetails();
-            return;
-        }
+        if (_currentPost is null) return;
 
         try
         {
             var payload = await imageService.GetEventImageAsync(_currentPost.Id);
+            if (_currentPost is null || _currentPost.Id != selectedId) return;
             if (payload is null)
             {
                 ImgEvent.Visibility = Visibility.Collapsed;
+                ImgEvent.Source = null;
                 return;
             }
 
@@ -162,6 +160,7 @@ public partial class PostsWindow
         catch
         {
             ImgEvent.Visibility = Visibility.Collapsed;
+            ImgEvent.Source = null;
         }
     }
 
@@ -183,11 +182,9 @@ public partial class PostsWindow
         {
             EventFeedbackControl.Clear();
             EventFeedbackControl.IsEnabled = false;
-            EventFeedbackControl.Visibility = Visibility.Collapsed;
             return;
         }
-
-        EventFeedbackControl.Visibility = Visibility.Visible;
+        
         EventFeedbackControl.IsEnabled = true;
         await EventFeedbackControl.LoadAsync(_currentPost.Id, _userId);
     }
@@ -223,6 +220,7 @@ public partial class PostsWindow
         TxtBody.Text = string.Empty;
         EventFeedbackControl.Clear();
         UpdateActionButtons();
+        ImgEvent.Source = null;
         HideDetails();
     }
 
@@ -319,5 +317,7 @@ public partial class PostsWindow
         SpMainContent.Visibility = Visibility.Collapsed;
         EventFeedbackControl.Visibility = Visibility.Collapsed;
         SpInterests.Visibility = Visibility.Collapsed;
+        ImgEvent.Visibility = Visibility.Collapsed;
+        ImgEvent.Source = null;
     }
 }

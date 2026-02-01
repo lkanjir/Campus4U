@@ -109,43 +109,20 @@ public partial class PostEditWindow
     {
         if (string.IsNullOrWhiteSpace(_selectedImagePath)) return;
 
-        try
+        const long maxBytes = 10 * 1024 * 1024;
+        var (result, error) = await ImageUploadFactory.TryCreateAsync(_selectedImagePath, maxBytes);
+        if (result is null)
         {
-            var fileInfo = new FileInfo(_selectedImagePath);
-            const long maxBytes = 10 * 1024 * 1024;
-            if (fileInfo.Length is <= 0 or > maxBytes)
-            {
-                MessageBox.Show("Slika je prevelika ili nema slike (max 10MB).");
-                return;
-            }
-
-            var contentType = GetContentType(fileInfo.Extension);
-            if (contentType is null)
-            {
-                MessageBox.Show("Nepodržan format slike.");
-                return;
-            }
-
-            var bytes = await File.ReadAllBytesAsync(_selectedImagePath);
-            await using var stream = new MemoryStream(bytes, writable: false);
-            var upload = new ImageUpload(stream, contentType, bytes.LongLength, fileInfo.Name);
-            await _imageService.UploadEventImageAsync(eventId, upload);
+            MessageBox.Show(error ?? "Greška pri obradi slike.");
+            return;
         }
-        catch
+  
+        await using (result.Upload.Content)
         {
-            MessageBox.Show("Greška pri uploadu slike.");
+            await _imageService.UploadEventImageAsync(eventId, result.Upload);
         }
     }
-
-    private static string? GetContentType(string extension) => extension.Trim().ToLowerInvariant() switch
-    {
-        ".jpg" => "image/jpeg",
-        ".jpeg" => "image/jpeg",
-        ".png" => "image/png",
-        ".webp" => "image/webp",
-        _ => null
-    };
-
+    
     private static bool TryParseTime(string? value, out TimeSpan time) =>
         TimeSpan.TryParseExact(value?.Trim(), ["h\\:mm", "hh\\:mm", "hh\\:m", "h\\:m"], CultureInfo.InvariantCulture,
             out time);
