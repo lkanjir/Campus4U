@@ -106,7 +106,8 @@
                                         BorderThickness="0"
                                         Foreground="White"
                                         Background="#7A0C19"
-                                        Click="BtnOtkaziRezervaciju_Click">
+                                        Click="BtnOtkaziRezervaciju_Click"
+                                        Tag="{Binding}">
                                     <Button.Style>
                                         <Style TargetType="Button">
                                             <Setter Property="Visibility" Value="Collapsed"/>

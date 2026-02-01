@@ -102,5 +102,17 @@ namespace Client.Data.Spaces
 
             return rezervacije;
         }
+
+        public async Task OtkaziRezervaciju(int rezervacijaId)
+        {
+            await using var db = new Campus4UContext();
+            var rezervacija = await db.Rezervacije
+                .FirstOrDefaultAsync(r => r.Id == rezervacijaId);
+            if (rezervacija != null)
+            {
+                rezervacija.Status = "Otkazano";
+                await db.SaveChangesAsync();
+            }
+        }
     }
 }

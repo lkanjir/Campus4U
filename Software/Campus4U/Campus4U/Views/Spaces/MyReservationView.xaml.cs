@@ -89,10 +89,21 @@ namespace Client.Presentation.Views.Spaces
                 .ToList();
         }
 
-        private void BtnOtkaziRezervaciju_Click(object sender, RoutedEventArgs e)
+        private async void BtnOtkaziRezervaciju_Click(object sender, RoutedEventArgs e)
         {
+            var odgovor = MessageBox.Show("Jeste li sigurni da želite otkazati ovu rezervaciju?", "Potvrda otkazivanja", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            
+            if (odgovor != MessageBoxResult.Yes)
+            {
+                return;
+            }
 
+            if (sender is Button button && button.DataContext is Rezervacija rezervacija)
+            {
+                await repo.OtkaziRezervaciju(rezervacija.ID);
+                sveRezervacije = await repo.DohvatiRezervacijeKorisnika(korisnikId);
+                FiltrirajRezervacije_Click(null, null);
+            }
         }
-
     }
 }
