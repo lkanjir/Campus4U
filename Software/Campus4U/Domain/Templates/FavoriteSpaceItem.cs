@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 /// Nikola Kihas
+using Client.Domain.Spaces;
+
 namespace Client.Domain.Templates
 {
     public class FavoriteSpaceItem
@@ -12,5 +14,7 @@ namespace Client.Domain.Templates
         public string Capacity { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string ImagePath { get; set; } = string.Empty;
+        public Space? Space { get; set; }
+        public int? KorisnikId { get; set; }
     }
 }

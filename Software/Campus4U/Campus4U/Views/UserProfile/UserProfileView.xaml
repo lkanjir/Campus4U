@@ -55,6 +55,16 @@
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
 
+                        <Button x:Name="BtnMojeRezervacije" Click="BtnMojeRezervacije_OnClick"
+                            Width="160" Height="36"
+                            Margin="0,18,18,0"
+                            Background="#fff" BorderBrush="#7A0C19" BorderThickness="2" 
+                            Grid.Column="0" Grid.Row="0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="/Images/Profile/calendar-icon.png" Width="18" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality" />
+                                <TextBlock Text="Moje Rezervacije" VerticalAlignment="Center" Foreground="#7A0C19" FontWeight="Medium"/>
+                            </StackPanel>
+                        </Button>
                         <Button x:Name="BtnUrediProfil" Click="BtnUrediProfil_OnClick"
                              Width="120" Height="36"
                              Margin="0 18 0 0"
@@ -134,11 +144,13 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <templates:SpaceCard Title="{Binding Title}"
-                      Capacity="{Binding Capacity}"
-                      Description="{Binding Description}"
-                      ImagePath="{Binding ImagePath}"
-                      Margin="0,0,15,15"/>
+                            <templates:SpaceCard
+                                Title="{Binding Title}"
+                                Capacity="{Binding Capacity}"
+                                Description="{Binding Description}"
+                                ImagePath="{Binding ImagePath}"
+                                ReserveRequested="SpaceCard_ReserveRequested"
+                                Margin="0,0,15,15"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

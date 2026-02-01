@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Client.Application.Favorites;
+using Client.Data.Favorites;
+using Client.Data.Spaces;
+using Client.Domain.Spaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,8 +16,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Client.Data.Spaces;
-using Client.Domain.Spaces;
 
 namespace Client.Presentation.Views.Spaces
 {
@@ -25,14 +27,17 @@ namespace Client.Presentation.Views.Spaces
     {
         public Space TrenutniProstor { get; set; }
         public readonly ReservationRepository reservationRepository = new ReservationRepository();
+        private readonly ISpacesFavoritesService _favoritesService;
         private int idKorisnika;
         public ReservationView(Space prostor, int idKorisnika)
         {
             InitializeComponent();
+            _favoritesService = new SpacesFavoritesService(new SpacesFavoritesRepository());
             PopuniVremena();
             TrenutniProstor = prostor;
             this.DataContext = TrenutniProstor;
             this.idKorisnika = idKorisnika;
+            Loaded += ReservationView_Loaded;
         }
 
         private void PopuniVremena()
@@ -107,7 +112,8 @@ namespace Client.Presentation.Views.Spaces
                     pocetak,
                     kraj,
                     "Aktivno",
-                    brojOsoba
+                    brojOsoba,
+                    DateTime.Now
                 );
 
                 await reservationRepository.SpremiRezervaciju(novaRezervacija);
@@ -130,6 +136,71 @@ namespace Client.Presentation.Views.Spaces
         {
             int trenutno = int.Parse(TxtBrojOsoba.Text);
             TxtBrojOsoba.Text = (trenutno + 1).ToString();
+        }
+
+        //Nikola Kihas
+        private async void BtnDodajUFavorite_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var dodano = await _favoritesService.DodajFavoritaProstorijeAsync(idKorisnika, TrenutniProstor.ProstorId);
+                PostaviVidljivostFavorita(true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Greška pri dodavanju u favorite", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async void BtnUkloniIzFavorita_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var uklonjeno = await _favoritesService.UkloniFavoritaProstorijeAsync(idKorisnika, TrenutniProstor.ProstorId);
+                PostaviVidljivostFavorita(false);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Greška pri uklanjanju iz favorita", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async void ReservationView_Loaded(object sender, RoutedEventArgs e)
+        {
+            await OsvjeziFavoriteGumbeAsync();
+        }
+
+        private async Task OsvjeziFavoriteGumbeAsync()
+        {
+            try
+            {
+                if (TrenutniProstor is null)
+                {
+                    PostaviVidljivostFavorita(false);
+                    return;
+                }
+
+                var favoriti = await _favoritesService.DohvatiFavoriteKorisnikaAsync(idKorisnika);
+                var jeFavorit = favoriti.Any(p => p.ProstorId == TrenutniProstor.ProstorId);
+                PostaviVidljivostFavorita(jeFavorit);
+            }
+            catch
+            {
+                PostaviVidljivostFavorita(false);
+            }
+        }
+
+        private void PostaviVidljivostFavorita(bool jeFavorit)
+        {
+            if (BtnDodajUFavorite is not null)
+            {
+                BtnDodajUFavorite.Visibility = jeFavorit ? Visibility.Collapsed : Visibility.Visible;
+            }
+
+            if (BtnUkloniIzFavorita is not null)
+            {
+                BtnUkloniIzFavorita.Visibility = jeFavorit ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
     }
 }

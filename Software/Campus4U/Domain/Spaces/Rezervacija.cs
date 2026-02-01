@@ -9,6 +9,7 @@ namespace Client.Domain.Spaces
         DateTime PocetnoVrijeme,
         DateTime KrajnjeVrijeme,
         string Status,
-        int BrojOsoba
+        int BrojOsoba,
+        DateTime DatumKreiranja
     );
 }
