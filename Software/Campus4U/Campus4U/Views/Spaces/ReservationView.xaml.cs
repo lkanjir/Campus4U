@@ -130,6 +130,12 @@ namespace Client.Presentation.Views.Spaces
         private void BtnPlus_Click(object sender, RoutedEventArgs e)
         {
             int trenutno = int.Parse(TxtBrojOsoba.Text);
+
+            if (trenutno >=5)
+            {
+                return;
+            }
+
             TxtBrojOsoba.Text = (trenutno + 1).ToString();
         }
     }
