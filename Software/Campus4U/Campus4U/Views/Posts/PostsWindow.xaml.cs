@@ -30,6 +30,14 @@ public partial class PostsWindow : Window
         var postsRepository = new PostsRepository();
         postsService = new PostsService(postsRepository);
         interestsService = new InterestsService(new InterestsRepository(), postsRepository);
+        UpdateActionButtons();
+    }
+
+    private void UpdateActionButtons()
+    {
+        var canEditDelete = currentPost is not null && (isStaff || currentPost.AutorId == userId);
+        BtnEdit.Visibility = canEditDelete ? Visibility.Visible : Visibility.Collapsed;
+        BtnDelete.Visibility = canEditDelete ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private async void PostsWindow_OnLoaded(object sender, RoutedEventArgs e) => await LoadPostsAsync();
@@ -44,10 +52,26 @@ public partial class PostsWindow : Window
             {
                 Posts.Add(item);
             }
+
+            SelectPost(currentPost?.Id);
+            if (PostsList.SelectedItem is null) ClearDetails();
         }
         catch (Exception ex)
         {
             MessageBox.Show("Greška kod dohvaćanja objava");
+        }
+    }
+
+    private void SelectPost(int? postId)
+    {
+        if (postId is null) return;
+        foreach (var item in Posts)
+        {
+            if (item.Id == postId.Value)
+            {
+                PostsList.SelectedItem = item;
+                break;
+            }
         }
     }
 
@@ -71,6 +95,7 @@ public partial class PostsWindow : Window
             if (currentPost is null)
             {
                 ClearDetails();
+                ClearDetails();
                 return;
             }
 
@@ -81,9 +106,11 @@ public partial class PostsWindow : Window
             var eventDateText = currentPost.DatumVrijemeDogadaja == default
                 ? "-"
                 : currentPost.DatumVrijemeDogadaja.ToString("dd.MM.yyyy. HH:mm");
+            TxtDates.Text = $"Objava: {currentPost.DatumVrijemeObjave:dd.MM.yyyy.} | Događaj: {eventDateText}";
             TxtBody.Text = currentPost.Sadrzaj;
 
             await UpdateInterestsStateAsync();
+            UpdateActionButtons();
         }
         catch (Exception ex)
         {
@@ -99,7 +126,7 @@ public partial class PostsWindow : Window
             TxtInterestStatus.Text = string.Empty;
             return;
         }
-        
+
         if (currentPost.DatumVrijemeDogadaja == default)
         {
             BtnToggleInterests.IsEnabled = false;
@@ -122,12 +149,13 @@ public partial class PostsWindow : Window
         TxtBody.Text = string.Empty;
         BtnToggleInterests.IsEnabled = false;
         TxtInterestStatus.Text = string.Empty;
+        UpdateActionButtons();
     }
 
     private async void BtnToggleInterests_OnClick(object sender, RoutedEventArgs e)
     {
         if (currentPost is null) return;
-        
+
         var result = await interestsService.ToggleAsync(currentPost.Id, userId);
         if (!result.IsSuccess)
         {
@@ -138,5 +166,70 @@ public partial class PostsWindow : Window
         isInterested = result.IsInterested;
         BtnToggleInterests.Content = isInterested ? "Ne zanima me" : "Zanima me";
         TxtInterestStatus.Text = isInterested ? "Interes označen" : "Interes nije označen";
+    }
+
+    private void BtnNew_OnClick(object sender, RoutedEventArgs e)
+    {
+        var window = new PostEditWindow(postsService, userId, isStaff)
+        {
+            Owner = this
+        };
+        if (window.ShowDialog() == true)
+        {
+            _ = LoadPostsAsync();
+        }
+    }
+
+    private void BtnEdit_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (currentPost is null)
+        {
+            MessageBox.Show("Odaberite objavu");
+            return;
+        }
+
+        if (!isStaff && currentPost.AutorId != userId)
+        {
+            MessageBox.Show("Nemate pravo uređivanja ove objave.");
+            return;
+        }
+
+        var window = new PostEditWindow(postsService, userId, isStaff, currentPost)
+        {
+            Owner = this
+        };
+        if (window.ShowDialog() == true)
+        {
+            _ = LoadPostsAsync();
+        }
+    }
+
+    private async void BtnDelete_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (currentPost is null)
+        {
+            MessageBox.Show("Odaberite objavu");
+            return;
+        }
+
+        if (!isStaff && currentPost.AutorId != userId)
+        {
+            MessageBox.Show("Nemate pravo brisanja objave");
+            return;
+        }
+
+        var confirm = MessageBox.Show("Jeste li sigurni da želite obrisati objavu?", "Potvrda brisanja",
+            MessageBoxButton.YesNo, MessageBoxImage.Question);
+        if (confirm != MessageBoxResult.Yes) return;
+
+        var result = await postsService.DeleteAsync(currentPost.Id, userId, isStaff);
+        if (!result.IsSuccess)
+        {
+            MessageBox.Show(result.Error ?? "Greška kod brisanja objave");
+            return;
+        }
+
+        await LoadPostsAsync();
+        ClearDetails();
     }
 }

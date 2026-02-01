@@ -18,6 +18,21 @@
 
         <Border Grid.Column="0" Style="{StaticResource Card}" Padding="12">
             <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0 0 0 10" HorizontalAlignment="Center">
+                    <Button x:Name="BtnNew" Height="32" Margin="0 0 8 0" Style="{StaticResource PrimaryButton}"
+                            Click="BtnNew_OnClick">
+                        Nova objava
+                    </Button>
+                    <Button x:Name="BtnEdit" Height="32" Margin="0 0 8 0"
+                            Style="{StaticResource SecondaryButton}" Click="BtnEdit_OnClick" Visibility="Collapsed">
+                        Uredi
+                    </Button>
+                    <Button x:Name="BtnDelete" Height="32"
+                            Style="{StaticResource SecondaryButton}" Click="BtnDelete_OnClick" Visibility="Collapsed">
+                        Obriši
+                    </Button>
+                </StackPanel>
+
                 <Button x:Name="BtnRefresh" DockPanel.Dock="Top" Height="32" Margin="0 0 0 10"
                         Style="{StaticResource SecondaryButton}" Click="BtnRefresh_OnClick">
                     Osvježi

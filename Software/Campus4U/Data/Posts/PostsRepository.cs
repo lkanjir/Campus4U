@@ -63,7 +63,8 @@ public sealed class PostsRepository : IPostsRepository
         entity.Opis = request.Sadrzaj.Trim();
         entity.VrijemeDogadaja = request.DatumDogadaja;
 
-        return await context.SaveChangesAsync(ct) > 0;
+        await context.SaveChangesAsync(ct);
+        return true;
     }
 
     public async Task<bool> DeleteAsync(int postId, CancellationToken ct = default)
