@@ -2,6 +2,7 @@
 
 namespace Client.Application.Posts;
 
+//Luka Kanjir
 public sealed class PostsService(IPostsRepository postsRepository)
 {
     private const int MaxTitleLength = 255;

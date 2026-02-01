@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Client.Application.Posts;
+﻿using Client.Application.Posts;
 using Client.Data.Context;
 using Client.Data.Context.Entities;
 using Client.Domain.Posts;
@@ -7,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Client.Data.Posts;
 
+//Luka Kanjir
 public sealed class PostRepository : IPostsRepository
 {
     public async Task<IReadOnlyList<PostListItem>> GetAllAsync(CancellationToken ct = default)
@@ -74,5 +74,12 @@ public sealed class PostRepository : IPostsRepository
 
         context.Dogadaji.Remove(entity);
         return await context.SaveChangesAsync(ct) > 0;
+    }
+
+    public async Task<DateTime?> GetEventDateAsync(int postId, CancellationToken ct = default)
+    {
+        await using var context = new Campus4UContext();
+        return await (from d in context.Dogadaji where d.Id == postId select (DateTime?)d.VrijemeDogadaja)
+            .FirstOrDefaultAsync(ct);
     }
 }
