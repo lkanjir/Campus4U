@@ -55,7 +55,7 @@
                                  VerticalAlignment="Center" Stroke="#B0B0B0" StrokeThickness="2" Cursor="Hand"
                                  MouseLeftButtonUp="BtnProfilKorisnika_OnClick" RenderOptions.BitmapScalingMode="HighQuality"  SnapsToDevicePixels="True" UseLayoutRounding="True">
                             <Ellipse.Fill>
-                                <ImageBrush ImageSource="/Images/Profile/default-profile.png" Stretch="UniformToFill"/>
+                                <ImageBrush x:Name="ProfileImgBrush" ImageSource="/Images/Profile/default-profile.png" Stretch="UniformToFill"/>
                             </Ellipse.Fill>
                         </Ellipse>
                         <StackPanel Margin="5,0,0,0">

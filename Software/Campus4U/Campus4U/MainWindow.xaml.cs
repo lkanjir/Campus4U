@@ -1,4 +1,5 @@
 using Client.Application.Auth;
+using Client.Application.Images;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Windows;
@@ -6,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using Client.Application.Users;
 using Client.Data.Auth;
+using Client.Data.Images;
 using Client.Data.Users;
 using Client.Domain.Auth;
 using Client.Domain.Users;
@@ -15,9 +17,18 @@ using Client.Presentation.Views.Spaces;
 using Client.Presentation.Views.UserProfile;
 using Duende.IdentityModel.OidcClient.Browser;
 using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Windows;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using System.Windows.Threading;
 
 namespace Client.Presentation
@@ -35,6 +46,9 @@ namespace Client.Presentation
 
         private IAuthService authService;
         private UserProfileService userProfileService;
+
+        private readonly IImageService _imageService;
+        private static readonly ImageSource DefaultProfileImage = new BitmapImage(new Uri("pack://application:,,,/Images/Profile/default-profile.png", UriKind.Absolute));
 
         private readonly StudentView studentView = new();
         private readonly StaffView staffView = new();
@@ -79,6 +93,8 @@ namespace Client.Presentation
             IUserProfileRepository userProfileRepository = new UserProfileProfileRepository();
             userProfileService = new UserProfileService(userProfileRepository);
             onboardingView.Submitted += OnOnboardingSubmitted;
+
+            _imageService = new ImageService(new ImageApiClient(apiBaseUrl, tokenStore), new ImageCache(), TimeSpan.FromMinutes(20));
 
             triggerTimer.Tick += TriggerTimerOnTick;
 
@@ -314,6 +330,7 @@ namespace Client.Presentation
             var profile = await userProfileService.GetBySubAsync(currentSub);
             currentId = profile?.Id ?? 0;
             SetHeaderUserInfo(profile, currentEmail);
+            await LoadHeaderProfileImageAsync(currentId);
 
             staffView.KorisnikId = currentId;
             studentView.KorisnikId = currentId;
@@ -363,6 +380,11 @@ namespace Client.Presentation
             {
                 Owner = this
             };
+            profileView.Closed += async (_, __) =>
+            {
+                _imageService.InvalidateProfile(currentId);
+                await LoadHeaderProfileImageAsync(currentId);
+            };
             profileView.Show();
         }
 
@@ -409,6 +431,41 @@ namespace Client.Presentation
             }
 
             http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        }
+
+        private async Task LoadHeaderProfileImageAsync(int userId)
+        {
+            if(userId <= 0)
+            {
+                ProfileImgBrush.ImageSource = DefaultProfileImage;
+                return;
+            }
+            try
+            {
+                var payload = await _imageService.GetProfileImageAsync(userId);
+                if(payload is null)
+                {
+                    ProfileImgBrush.ImageSource = DefaultProfileImage;
+                    return;
+                }
+                ProfileImgBrush.ImageSource = CreateImageSource(payload.Bytes);
+            }
+            catch
+            {
+                ProfileImgBrush.ImageSource = DefaultProfileImage;
+            }
+        }
+
+        private static ImageSource CreateImageSource(byte[] bytes)
+        {
+            using var stream = new MemoryStream(bytes);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.StreamSource = stream;
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return bitmap;
         }
     }
 }
