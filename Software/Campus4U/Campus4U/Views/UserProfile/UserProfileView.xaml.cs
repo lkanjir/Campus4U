@@ -318,6 +318,7 @@ namespace Client.Presentation.Views.UserProfile
             {
                 await DohvatiFavoriteProstorijaAsync(_profil.Id);
             }
+        }
         private void BtnMojeRezervacije_OnClick(object sender, RoutedEventArgs e)
         {
             if (_korisnikSub == null)
