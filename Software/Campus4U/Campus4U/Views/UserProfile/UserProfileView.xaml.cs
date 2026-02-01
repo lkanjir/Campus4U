@@ -12,6 +12,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Client.Application.Images;
+using Client.Data.Images;
+using Client.Presentation.Views.Spaces;
 using DomainUserProfile = Client.Domain.Users.UserProfile;
 
 namespace Client.Presentation.Views.UserProfile
