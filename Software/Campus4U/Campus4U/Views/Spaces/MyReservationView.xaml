@@ -94,6 +94,9 @@
                                     <TextBlock Margin="0,4,0,0"
                                                FontSize="13"
                                                Text="{Binding BrojOsoba, StringFormat=Osobe: {0}}"/>
+                                    <TextBlock Margin="0,4,0,0"
+                                               FontSize="13"
+                                               Text="{Binding DatumKreiranja, StringFormat=Vrijeme kreiranja: {0:dd.MM.yyyy HH:mm}}"/>
                                 </StackPanel>
 
                                 <Button Grid.Column="2"
