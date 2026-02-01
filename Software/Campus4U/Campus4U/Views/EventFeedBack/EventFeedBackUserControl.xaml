@@ -2,117 +2,122 @@
              x:Name="Root"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Client.Presentation.Views.EventFeedBack"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
-    <Grid>
+        <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Margin="20,20,20,5">
+        <Grid Grid.Row="0" Margin="0, 20,0,5">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Text="Ostavite komentar i ocjenu" FontSize="14" FontWeight="Bold" Margin="0,0,0,10"></TextBlock>
 
             <Border Grid.Row="1" CornerRadius="10" BorderBrush="Gray" BorderThickness="1" Padding="4">
-                <TextBox x:Name="txtKomentar" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" FontSize="12" BorderThickness="0" Padding="8"/>
+                <TextBox x:Name="txtKomentar" TextWrapping="Wrap" AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto" FontSize="12" BorderThickness="0" Padding="8" />
             </Border>
 
             <Grid Grid.Row="2" Margin="0,10,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="Ocjena:" FontSize="12" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <TextBlock Text="Ocjena:" FontSize="12" VerticalAlignment="Center" Margin="0,0,5,0" />
                     <ComboBox x:Name="cboOcjena" Width="60" FontSize="12">
-                        <ComboBoxItem Content="1"/>
-                        <ComboBoxItem Content="2"/>
-                        <ComboBoxItem Content="3"/>
-                        <ComboBoxItem Content="4"/>
-                        <ComboBoxItem Content="5"/>
+                        <ComboBoxItem Content="1" />
+                        <ComboBoxItem Content="2" />
+                        <ComboBoxItem Content="3" />
+                        <ComboBoxItem Content="4" />
+                        <ComboBoxItem Content="5" />
                     </ComboBox>
                 </StackPanel>
-                <Button x:Name="btnDodajKomentar" Grid.Column="2" Content="Dodaj" Style="{StaticResource PrimaryButton}" Height="36" VerticalAlignment="Center" HorizontalAlignment="Left" Width="67" Click="btnDodajKomentar_Click"/>
+                <Button x:Name="btnDodajKomentar" Grid.Column="2" Content="Dodaj"
+                        Style="{StaticResource PrimaryButton}" Height="36" VerticalAlignment="Center"
+                        HorizontalAlignment="Left" Width="67" Click="btnDodajKomentar_Click" />
             </Grid>
         </Grid>
 
-        <StackPanel Grid.Row="1" Margin="20,0,20,8">
+        <StackPanel Grid.Row="1" Margin="0,0,0,8">
             <TextBlock Margin="0,0,0,10"
                        Text="{Binding ElementName=Root, Path=Poruka}"
                        FontSize="12">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
-                        <Setter Property="Visibility" Value="Visible"/>
+                        <Setter Property="Visibility" Value="Visible" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ElementName=Root, Path=Poruka}" Value="">
-                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding ElementName=Root, Path=Poruka}" Value="{x:Null}">
-                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-            <TextBlock Text="Komentari" FontSize="17" FontWeight="Bold"/>
+            <TextBlock Text="Komentari" FontSize="17" FontWeight="Bold" />
         </StackPanel>
 
-        <ScrollViewer Grid.Row="2" Margin="20,0,20,20" VerticalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding ElementName=Root, Path=Comments}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Style="{StaticResource Card}" Margin="0,0,0,10">
-                            <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock FontWeight="SemiBold" FontSize="15" Text="{Binding ImePrezime}"/>
-                                    <TextBlock Grid.Column="1" Foreground="{StaticResource BrushMuted}"
-                                               Text="{Binding Datum, StringFormat={}{0:dd.MM.yyyy HH:mm}}"/>
-                                </Grid>
-                                <Grid Margin="0,4,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock FontSize="12" Text="{Binding Ocjena, StringFormat=Ocjena: {0}}"/>
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <Button Content="Uredi" Style="{StaticResource SecondaryButton}" Margin="0,0,6,0" Padding="6,2" FontSize="11"
-                                                Click="btnUrediKomentar_Click">
-                                            <Button.Visibility>
-                                                <Binding Path="MojKomentar" Converter="{StaticResource BooleanToVisibilityConverter}"/>
-                                            </Button.Visibility>
-                                        </Button>
-                                        <Button Content="Obrisi" Style="{StaticResource SecondaryButton}" Padding="6,2" FontSize="11"
-                                                Click="btnObrisiKomentar_Click">
-                                            <Button.Visibility>
-                                                <Binding Path="MojKomentar" Converter="{StaticResource BooleanToVisibilityConverter}"/>
-                                            </Button.Visibility>
-                                        </Button>
-                                    </StackPanel>
-                                </Grid>
-                                <TextBlock Margin="0,6,0,0" FontSize="12" TextWrapping="Wrap" Text="{Binding Komentar}"/>
-                            </StackPanel>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+        <ItemsControl Grid.Row="2" Margin="20,0,20,20" ItemsSource="{Binding ElementName=Root, Path=Comments}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,10">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock FontWeight="SemiBold" FontSize="15" Text="{Binding ImePrezime}" />
+                                <TextBlock Grid.Column="1" Foreground="{StaticResource BrushMuted}"
+                                           Text="{Binding Datum, StringFormat={}{0:dd.MM.yyyy HH:mm}}" />
+                            </Grid>
+                            <Grid Margin="0,4,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock FontSize="12" Text="{Binding Ocjena, StringFormat=Ocjena: {0}}" />
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="Uredi" Style="{StaticResource SecondaryButton}" Margin="0,0,6,0"
+                                            Padding="6,2" FontSize="11"
+                                            Click="btnUrediKomentar_Click">
+                                        <Button.Visibility>
+                                            <Binding Path="MojKomentar"
+                                                     Converter="{StaticResource BooleanToVisibilityConverter}" />
+                                        </Button.Visibility>
+                                    </Button>
+                                    <Button Content="Obrisi" Style="{StaticResource SecondaryButton}" Padding="6,2"
+                                            FontSize="11"
+                                            Click="btnObrisiKomentar_Click">
+                                        <Button.Visibility>
+                                            <Binding Path="MojKomentar"
+                                                     Converter="{StaticResource BooleanToVisibilityConverter}" />
+                                        </Button.Visibility>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                            <TextBlock Margin="0,6,0,0" FontSize="12" TextWrapping="Wrap" Text="{Binding Komentar}" />
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </UserControl>
