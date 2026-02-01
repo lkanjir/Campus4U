@@ -11,8 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Client.Application.Images;
-using Client.Data.Images;
+using System.Windows.Shapes;
 using DomainUserProfile = Client.Domain.Users.UserProfile;
 
 namespace Client.Presentation.Views.UserProfile
@@ -273,6 +272,20 @@ namespace Client.Presentation.Views.UserProfile
                     button.IsEnabled = true;
                 }
             }
+        }
+
+        private void BtnMojeRezervacije_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_korisnikSub == null)
+            {
+                return;
+            }
+
+            MyReservationView myReservationView = new MyReservationView(_korisnikSub)
+            {
+                Owner = this
+            };
+            myReservationView.ShowDialog();
         }
     }
 }

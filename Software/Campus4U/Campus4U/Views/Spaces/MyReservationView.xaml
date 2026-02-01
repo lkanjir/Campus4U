@@ -1,0 +1,136 @@
+﻿<Window x:Class="Client.Presentation.Views.Spaces.MyReservationView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:Client.Presentation.Views.Spaces"
+        mc:Ignorable="d" 
+        d:DesignHeight="450" d:DesignWidth="800"
+        Title="Moje rezervacije"
+        Background="{StaticResource BrushBackground}"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
+            <StackPanel.Resources>
+                <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                    <Setter Property="Width" Value="120"/>
+                    <Setter Property="Height" Value="40"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="FontWeight" Value="Medium"/>
+                    <Setter Property="Margin" Value="5,0"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="RadioButton">
+                                <Border x:Name="border"
+                                        Background="White"
+                                        BorderBrush="#7A0C19"
+                                        BorderThickness="2"
+                                        CornerRadius="5">
+                                    <ContentPresenter HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="#7A0C19"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                    <Trigger Property="IsChecked" Value="False">
+                                        <Setter TargetName="border" Property="Background" Value="White"/>
+                                        <Setter Property="Foreground" Value="#7A0C19"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </StackPanel.Resources>
+
+            <RadioButton Content="Aktivno" IsChecked="True" x:Name="BtnAktivno" Click="FiltrirajRezervacije_Click"/>
+            <RadioButton Content="Prošlo" x:Name="BtnProslo" Click="FiltrirajRezervacije_Click"/>
+            <RadioButton Content="Otkazano" x:Name="BtnOtkazano" Click="FiltrirajRezervacije_Click"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1">
+            <ItemsControl x:Name="ReservationsItemsControl">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,12"
+                                Padding="10"
+                                Background="White"
+                                BorderBrush="#E0E0E0"
+                                BorderThickness="1"
+                                CornerRadius="12">
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Width="80" Height="80" CornerRadius="8" ClipToBounds="True">
+                                    <Image Source="{Binding Prostor.SlikaPutanja}" Stretch="UniformToFill"/>
+                                </Border>
+
+                                <StackPanel Grid.Column="1" Margin="12,0">
+                                    <TextBlock Text="{Binding Prostor.Naziv}" FontSize="16" FontWeight="Bold"/>
+
+                                    <TextBlock Margin="0,6,0,0"
+                                               FontSize="13"
+                                               Foreground="Gray"
+                                               Text="{Binding PocetnoVrijeme, StringFormat={}{0:dd.MM.yyyy HH:mm} - }"/>
+
+                                    <TextBlock FontSize="13"
+                                               Foreground="Gray"
+                                               Text="{Binding KrajnjeVrijeme, StringFormat={}{0:HH:mm}}"/>
+
+                                    <TextBlock Margin="0,4,0,0"
+                                               FontSize="13"
+                                               Text="{Binding BrojOsoba, StringFormat=Osobe: {0}}"/>
+                                </StackPanel>
+
+                                <Button Grid.Column="2"
+                                        Content="Otkaži"
+                                        Height="32"
+                                        Padding="14,0"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Right"
+                                        Cursor="Hand"
+                                        BorderThickness="0"
+                                        Foreground="White"
+                                        Background="#7A0C19"
+                                        Click="BtnOtkaziRezervaciju_Click"
+                                        Tag="{Binding}">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Status}" Value="Aktivno">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="8"/>
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
+                            </Grid>
+
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</Window>
