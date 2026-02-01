@@ -10,6 +10,7 @@ using Client.Data.Users;
 using Client.Domain.Auth;
 using Client.Domain.Users;
 using Client.Presentation.Views;
+using Client.Presentation.Views.Fault;
 using Client.Presentation.Views.Posts;
 using Client.Presentation.Views.UserProfile;
 using Duende.IdentityModel.OidcClient.Browser;
@@ -43,8 +44,6 @@ namespace Client.Presentation
         private readonly HttpClient http;
         private string accessToken;
         private bool triggersStarted;
-
-        private bool categoryWindowShown;
 
         public MainWindow()
         {
