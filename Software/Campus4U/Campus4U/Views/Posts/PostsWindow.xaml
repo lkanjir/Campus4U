@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:Client.Presentation.Views.Posts"
         xmlns:eventfb="clr-namespace:Client.Presentation.Views.EventFeedBack"
         mc:Ignorable="d"
         Title="Oglasnik" Height="800" Width="1200"
@@ -19,7 +18,8 @@
 
         <Border Grid.Column="0" Style="{StaticResource Card}" Padding="12">
             <DockPanel>
-                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0 0 0 10" HorizontalAlignment="Center">
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0 0 0 10"
+                            HorizontalAlignment="Center">
                     <Button x:Name="BtnNew" Height="32" Margin="0 0 8 0" Style="{StaticResource PrimaryButton}"
                             Click="BtnNew_OnClick">
                         Nova objava
@@ -54,35 +54,46 @@
             </DockPanel>
         </Border>
 
-        <Border Grid.Column="2" Style="{StaticResource Card}" Padding="16">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="2*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+        <ScrollViewer Grid.Column="2">
+            <Border Style="{StaticResource Card}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                <TextBlock x:Name="TxtTitle" FontSize="24" FontWeight="Bold" Text="Odaberi objavu" />
-                <TextBlock x:Name="TxtAuthor" Grid.Row="1" Foreground="Gray" Margin="0,4,0,0" />
-                <TextBlock x:Name="TxtDates" Grid.Row="2" Foreground="Gray" Margin="0,4,0,12" />
+                    <TextBlock x:Name="TxtTitle" FontSize="24" FontWeight="Bold" Text="Odaberi objavu" Margin="0 0 0 12"/>
+                    <TextBlock x:Name="TxtAuthor" Grid.Row="1" Foreground="Gray" Margin="0,4,0,0" Visibility="Collapsed"/>
+                    <TextBlock x:Name="TxtDates" Grid.Row="2" Foreground="Gray" Margin="0,4,0,12" Visibility="Collapsed"/>
 
-                <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
-                    <TextBlock x:Name="TxtBody" TextWrapping="Wrap"></TextBlock>
-                </ScrollViewer>
+                    <StackPanel Grid.Row="3" Visibility="Collapsed" x:Name="SpMainContent">
+                        <Image x:Name="ImgEvent" Height="400" Stretch="Uniform" StretchDirection="DownOnly"
+                               Margin="0,0,0,20" Visibility="Collapsed" />
+                        <TextBlock Text="Sadržaj objave" FontWeight="SemiBold"
+                                   Foreground="Gray" Margin="0,0,0,6" />
+                        <TextBlock x:Name="TxtBody" TextWrapping="Wrap"
+                                   FontSize="16" LineHeight="20"
+                                   LineStackingStrategy="BlockLineHeight" />
+                    </StackPanel>
 
-                <eventfb:EventFeedBackUserControl x:Name="EventFeedbackControl" Grid.Row="4" Margin="0,12,12,0" Visibility="Collapsed"/>
-                
-                <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0 12 0 0">
-                    <Button x:Name="BtnToggleInterests" Width="140" Height="34" Style="{StaticResource PrimaryButton}"
-                            Click="BtnToggleInterests_OnClick">
-                        Zanima me
-                    </Button>
-                    <TextBlock x:Name="TxtInterestStatus" Margin="12 6 0 0" Foreground="Gray" />
-                </StackPanel>
-            </Grid>
-        </Border>
+                    <eventfb:EventFeedBackUserControl x:Name="EventFeedbackControl" Grid.Row="4" Margin="0,12,12,0"
+                                                      Visibility="Collapsed" />
+
+                    <StackPanel x:Name="SpInterests" Visibility="Collapsed" Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0 12 0 0">
+                        <Button x:Name="BtnToggleInterests" Width="140" Height="34"
+                                Style="{StaticResource PrimaryButton}"
+                                Click="BtnToggleInterests_OnClick">
+                            Zanima me
+                        </Button>
+                        <TextBlock x:Name="TxtInterestStatus" Margin="12 0 0 0" Foreground="Gray"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </ScrollViewer>
     </Grid>
 </Window>

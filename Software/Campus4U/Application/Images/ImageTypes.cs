@@ -16,3 +16,6 @@ public enum ImageType
 
 //Luka Kanjir
 public sealed record ImageUpload(Stream Content, string ContentType, long Length, string FileName);
+
+//Luka Kanjir
+public sealed record ImageUploadResult(ImageUpload Upload, byte[] Bytes);
