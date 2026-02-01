@@ -89,5 +89,10 @@ namespace Client.Presentation.Views.Spaces
                 .ToList();
         }
 
+        private void BtnOtkaziRezervaciju_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
     }
 }

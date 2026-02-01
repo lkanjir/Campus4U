@@ -68,25 +68,37 @@ namespace Client.Data.Spaces
                 .Where(r => r.KorisnikId == korisnikId)
                 .ToListAsync();
 
-            var rezervacije = rezervacijeEntities.Select(r => new Rezervacija(
-                r.Id,
-                new Space(
-                    r.Prostor.Id,
-                    r.Prostor.Naziv,
-                    r.Prostor.Kapacitet,
-                    r.Prostor.Opremljenost,
-                    r.Prostor.Opis,
-                    (Dom)r.Prostor.DomId,
-                    (TipProstora)r.Prostor.TipProstorijeId,
-                    r.Prostor.SlikaPutanja
-                ),
-                r.KorisnikId,
-                r.VrijemeOd,
-                r.VrijemeDo,
-                r.Status,
-                r.BrojOsoba,
-                r.DatumKreiranja
-            )).ToList();
+            var sada = DateTime.Now;
+
+            var rezervacije = rezervacijeEntities.Select(r =>
+            {
+                var status = r.Status;
+
+                if (status != "Otkazano")
+                {
+                    status = (r.VrijemeDo < sada) ? "Prošlo" : "Aktivno";
+                }
+
+                return new Rezervacija(
+                    r.Id,
+                    new Space(
+                        r.Prostor.Id,
+                        r.Prostor.Naziv,
+                        r.Prostor.Kapacitet,
+                        r.Prostor.Opremljenost,
+                        r.Prostor.Opis,
+                        (Dom)r.Prostor.DomId,
+                        (TipProstora)r.Prostor.TipProstorijeId,
+                        r.Prostor.SlikaPutanja
+                    ),
+                    r.KorisnikId,
+                    r.VrijemeOd,
+                    r.VrijemeDo,
+                    status,
+                    r.BrojOsoba,
+                    r.DatumKreiranja
+                );
+            }).ToList();
 
             return rezervacije;
         }

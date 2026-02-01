@@ -76,14 +76,11 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Border Width="80" Height="80" CornerRadius="8" ClipToBounds="True">
-                                    <Image Source="{Binding Prostor.SlikaPutanja}"
-                                           Stretch="UniformToFill"/>
+                                    <Image Source="{Binding Prostor.SlikaPutanja}" Stretch="UniformToFill"/>
                                 </Border>
 
                                 <StackPanel Grid.Column="1" Margin="12,0">
-                                    <TextBlock Text="{Binding Prostor.Naziv}"
-                                               FontSize="16"
-                                               FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Prostor.Naziv}" FontSize="16" FontWeight="Bold"/>
 
                                     <TextBlock Margin="0,6,0,0"
                                                FontSize="13"
@@ -99,52 +96,36 @@
                                                Text="{Binding BrojOsoba, StringFormat=Osobe: {0}}"/>
                                 </StackPanel>
 
-                                <Border Grid.Column="2"
-                                        Padding="10,4"
-                                        CornerRadius="12"
-                                        VerticalAlignment="Top">
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Setter Property="Background" Value="#7A0C19"/>
+                                <Button Grid.Column="2"
+                                        Content="Otkaži"
+                                        Height="32"
+                                        Padding="14,0"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Right"
+                                        Cursor="Hand"
+                                        BorderThickness="0"
+                                        Foreground="White"
+                                        Background="#7A0C19"
+                                        Click="BtnOtkaziRezervaciju_Click">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Status}" Value="Prošlo">
-                                                    <Setter Property="Background" Value="#B33A45"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding Status}" Value="Otkazano">
-                                                    <Setter Property="Background" Value="#CCCCCC"/>
+                                                <DataTrigger Binding="{Binding Status}" Value="Aktivno">
+                                                    <Setter Property="Visibility" Value="Visible"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </Border.Style>
+                                    </Button.Style>
 
-                                    <TextBlock FontWeight="SemiBold"
-           FontSize="12">
-                                        <TextBlock.Text>
-                                            <Binding Path="PrikazStatusa"/>
-                                        </TextBlock.Text>
-
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="White"/>
-
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding PrikazStatusa}" Value="Aktivno">
-                                                        <Setter Property="Foreground" Value="White"/>
-                                                    </DataTrigger>
-
-                                                    <DataTrigger Binding="{Binding PrikazStatusa}" Value="Prošlo">
-                                                        <Setter Property="Foreground" Value="White"/>
-                                                    </DataTrigger>
-
-                                                    <DataTrigger Binding="{Binding PrikazStatusa}" Value="Otkazano">
-                                                        <Setter Property="Foreground" Value="White"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </Border>
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="8"/>
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
                             </Grid>
+
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
