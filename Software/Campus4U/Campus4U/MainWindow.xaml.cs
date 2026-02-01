@@ -129,9 +129,8 @@ namespace Client.Presentation
             onboardingView.SetStatus(string.Empty);
             try
             {
-                // "" => brojTelefona, slikaProfila, korIme nisu obavezni za onboarding
                 var result = await userProfileService.SaveAsync(currentSub, currentEmail, e.Ime, e.Prezime, e.BrojSobe,
-                    "", "", "",
+                    e.BrojTelefona, null, e.KorisnickoIme ?? "",
                     currentRole);
 
                 if (!result.isSuccess)
@@ -139,6 +138,15 @@ namespace Client.Presentation
                     requiresOnboarding = true;
                     onboardingView.SetStatus(result.Error ?? "Greška kod spremanja profila");
                     return;
+                }
+
+                if(!string.IsNullOrWhiteSpace(e.ProfileImagePath))
+                {
+                    var savedProfile = await userProfileService.GetBySubAsync(currentSub);
+                    if(savedProfile?.Id > 0)
+                    {
+                        await UploadOnboardingProfileImageAsync(savedProfile.Id, e.ProfileImagePath);
+                    }
                 }
 
                 requiresOnboarding = false;
@@ -152,6 +160,40 @@ namespace Client.Presentation
             {
                 SetBusy(false);
             }
+        }
+
+        private async Task UploadOnboardingProfileImageAsync(int id, string profileImagePath)
+        {
+            var fileInfo = new FileInfo(profileImagePath);
+            const long maxBytes = 10 * 1024 * 1024; // 10 MB
+            if (fileInfo.Length is <= 0 or > maxBytes) return;
+
+            var contentType = GetImageContentType(fileInfo.Extension);
+            if(contentType is null) return;
+
+            var bytes = await File.ReadAllBytesAsync(profileImagePath);
+            await using var stream = new MemoryStream(bytes, writable: false);
+            var upload = new ImageUpload(stream, contentType, bytes.LongLength, fileInfo.Name);
+
+            await _imageService.UploadProfileImageAsync(id, upload);
+            _imageService.InvalidateProfile(id);
+            await LoadHeaderProfileImageAsync(id);
+        }
+
+        private static string? GetImageContentType(string extension)
+        {
+            switch (extension.Trim().ToLowerInvariant())
+            {
+                case ".jpg":
+                case ".jpeg":
+                    return "image/jpeg";
+                case ".png":
+                    return "image/png";
+                case ".webp":
+                    return "image/webp";
+                default:
+                    return null;
+            }   
         }
 
         private void ApplyUiState()
@@ -337,7 +379,7 @@ namespace Client.Presentation
             if (profile is null || !profile.IsOnboardingComplete)
             {
                 requiresOnboarding = true;
-                onboardingView.SetInitialValues(profile?.Ime, profile?.Prezime, currentEmail, profile?.BrojSobe);
+                onboardingView.SetInitialValues(profile?.Ime, profile?.Prezime, currentEmail, profile?.BrojSobe, profile?.KorisnickoIme, profile?.BrojTelefona);
             }
         }
 
@@ -349,7 +391,7 @@ namespace Client.Presentation
 
             if (string.IsNullOrWhiteSpace(fullName))
             {
-                fullName = "Nepoznati korisnik";
+                fullName = "Dobrodosli!";
             }
 
             UserFirstLastName.Text = fullName;
