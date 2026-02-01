@@ -27,6 +27,15 @@
                 <TextBlock Text="Vrijeme (HH:mm)" FontWeight="Bold" />
                 <TextBox x:Name="TxtTime" Height="24" Margin="0,6,0,0" />
             </StackPanel>
+            <StackPanel VerticalAlignment="Bottom" Margin="10 0 0 0">
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="BtnSelectImage" Height="30" Width="140"
+                            Style="{StaticResource SecondaryButton}" Click="BtnSelectImage_OnClick">
+                        Odaberi sliku
+                    </Button>
+                    <TextBlock x:Name="TxtSelectedImage" Margin="12,6,0,0" Foreground="Gray" />
+                </StackPanel>
+            </StackPanel>
         </StackPanel>
 
         <TextBlock Grid.Row="3" Text="Sadržaj" FontWeight="Bold" />
