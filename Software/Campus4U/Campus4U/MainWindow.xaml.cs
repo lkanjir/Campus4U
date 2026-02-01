@@ -10,6 +10,7 @@ using Client.Data.Users;
 using Client.Domain.Auth;
 using Client.Domain.Users;
 using Client.Presentation.Views;
+using Client.Presentation.Views.Posts;
 using Client.Presentation.Views.UserProfile;
 using Duende.IdentityModel.OidcClient.Browser;
 using Microsoft.Extensions.Configuration;
@@ -391,6 +392,19 @@ namespace Client.Presentation
             }
 
             http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        }
+
+        private void BtnPosts_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!isAuthenticated)
+            {
+                MessageBox.Show("Morate biti prijavljeni");
+                return;
+            }
+
+            var isStaff = string.Equals(currentRole, "osoblje", StringComparison.OrdinalIgnoreCase);
+            var window = new PostsWindow(currentId, isStaff) { Owner = this };
+            window.Show();
         }
     }
 }

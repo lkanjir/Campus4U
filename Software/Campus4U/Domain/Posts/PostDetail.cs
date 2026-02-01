@@ -1,6 +1,6 @@
 ﻿namespace Client.Domain.Posts;
 
-public sealed class PostDetail(
+public sealed record PostDetail(
     int Id,
     string Naslov,
     string Sadrzaj,

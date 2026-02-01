@@ -5,5 +5,5 @@ public sealed record PostListItem(
     string Naslov,
     string AutorIme,
     DateTime DatumVrijemeObjave,
-    DateTime DatumVrijmeDogadaja
+    DateTime DatumVrijemeDogadaja
 );

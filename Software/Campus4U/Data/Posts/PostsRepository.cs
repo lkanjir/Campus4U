@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Client.Data.Posts;
 
 //Luka Kanjir
-public sealed class PostRepository : IPostsRepository
+public sealed class PostsRepository : IPostsRepository
 {
     public async Task<IReadOnlyList<PostListItem>> GetAllAsync(CancellationToken ct = default)
     {

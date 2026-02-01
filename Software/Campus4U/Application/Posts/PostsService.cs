@@ -11,6 +11,10 @@ public sealed class PostsService(IPostsRepository postsRepository)
     public Task<IReadOnlyList<PostListItem>> GetAllAsync(CancellationToken ct = default) =>
         postsRepository.GetAllAsync(ct);
 
+    public Task<PostDetail?> GetByIdAsync(int postId, CancellationToken ct = default) => postId <= 0
+        ? Task.FromResult<PostDetail?>(null)
+        : postsRepository.GetByIdAsync(postId, ct);
+
     public async Task<PostSaveResult> CreateAsync(PostCreateRequest request, int authorId,
         CancellationToken ct = default)
     {
@@ -25,7 +29,7 @@ public sealed class PostsService(IPostsRepository postsRepository)
     public async Task<PostSaveResult> UpdateAsync(int postId, PostUpdateRequest request, int currentUserId,
         bool isStaff, CancellationToken ct = default)
     {
-        if (postId <= 0) return new PostSaveResult(false, "Objava ne postji", null);
+        if (postId <= 0) return new PostSaveResult(false, "Objava ne postoji", null);
         var validation = Validate(request.Naslov, request.Sadrzaj, request.DatumDogadaja);
         if (validation is not null) return new PostSaveResult(false, validation, null);
 
@@ -59,7 +63,7 @@ public sealed class PostsService(IPostsRepository postsRepository)
         if (naslov.Length > MaxTitleLength) return $"Naslov je predugačak (max {MaxTitleLength})";
         if (string.IsNullOrWhiteSpace(sadrzaj)) return "Sadrzaj je obavezan";
         if (sadrzaj.Length > MaxBodyLength) return $"Sadrzaj je predugačak (max {MaxBodyLength})";
-        if (datumDogadaja == default) return "Datum dogadaj je obavezan";
+        if (datumDogadaja == default) return "Datum događaja je obavezan";
 
         return null;
     }
