@@ -183,12 +183,17 @@ namespace Client.Presentation
                     return null;
             }   
         }
+        private bool IsStaff => isAuthenticated && string.Equals(currentRole, "osoblje", StringComparison.OrdinalIgnoreCase);
 
         private void ApplyUiState()
         {
             BtnLogin.IsEnabled = !isBusy && !isAuthenticated;
             BtnLogout.IsEnabled = !isBusy && isAuthenticated;
             BtnFault.IsEnabled = !isBusy && isAuthenticated;
+
+            var canMangeFaults = IsStaff && !isBusy;
+            BtnUpravljanjeKvarovima.Visibility = IsStaff ? Visibility.Visible : Visibility.Collapsed;
+            BtnUpravljanjeKvarovima.IsEnabled = canMangeFaults;
 
             PanelHeader.Visibility = isAuthenticated ? Visibility.Visible : Visibility.Collapsed;
             RoleContent.Visibility = isAuthenticated ? Visibility.Visible : Visibility.Collapsed;
@@ -427,6 +432,11 @@ namespace Client.Presentation
 
         private void BtnUpravljanjeKvarovima_OnClick(object sender, RoutedEventArgs e)
         {
+            if(!IsStaff)
+            {
+                MessageBox.Show("Samo osoblje može upravljati kvariovima.");
+                return;
+            }
             RoleContent.Content = new UpravljanjeKvarovimaUserControl();
         }
 

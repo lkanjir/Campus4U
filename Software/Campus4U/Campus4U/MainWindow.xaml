@@ -45,6 +45,7 @@
                         Style="{StaticResource SecondaryButton}"
                         Width="200"
                         Margin="8,0,0,0"
+                        Visibility="Collapsed"
                         Click="BtnUpravljanjeKvarovima_OnClick">
                         <TextBlock Text="Upravljanje kvarovima (test)" VerticalAlignment="Center"/>
                     </Button>
