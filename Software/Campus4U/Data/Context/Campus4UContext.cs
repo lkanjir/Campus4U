@@ -19,21 +19,18 @@ public partial class Campus4UContext : DbContext
     }
 
     public virtual DbSet<Korisnici> Korisnici { get; set; }
-
     public virtual DbSet<Uloge> Uloge { get; set; }
     public virtual DbSet<Dogadaji> Dogadaji { get; set; }
-
     public virtual DbSet<KomentariDogadaja> KomentariDogadaja { get; set; }
-
     public virtual DbSet<DnevniJelovnik> DnevniJelovnik { get; set; }
     public virtual DbSet<Prostori> Prostori { get; set; }
     public virtual DbSet<DogadajiFavoriti> DogadajiFavoriti { get; set; }
     public virtual DbSet<ProstoriFavoriti> ProstoriFavoriti { get; set; }
     public virtual DbSet<VrsteKvarova> VrsteKvarova { get; set; }
     public virtual DbSet<Kvarovi> Kvarovi { get; set; }
-
     public virtual DbSet<Jelo> Jelo { get; set; }
     public virtual DbSet<Rezervacije> Rezervacije { get; set; }
+    public virtual DbSet<ObavijestiPostavke> ObavijestiPostavke { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https: //go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -47,6 +44,7 @@ public partial class Campus4UContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__korisnic__3213E83F54EBF408");
 
             entity.ToTable("korisnici");
+            entity.ToTable("korisnici", t => t.HasTrigger("trg_korisnici_obavijesti_postavke"));
 
             entity.HasIndex(e => e.Email, "UQ__korisnic__AB6E61642276BC97").IsUnique();
 
@@ -100,12 +98,18 @@ public partial class Campus4UContext : DbContext
         modelBuilder.Entity<Rezervacije>(entity =>
         {
             entity.ToTable("rezervacije", t => t.HasTrigger("trg_rezervacije_obavijesti_za_slanje"));
+            entity.ToTable("rezervacije", t =>
+            {
+                t.HasTrigger("trg_rezervacije_obavijesti_za_slanje");
+                t.UseSqlOutputClause(false);
+            });
         });
 
         modelBuilder.Entity<Dogadaji>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__dogadaji__3213E83FCAC6C6DB");
         });
+        modelBuilder.Entity<Dogadaji>().ToTable("dogadaji", t => t.HasTrigger("trg_dogadaji_obavijesti_za_slanje"));
 
         modelBuilder.Entity<Dogadaji>(entity =>
         {
@@ -194,6 +198,30 @@ public partial class Campus4UContext : DbContext
             entity.HasOne(d => d.VrstaKvara)
                 .WithMany()
                 .HasForeignKey(d => d.VrstaKvaraId);
+        });
+
+        modelBuilder.Entity<ObavijestiPostavke>(entity =>
+        {
+            entity.HasKey(e => new { e.KorisnikId, e.Tip });
+
+            entity.ToTable("obavijesti_postavke");
+
+            entity.HasIndex(e => new { e.Tip, e.Omoguceno }, "IX_obavijesti_postavke_tip_omoguceno");
+
+            entity.Property(e => e.KorisnikId).HasColumnName("korisnik_id");
+            entity.Property(e => e.Tip)
+                .HasMaxLength(50)
+                .HasColumnName("tip");
+            entity.Property(e => e.Azurirano)
+                .HasDefaultValueSql("(sysdatetime())")
+                .HasColumnName("azurirano");
+            entity.Property(e => e.Omoguceno)
+                .HasDefaultValue(true)
+                .HasColumnName("omoguceno");
+
+            entity.HasOne(d => d.Korisnik).WithMany(p => p.ObavijestiPostavke)
+                .HasForeignKey(d => d.KorisnikId)
+                .HasConstraintName("FK_obavijesti_postavke_korisnici");
         });
 
         OnModelCreatingPartial(modelBuilder);

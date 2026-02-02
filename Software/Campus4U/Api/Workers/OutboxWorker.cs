@@ -1,15 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Application.Email;
 using Server.Data.Context;
+using Server.Data.Entities;
 
 namespace Api.Workers;
-
-//Luka Kanjir
-public static class Dogadjaji
-{
-    public const string KvarPrijavljen = "kvar_prijavljen";
-    public const string RezervacijaKreirana = "rezervacija_kreirana";
-}
 
 //Luka Kanjir
 public sealed class OutboxWorker(
@@ -25,13 +19,13 @@ public sealed class OutboxWorker(
     {
         while (!ct.IsCancellationRequested)
         {
-            using var delayCtSource =  CancellationTokenSource.CreateLinkedTokenSource(ct);
+            using var delayCtSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
             var delayTask = Task.Delay(pollingInterval, delayCtSource.Token);
             var signalTask = control.WaitForSignalAsync(ct);
-            
+
             var completed = await Task.WhenAny(delayTask, signalTask);
-            if(completed == signalTask) delayCtSource.Cancel();
-            
+            if (completed == signalTask) delayCtSource.Cancel();
+
             if (!control.Enabled) continue;
 
             try
@@ -50,7 +44,11 @@ public sealed class OutboxWorker(
     {
         using var scope = scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<Campus4UContext>();
-        var events = new[] { Dogadjaji.KvarPrijavljen, Dogadjaji.RezervacijaKreirana };
+        var events = new[]
+        {
+            Dogadjaji.KvarPrijavljen, Dogadjaji.RezervacijaKreirana, Dogadjaji.KvarStatusPromijenjen,
+            Dogadjaji.RezervacijaStatusPromijenjena, Dogadjaji.DogadajKreiran
+        };
 
         var pending = await (from o in db.ObavijestiZaSlanje
             where o.Status == "ceka" && events.Contains(o.Dogadjaj)
@@ -67,7 +65,7 @@ public sealed class OutboxWorker(
                 {
                     case Dogadjaji.KvarPrijavljen:
                     {
-                        var kvar = await db.Kvarovi
+                        var kvar = await db.Kvarovi.AsNoTracking()
                             .Include(k => k.Prostor)
                             .Include(k => k.VrstaKvara)
                             .Include(k => k.Korisnik)
@@ -78,6 +76,12 @@ public sealed class OutboxWorker(
                             obavijest.Status = "greska";
                             obavijest.ZadnjaGreska = "Kvar ne postji.";
                             obavijest.Pokusaji++;
+                            break;
+                        }
+
+                        if (!await IsPreferenceEnabledAsync(db, kvar.KorisnikId, TipoviObavijesti.Kvarovi, ct))
+                        {
+                            MarkSkipped(obavijest, "Korisnik je iskljucio obavijesti za kvarove.");
                             break;
                         }
 
@@ -112,6 +116,7 @@ public sealed class OutboxWorker(
                     case Dogadjaji.RezervacijaKreirana:
                     {
                         var rez = await db.Rezervacije
+                            .AsNoTracking()
                             .Include(r => r.Prostor)
                             .Include(r => r.Korisnik)
                             .FirstOrDefaultAsync(r => r.Id == obavijest.EntitetId, ct);
@@ -121,6 +126,12 @@ public sealed class OutboxWorker(
                             obavijest.Status = "greska";
                             obavijest.ZadnjaGreska = "Rezervacija ne postoji.";
                             obavijest.Pokusaji++;
+                            break;
+                        }
+
+                        if (!await IsPreferenceEnabledAsync(db, rez.KorisnikId, TipoviObavijesti.Rezervacije, ct))
+                        {
+                            MarkSkipped(obavijest, "Korisnik je iskljucio obavijesti za rezervacije.");
                             break;
                         }
 
@@ -152,6 +163,179 @@ public sealed class OutboxWorker(
                         break;
                     }
 
+                    case Dogadjaji.KvarStatusPromijenjen:
+                    {
+                        var kvar = await db.Kvarovi
+                            .AsNoTracking()
+                            .Include(k => k.Prostor)
+                            .Include(k => k.VrstaKvara)
+                            .Include(k => k.Korisnik)
+                            .FirstOrDefaultAsync(k => k.KvarId == obavijest.EntitetId, ct);
+
+                        if (kvar is null)
+                        {
+                            obavijest.Status = "greska";
+                            obavijest.ZadnjaGreska = "Kvar ne postji.";
+                            obavijest.Pokusaji++;
+                            break;
+                        }
+
+                        if (!await IsPreferenceEnabledAsync(db, kvar.KorisnikId, TipoviObavijesti.Kvarovi, ct))
+                        {
+                            MarkSkipped(obavijest, "Korisnik je iskljucio obavijesti za kvarove.");
+                            break;
+                        }
+
+                        var subject = $"Promjena statusa kvara: {kvar.Prostor.Naziv}, {kvar.VrstaKvara.Naziv}";
+                        var datum = DateTime.Now.ToString("dd.MM.yyyy.");
+                        var vrijeme = DateTime.Now.ToString("HH:mm");
+                        var status = kvar.Status;
+                        var body = $"""
+                                    Poštovana/Poštovani,
+
+                                    obavještavamo Vas da je na {datum} u {vrijeme} sati promijenjen status
+                                    Vaše prijave kvara za prostor: {kvar.Prostor.Naziv}.
+
+                                    Novi status: {status}
+
+                                    Srdačan pozdrav,
+                                    Campus4U
+                                    """;
+
+                        await emailSender.SendAsync(new EmailMessage
+                        {
+                            ToEmail = kvar.Korisnik.Email,
+                            ToName = $"{kvar.Korisnik.Ime} {kvar.Korisnik.Prezime}".Trim(),
+                            Subject = subject,
+                            Body = body
+                        }, ct);
+
+                        obavijest.Status = "poslano";
+                        obavijest.ZadnjaGreska = null;
+                        break;
+                    }
+
+                    case Dogadjaji.RezervacijaStatusPromijenjena:
+                    {
+                        var rez = await db.Rezervacije
+                            .AsNoTracking()
+                            .Include(r => r.Prostor)
+                            .Include(r => r.Korisnik)
+                            .FirstOrDefaultAsync(r => r.Id == obavijest.EntitetId, ct);
+
+                        if (rez is null)
+                        {
+                            obavijest.Status = "greska";
+                            obavijest.ZadnjaGreska = "Rezervacija ne postoji.";
+                            obavijest.Pokusaji++;
+                            break;
+                        }
+
+                        if (!await IsPreferenceEnabledAsync(db, rez.KorisnikId, TipoviObavijesti.Rezervacije, ct))
+                        {
+                            MarkSkipped(obavijest, "Korisnik je iskljucio obavijesti za rezervacije.");
+                            break;
+                        }
+
+                        var subject = $"Promjena statusa rezervacije: {rez.Prostor.Naziv}";
+                        var datum = rez.VrijemeOd.ToString("dd.MM.yyyy.");
+                        var vrijemeOd = rez.VrijemeOd.ToString("HH:mm");
+                        var vrijemeDo = rez.VrijemeDo.ToString("HH:mm");
+                        var status = rez.Status;
+                        var body = $"""
+                                    Poštovana/Poštovani,
+
+                                    obavještavamo Vas da je promijenjen status Vaše rezervacije prostora {rez.Prostor.Naziv}
+                                    za datum {datum} u terminu od {vrijemeOd} do {vrijemeDo} sati.
+
+                                    Novi status: {status}
+
+                                    Srdačan pozdrav,
+                                    Campus4U
+                                    """;
+
+                        await emailSender.SendAsync(new EmailMessage
+                        {
+                            ToEmail = rez.Korisnik.Email,
+                            ToName = $"{rez.Korisnik.Ime} {rez.Korisnik.Prezime}".Trim(),
+                            Subject = subject,
+                            Body = body
+                        }, ct);
+
+                        obavijest.Status = "poslano";
+                        obavijest.ZadnjaGreska = null;
+                        break;
+                    }
+
+                    case Dogadjaji.DogadajKreiran:
+                    {
+                        var dogadjaj = await db.Dogadaji
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(d => d.Id == obavijest.EntitetId, ct);
+
+                        if (dogadjaj is null)
+                        {
+                            obavijest.Status = "greska";
+                            obavijest.ZadnjaGreska = "Dogadjaj ne postoji.";
+                            obavijest.Pokusaji++;
+                            break;
+                        }
+
+                        var recipients = await (from k in db.Korisnici
+                            join u in db.Uloge on k.UlogaId equals u.Id
+                            where u.NazivUloge == "student"
+                            select new { k.Id, k.Email, k.Ime, k.Prezime }).ToListAsync(ct);
+
+                        if (recipients.Count == 0)
+                        {
+                            obavijest.Status = "poslano";
+                            obavijest.ZadnjaGreska = null;
+                            break;
+                        }
+
+                        var recipientIds = recipients.Select(r => r.Id).ToArray();
+                        var preferences = await db.ObavijestiPostavke
+                            .AsNoTracking()
+                            .Where(p => p.Tip == TipoviObavijesti.Dogadjaji && recipientIds.Contains(p.KorisnikId))
+                            .ToDictionaryAsync(p => p.KorisnikId, p => p.Omoguceno, ct);
+
+                        var subject = $"Nova objava u oglasniku: {dogadjaj.Naslov}";
+                        var datumObjave = dogadjaj.VrijemeObjave.ToString("dd.MM.yyyy.");
+                        var datumDogadaja = dogadjaj.VrijemeDogadaja.ToString("dd.MM.yyyy.");
+                        var vrijemeDogadaja = dogadjaj.VrijemeDogadaja.ToString("HH:mm");
+
+                        foreach (var recipient in recipients)
+                        {
+                            if (string.IsNullOrWhiteSpace(recipient.Email)) continue;
+                            if (preferences.TryGetValue(recipient.Id, out var enabled) && !enabled) continue;
+
+                            var body = $"""
+                                        Poštovana/Poštovani,
+
+                                        objavljena je nova obavijest u oglasniku.
+                                        Naslov: {dogadjaj.Naslov}
+                                        Datum objave: {datumObjave}
+
+                                        Datum događaja: {datumDogadaja} u {vrijemeDogadaja} sati.
+
+                                        Srdačan pozdrav,
+                                        Campus4U
+                                        """;
+
+                            await emailSender.SendAsync(new EmailMessage
+                            {
+                                ToEmail = recipient.Email,
+                                ToName = $"{recipient.Ime} {recipient.Prezime}".Trim(),
+                                Subject = subject,
+                                Body = body
+                            }, ct);
+                        }
+
+                        obavijest.Status = "poslano";
+                        obavijest.ZadnjaGreska = null;
+                        break;
+                    }
+
                     default:
                     {
                         obavijest.Status = "greska";
@@ -171,5 +355,19 @@ public sealed class OutboxWorker(
         }
 
         await db.SaveChangesAsync(ct);
+    }
+
+    private void MarkSkipped(ObavijestiZaSlanje obavijest, string razlog)
+    {
+        obavijest.Status = "preskoceno";
+        obavijest.ZadnjaGreska = razlog;
+    }
+
+    private async Task<bool> IsPreferenceEnabledAsync(Campus4UContext db, int korisnikId, string tip,
+        CancellationToken ct)
+    {
+        var pref = await db.ObavijestiPostavke.AsNoTracking()
+            .FirstOrDefaultAsync(p => p.KorisnikId == korisnikId && p.Tip == tip, ct);
+        return pref?.Omoguceno ?? true;
     }
 }

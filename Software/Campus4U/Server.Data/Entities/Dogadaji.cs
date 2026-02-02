@@ -19,6 +19,10 @@ public partial class Dogadaji
 
     public string? SlikaPutanja { get; set; }
 
+    public int? AutorId { get; set; }
+
+    public virtual Korisnici? Autor { get; set; }
+
     public virtual ICollection<KomentariDogadaja> KomentariDogadaja { get; set; } = new List<KomentariDogadaja>();
 
     public virtual ICollection<Korisnici> Korisnik { get; set; } = new List<Korisnici>();

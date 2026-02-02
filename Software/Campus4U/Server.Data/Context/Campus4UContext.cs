@@ -28,6 +28,8 @@ public partial class Campus4UContext : DbContext
 
     public virtual DbSet<Kvarovi> Kvarovi { get; set; }
 
+    public virtual DbSet<ObavijestiPostavke> ObavijestiPostavke { get; set; }
+
     public virtual DbSet<ObavijestiZaSlanje> ObavijestiZaSlanje { get; set; }
 
     public virtual DbSet<Objave> Objave { get; set; }
@@ -66,8 +68,10 @@ public partial class Campus4UContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__dogadaji__3213E83FCAC6C6DB");
 
             entity.ToTable("dogadaji");
+            entity.ToTable("dogadaji", t => t.HasTrigger("trg_dogadaji_obavijesti_za_slanje"));
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AutorId).HasColumnName("autor_id");
             entity.Property(e => e.Naslov)
                 .HasMaxLength(255)
                 .HasColumnName("naslov");
@@ -82,6 +86,11 @@ public partial class Campus4UContext : DbContext
                 .HasColumnName("slika_putanja");
             entity.Property(e => e.VrijemeDogadaja).HasColumnName("vrijeme_dogadaja");
             entity.Property(e => e.VrijemeObjave).HasColumnName("vrijeme_objave");
+
+            entity.HasOne(d => d.Autor).WithMany(p => p.Dogadaji)
+                .HasForeignKey(d => d.AutorId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_dogadaji_korisnici_autor");
 
             entity.HasMany(d => d.Korisnik).WithMany(p => p.Dogadaj)
                 .UsingEntity<Dictionary<string, object>>(
@@ -186,6 +195,7 @@ public partial class Campus4UContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__korisnic__3213E83F54EBF408");
 
             entity.ToTable("korisnici");
+            entity.ToTable("korisnici", t => t.HasTrigger("trg_korisnici_obavijesti_postavke"));
 
             entity.HasIndex(e => e.Email, "UQ__korisnic__AB6E61642276BC97").IsUnique();
 
@@ -253,7 +263,6 @@ public partial class Campus4UContext : DbContext
 
             entity.HasOne(d => d.Korisnik).WithMany(p => p.Kvarovi)
                 .HasForeignKey(d => d.KorisnikId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Kvarovi_Korisnici");
 
             entity.HasOne(d => d.Prostor).WithMany(p => p.Kvarovi)
@@ -265,6 +274,30 @@ public partial class Campus4UContext : DbContext
                 .HasForeignKey(d => d.VrstaKvaraId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Kvarovi_VrsteKvarova");
+        });
+
+        modelBuilder.Entity<ObavijestiPostavke>(entity =>
+        {
+            entity.HasKey(e => new { e.KorisnikId, e.Tip });
+
+            entity.ToTable("obavijesti_postavke");
+
+            entity.HasIndex(e => new { e.Tip, e.Omoguceno }, "IX_obavijesti_postavke_tip_omoguceno");
+
+            entity.Property(e => e.KorisnikId).HasColumnName("korisnik_id");
+            entity.Property(e => e.Tip)
+                .HasMaxLength(50)
+                .HasColumnName("tip");
+            entity.Property(e => e.Azurirano)
+                .HasDefaultValueSql("(sysdatetime())")
+                .HasColumnName("azurirano");
+            entity.Property(e => e.Omoguceno)
+                .HasDefaultValue(true)
+                .HasColumnName("omoguceno");
+
+            entity.HasOne(d => d.Korisnik).WithMany(p => p.ObavijestiPostavke)
+                .HasForeignKey(d => d.KorisnikId)
+                .HasConstraintName("FK_obavijesti_postavke_korisnici");
         });
 
         modelBuilder.Entity<ObavijestiZaSlanje>(entity =>
@@ -405,7 +438,6 @@ public partial class Campus4UContext : DbContext
 
             entity.HasOne(d => d.Korisnik).WithMany(p => p.Rezervacije)
                 .HasForeignKey(d => d.KorisnikId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_rezervacije_korisnici");
 
             entity.HasOne(d => d.Prostor).WithMany(p => p.Rezervacije)

@@ -1,17 +1,8 @@
 using Client.Application.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Client.Application.Notifications;
+using Client.Data.Notifications;
+using Client.Domain.Notifications;
 using DomainUserProfile = Client.Domain.Users.UserProfile;
 
 namespace Client.Presentation.Views.UserProfile
@@ -24,6 +15,10 @@ namespace Client.Presentation.Views.UserProfile
     {
         private readonly DomainUserProfile _profile;
         private readonly UserProfileService _userProfileService;
+
+        private readonly NotificationPreferenceService _notificationPreferencesService;
+        private NotificationPreferences _preferences = NotificationPreferences.Default;
+
         public UpdateUserProfile()
         {
             InitializeComponent();
@@ -34,6 +29,7 @@ namespace Client.Presentation.Views.UserProfile
         {
             _profile = profile ?? throw new ArgumentNullException(nameof(profile));
             _userProfileService = userProfileService ?? throw new ArgumentNullException(nameof(userProfileService));
+            _notificationPreferencesService = new NotificationPreferenceService(new NotificationPreferenceRepository());
 
             TxtIme.Text = profile.Ime ?? string.Empty;
             TxtPrezime.Text = profile.Prezime ?? string.Empty;
@@ -45,6 +41,14 @@ namespace Client.Presentation.Views.UserProfile
 
         private async void BtnSpremi_Click(object sender, RoutedEventArgs e)
         {
+            var preferences = BuildPreferences();
+            var prefResult = await _notificationPreferencesService.SaveAsync(_profile.Id, preferences);
+            if (!prefResult.IsSuccess)
+            {
+                MessageBox.Show(prefResult.Error ?? "Greška kod spremanja postavki obavijesti.");
+                return;
+            }
+
             var rez = await _userProfileService.AzurirajProfilAsync(_profile,
                 TxtIme.Text,
                 TxtPrezime.Text,
@@ -56,13 +60,34 @@ namespace Client.Presentation.Views.UserProfile
                 DialogResult = true;
                 return;
             }
+
             MessageBox.Show(rez.Error ?? "Neuspjesno spremanje profila.");
         }
+
+        private NotificationPreferences BuildPreferences() => new(
+            ChkNotifyPosts.IsChecked == true,
+            ChkNotifyFaults.IsChecked == true,
+            ChkNotifyReservations.IsChecked == true);
 
         private void BtnOdustani_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
+
+        private async void UpdateUserProfile_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _preferences = await _notificationPreferencesService.GetByUserIdAsync(_profile.Id);
+            }
+            catch (Exception ex)
+            {
+                _preferences = NotificationPreferences.Default;
+            }
+
+            ChkNotifyPosts.IsChecked = _preferences.Posts;
+            ChkNotifyFaults.IsChecked = _preferences.Faults;
+            ChkNotifyReservations.IsChecked = _preferences.Reservations;
+        }
     }
 }
-

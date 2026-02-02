@@ -27,11 +27,15 @@ public partial class Korisnici
 
     public string? SlikaPutanja { get; set; }
 
+    public virtual ICollection<Dogadaji> Dogadaji { get; set; } = new List<Dogadaji>();
+
     public virtual ICollection<Komentari> Komentari { get; set; } = new List<Komentari>();
 
     public virtual ICollection<KomentariDogadaja> KomentariDogadaja { get; set; } = new List<KomentariDogadaja>();
 
     public virtual ICollection<Kvarovi> Kvarovi { get; set; } = new List<Kvarovi>();
+
+    public virtual ICollection<ObavijestiPostavke> ObavijestiPostavke { get; set; } = new List<ObavijestiPostavke>();
 
     public virtual ICollection<Objave> Objave { get; set; } = new List<Objave>();
 

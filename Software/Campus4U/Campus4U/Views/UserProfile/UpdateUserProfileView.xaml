@@ -7,42 +7,59 @@
         mc:Ignorable="d"
         Title="UpdateUserProfile"
         SizeToContent="WidthAndHeight" Background="{StaticResource BrushBackground}"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" Loaded="UpdateUserProfile_OnLoaded">
     <StackPanel Margin="30,15,30,30">
         <TextBlock FontSize="30" FontWeight="Bold">Uredi profil korisnika</TextBlock>
 
         <StackPanel Orientation="Horizontal">
             <TextBlock FontSize="16">Ime: </TextBlock>
-            <TextBox x:Name="TxtIme" Width="200" Margin="10,0,0,0"/>
+            <TextBox x:Name="TxtIme" Width="200" Margin="10,0,0,0" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
             <TextBlock FontSize="16">Prezime:</TextBlock>
-            <TextBox x:Name="TxtPrezime" Width="200" Margin="10,0,0,0"/>
+            <TextBox x:Name="TxtPrezime" Width="200" Margin="10,0,0,0" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
             <TextBlock FontSize="16">Korisničko ime:</TextBlock>
-            <TextBox x:Name="TxtKorIme" Width="200" Margin="10,0,0,0"/>
+            <TextBox x:Name="TxtKorIme" Width="200" Margin="10,0,0,0" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
             <TextBlock FontSize="16">Email:</TextBlock>
-            <TextBox x:Name="TxtEmail" Width="200" Margin="10,0,0,0" IsReadOnly="True" IsTabStop="False" IsEnabled="False"/>
+            <TextBox x:Name="TxtEmail" Width="200" Margin="10,0,0,0" IsReadOnly="True" IsTabStop="False"
+                     IsEnabled="False" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
             <TextBlock FontSize="16">Broj telefona:</TextBlock>
-            <TextBox x:Name="TxtBrojTelefona" Width="200" Margin="10,0,0,0"/>
+            <TextBox x:Name="TxtBrojTelefona" Width="200" Margin="10,0,0,0" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
             <TextBlock FontSize="16">Broj sobe:</TextBlock>
-            <TextBox x:Name="TxtBrojSobe" Width="200" Margin="10,0,0,0"/>
+            <TextBox x:Name="TxtBrojSobe" Width="200" Margin="10,0,0,0" />
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button x:Name="BtnSpremi" 
+
+        <TextBlock FontSize="18" FontWeight="SemiBold" Margin="0,20,0,6">Obavijesti e-mailom</TextBlock>
+        <CheckBox x:Name="ChkNotifyPosts" Margin="0,0,0,6" IsChecked="True">
+            Nove objave u oglasniku
+        </CheckBox>
+        <CheckBox x:Name="ChkNotifyFaults" Margin="0,0,0,6" IsChecked="True">
+            Promjene statusa prijavljenih kvarova
+        </CheckBox>
+        <CheckBox x:Name="ChkNotifyReservations" Margin="0,0,0,0" IsChecked="True">
+            Rezervacije (kreiranje i promjene statusa)
+        </CheckBox>
+
+        <StackPanel Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Button x:Name="BtnSpremi"
                     Width="120" Height="36"
-                    Style="{StaticResource PrimaryButton}" Click="BtnSpremi_Click">Spremi</Button>
-            <Button x:Name="BtnOdustani" 
+                    Style="{StaticResource PrimaryButton}" Click="BtnSpremi_Click">
+                Spremi
+            </Button>
+            <Button x:Name="BtnOdustani"
                     Width="120" Height="36"
                     Margin="36,0,0,0"
-                    Style="{StaticResource SecondaryButton}" Click="BtnOdustani_Click">Odustani</Button>
+                    Style="{StaticResource SecondaryButton}" Click="BtnOdustani_Click">
+                Odustani
+            </Button>
         </StackPanel>
     </StackPanel>
 </Window>

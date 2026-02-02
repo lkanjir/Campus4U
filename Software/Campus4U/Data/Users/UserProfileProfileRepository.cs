@@ -94,8 +94,8 @@ public class UserProfileProfileRepository : IUserProfileRepository
         entity.BrojTelefona = profile.BrojTelefona;
         entity.SlikaProfila = profile.SlikaProfila;
 
-        var changed = await db.SaveChangesAsync();
-        return changed > 0;
+        await db.SaveChangesAsync();
+        return true;
     }
     /// Nikola Kihas
     public async Task<bool> ObrisiKorisnikaIzBazeAsync(int id)
