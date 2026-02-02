@@ -22,6 +22,7 @@ using Client.Data.Images;
 using Client.Presentation.Views.Spaces;
 using DomainUserProfile = Client.Domain.Users.UserProfile;
 using Client.Domain.Events;
+using Client.Presentation.Views.Posts;
 
 namespace Client.Presentation.Views.UserProfile
 {
@@ -144,6 +145,7 @@ namespace Client.Presentation.Views.UserProfile
                     var payload = await imageService.GetEventImageAsync(dogadaj.Id);
                     FavoriteEvents.Add(new FavoriteEventItemView
                     {
+                        EventId = dogadaj.Id,
                         Title = dogadaj.Naslov,
                         Date = dogadaj.VrijemeDogadaja.ToString("dd.MM.yyyy"),
                         Description = dogadaj.Opis,
@@ -386,6 +388,18 @@ namespace Client.Presentation.Views.UserProfile
                 Owner = this
             };
             myReservationView.ShowDialog();
+        }
+
+        private void EventCard_SeeRequested(object sender, int eventId)
+        {
+            if (_profil is null) return;
+
+            bool isStaff = _profil.UlogaId != 1;
+            var pogled = new PostsWindow(_profil.Id, isStaff, eventId)
+            {
+                Owner = this
+            };
+            pogled.ShowDialog();
         }
     }
 }

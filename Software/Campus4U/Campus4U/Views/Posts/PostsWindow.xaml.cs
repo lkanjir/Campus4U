@@ -19,6 +19,7 @@ public partial class PostsWindow
 {
     private readonly int _userId;
     private readonly bool _isStaff;
+    private readonly int? _initalPostId;
     private readonly PostsService _postsService;
     private readonly InterestsService _interestsService;
     private readonly IImageService imageService;
@@ -28,12 +29,13 @@ public partial class PostsWindow
 
     public ObservableCollection<PostListItem> Posts { get; } = [];
 
-    public PostsWindow(int userId, bool isStaff)
+    public PostsWindow(int userId, bool isStaff, int? initalPostId = null)
     {
         InitializeComponent();
         DataContext = this;
         this._userId = userId;
         this._isStaff = isStaff;
+        this._initalPostId = initalPostId;
 
         var postsRepository = new PostsRepository();
         _postsService = new PostsService(postsRepository);
@@ -59,9 +61,9 @@ public partial class PostsWindow
         BtnDelete.Visibility = canEditDelete ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    private async void PostsWindow_OnLoaded(object sender, RoutedEventArgs e) => await LoadPostsAsync();
+    private async void PostsWindow_OnLoaded(object sender, RoutedEventArgs e) => await LoadPostsAsync(_initalPostId);
 
-    private async Task LoadPostsAsync()
+    private async Task LoadPostsAsync(int? selectId = null)
     {
         try
         {
@@ -72,7 +74,7 @@ public partial class PostsWindow
                 Posts.Add(item);
             }
 
-            SelectPost(_currentPost?.Id);
+            SelectPost(selectId ?? _currentPost?.Id);
             if (PostsList.SelectedItem is null) ClearDetails();
         }
         catch (Exception)

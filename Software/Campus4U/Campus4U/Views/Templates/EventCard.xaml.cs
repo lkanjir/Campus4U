@@ -25,6 +25,9 @@ namespace Client.Presentation.Views.Templates
         private static readonly ImageSource DefaultImage =
             new BitmapImage(new Uri("pack://application:,,,/Images/no-img.png", UriKind.Absolute));
 
+        public static readonly DependencyProperty EventIdProperty = DependencyProperty.Register(
+            nameof(EventId), typeof(int), typeof(EventCard), new PropertyMetadata(0));
+
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register(nameof(Title), typeof(string), typeof(EventCard), new PropertyMetadata(string.Empty));
 
@@ -42,6 +45,11 @@ namespace Client.Presentation.Views.Templates
             InitializeComponent();
         }
 
+        public int EventId
+        {
+            get => (int)GetValue(EventIdProperty);
+            set => SetValue(EventIdProperty, value);
+        }
         public string Title
         {
             get => (string)GetValue(TitleProperty);
@@ -66,5 +74,11 @@ namespace Client.Presentation.Views.Templates
             set => SetValue(ImageProperty, value);
         }
 
+        public event EventHandler<int>? SeeRequested;
+        private void BtnSeeFavoriteEvent_Click(object sender, RoutedEventArgs e)
+        {
+            if (EventId <= 0) return;
+            SeeRequested?.Invoke(this, EventId);
+        }
     }
 }
