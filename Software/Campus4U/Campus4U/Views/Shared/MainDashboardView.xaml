@@ -34,7 +34,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Pregledajte prostorije preka kategoriji" FontSize="20" FontWeight="Bold"
+                    <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Pregledajte prostorije prema kategoriji" FontSize="20" FontWeight="Bold"
                         Margin="0,0,0,10" HorizontalAlignment="Center"/>
 
                     <Button Grid.Column="0" Grid.Row="1" x:Name="BtnKategorijaUcionice"
@@ -65,13 +65,13 @@
                                         </Border>
 
                                         <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                            <TextBlock Text="UCIONICE"
+                                            <TextBlock Text="UČIONICE"
                                    FontSize="24"
                                    FontWeight="Bold"
                                    Foreground="#333"
                                    HorizontalAlignment="Center"/>
 
-                                            <TextBlock Text="Ucenje"
+                                            <TextBlock Text="Učenje"
                                    FontSize="14"
                                    Foreground="Gray"
                                    Margin="0,5,0,0"
