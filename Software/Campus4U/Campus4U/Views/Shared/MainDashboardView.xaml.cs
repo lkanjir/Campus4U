@@ -46,13 +46,23 @@ public partial class SpacesDashboardView : UserControl
 
     private void BtnKategorijaUcionice_Click(object sender, RoutedEventArgs e)
     {
-        var spacesWindow = new SpacesView(TipProstora.Ucionica, KorisnikId);
+        var spacesWindow = new SpacesView(TipProstora.Ucionica, KorisnikId)
+        {
+            Owner = Window.GetWindow(this)
+        };
+        spacesWindow.Closed += (_, __) => _ = LoadFavoritesAsync();
+
         spacesWindow.Show();
     }
 
     private void BtnKategorijaTeretane_Click(object sender, RoutedEventArgs e)
     {
-        var spacesWindow = new SpacesView(TipProstora.Teretana, KorisnikId);
+        var spacesWindow = new SpacesView(TipProstora.Teretana, KorisnikId)
+        {
+            Owner = Window.GetWindow(this)
+        };
+        spacesWindow.Closed += (_, __) => _ = LoadFavoritesAsync();
+
         spacesWindow.Show();
     }
 
