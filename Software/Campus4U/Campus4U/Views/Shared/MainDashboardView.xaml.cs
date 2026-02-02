@@ -71,11 +71,11 @@ public partial class SpacesDashboardView : UserControl
 
         if (_korisnikId <= 0)
         {
-            ShowNoFavorites("Ovdje ce se prikazati favoriti kada oni budu oznaceni.");
+            ShowNoFavorites("Ovdje ƒáe se prikazati favoriti kada oni budu oznaƒáeni.");
             return;
         }
 
-        SetFavoritesStatus("UËitavanje favorita...");
+        SetFavoritesStatus("Uƒçitavanje favorita...");
 
         try
         {
@@ -88,11 +88,11 @@ public partial class SpacesDashboardView : UserControl
             var selected = ucionice.Count > 0 ? ucionice : teretane;
             if (selected.Count == 0)
             {
-                ShowNoFavorites("Ovdje Êe se prikazati favoriti kada oni budu oznaceni.");
+                ShowNoFavorites("Ovdje ƒáe se prikazati favoriti kada oni budu oznaƒáeni.");
                 return;
             }
 
-            TxtFavoritesTitle.Text = ucionice.Count > 0 ? "Favoriti uËionica" : "Favoriti teretana";
+            TxtFavoritesTitle.Text = ucionice.Count > 0 ? "Favoriti uƒçionica" : "Favoriti teretana";
 
             FavoriteSpaceCards.Clear();
             foreach (var space in selected.Take(3))
@@ -106,7 +106,7 @@ public partial class SpacesDashboardView : UserControl
         catch
         {
             if (version != _loadVersion) return;
-            ShowNoFavorites("Greöka kod dohvaÊanja favorita.");
+            ShowNoFavorites("Gre≈°ka kod dohvaƒáanja favorita.");
         }
     }
 

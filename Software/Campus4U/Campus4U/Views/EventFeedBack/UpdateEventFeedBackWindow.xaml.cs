@@ -36,7 +36,7 @@ namespace Client.Presentation.Views.EventFeedBack
         {
             if (cboOcjena.SelectedItem is not ComboBoxItem odabranaOcjena)
             {
-                MessageBox.Show("Odaberite ocjenu.", "Greöka", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Odaberite ocjenu.", "Gre≈°ka", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -45,7 +45,7 @@ namespace Client.Presentation.Views.EventFeedBack
             var tekstKomentara = txtKomentar.Text?.Trim() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(tekstKomentara))
             {
-                MessageBox.Show("Komentar ne smije biti prazan.", "Greöka", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Komentar ne smije biti prazan. Potrebno je unijeti tekst!", "Gre≈°ka", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -62,7 +62,7 @@ namespace Client.Presentation.Views.EventFeedBack
             var uspjeh = _servis.Uredi(updated);
             if (!uspjeh)
             {
-                MessageBox.Show("Aûuriranje komentara nije uspjelo.", "Greöka", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("A≈æuriranje komentara nije uspjelo.", "Gre≈°ka", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
