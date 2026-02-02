@@ -21,6 +21,7 @@ using Client.Application.Images;
 using Client.Data.Images;
 using Client.Presentation.Views.Spaces;
 using DomainUserProfile = Client.Domain.Users.UserProfile;
+using Client.Domain.Events;
 
 namespace Client.Presentation.Views.UserProfile
 {
@@ -38,12 +39,15 @@ namespace Client.Presentation.Views.UserProfile
         private static readonly ImageSource DefaultProfileImage = new BitmapImage(
             new Uri("pack://application:,,,/Images/Profile/default-profile.png",
                 UriKind.Absolute));
+        private static readonly ImageSource DefaultEventImage = new BitmapImage(
+            new Uri("pack://application:,,,/Images/no-img.png", UriKind.Absolute));
 
         private UserProfileService userProfileService;
         private readonly ISpacesFavoritesService spacesFavoritesService;
+        private readonly IEventsFavoritesSevice eventsFavoritesService;
         private readonly IPasswordResetService passwordResetService;
         private readonly IAccountDeletionService accountDeletionService;
-        public ObservableCollection<FavoriteEventItem> FavoriteEvents { get; } = new();
+        public ObservableCollection<FavoriteEventItemView> FavoriteEvents { get; } = new();
         public ObservableCollection<FavoriteSpaceItem> FavoriteSpaces { get; } = new();
 
         public UserProfileView(string? korisnikSub)
@@ -55,6 +59,7 @@ namespace Client.Presentation.Views.UserProfile
             Activated += UserProfileView_Activated;
             userProfileService = new UserProfileService(new UserProfileProfileRepository());
             spacesFavoritesService = new SpacesFavoritesService(new SpacesFavoritesRepository());
+            eventsFavoritesService = new EventsFavoritesService(new EventsFavoritesRepository());
 
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false)
@@ -79,24 +84,6 @@ namespace Client.Presentation.Views.UserProfile
                 throw new InvalidOperationException("Auth0Management konfiguracija nedostaje.");
 
             accountDeletionService = new Auth0AccountDeletionService(managementOptions);
-            FavoriteEvents.Add(new FavoriteEventItem
-            {
-                Title = "Noć muzeja",
-                Date = "26.01.2026",
-                Description = "Posebne izložbe i slobodan ulaz u muzeje diljem grada."
-            });
-            FavoriteEvents.Add(new FavoriteEventItem
-            {
-                Title = "Studentski hackathon",
-                Date = "02.02.2026",
-                Description = "48-satno timsko natjecanje u razvoju softverskih rješenja."
-            });
-            FavoriteEvents.Add(new FavoriteEventItem
-            {
-                Title = "Predavanje: UI/UX trendovi",
-                Date = "05.02.2026",
-                Description = "Pregled novih trendova u dizajnu sučelja i korisničkog iskustva."
-            });
         }
 
         private async void UserProfileView_Loaded(object sender, RoutedEventArgs e)
@@ -113,6 +100,7 @@ namespace Client.Presentation.Views.UserProfile
         private async void UserProfileView_Activated(object? sender, EventArgs e)
         {
             if (_profil is null) return;
+            await DohvatiFavoriteDogadajaAsync(_profil.Id);
             await DohvatiFavoriteProstorijaAsync(_profil.Id);
         }
 
@@ -141,9 +129,36 @@ namespace Client.Presentation.Views.UserProfile
                                            : " " + profil.BrojTelefona);
                 txtUloga.Text = "Uloga:" + (profil.UlogaId == 1 ? " Student" : "Osoblje");
                 await DohvatiFavoriteProstorijaAsync(profil.Id);
+                await DohvatiFavoriteDogadajaAsync(_profil.Id);
             }
         }
 
+        private async Task DohvatiFavoriteDogadajaAsync(int korisnikId)
+        {
+            try
+            {
+                List<Event> dogadajiFavoriti = await eventsFavoritesService.DohvatiFavoriteKorisnikaAsync(korisnikId);
+                FavoriteEvents.Clear();
+                foreach (var dogadaj in dogadajiFavoriti)
+                {
+                    var payload = await imageService.GetEventImageAsync(dogadaj.Id);
+                    FavoriteEvents.Add(new FavoriteEventItemView
+                    {
+                        Title = dogadaj.Naslov,
+                        Date = dogadaj.VrijemeDogadaja.ToString("dd.MM.yyyy"),
+                        Description = dogadaj.Opis,
+                        Image = payload is null
+                            ? DefaultEventImage
+                            : CreateImageSource(payload.Bytes)
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greška pri dohvaćanju favorita događaja: {ex.Message}",
+                    "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         private async Task DohvatiFavoriteProstorijaAsync(int korisnikId)
         {
             try

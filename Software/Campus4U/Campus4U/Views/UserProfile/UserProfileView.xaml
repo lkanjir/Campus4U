@@ -127,6 +127,7 @@
                             <templates:EventCard Title="{Binding Title}"
                                  Date="{Binding Date}"
                                  Description="{Binding Description}"
+                                 Image="{Binding Image}"
                                  Margin="0,0,15,15"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
