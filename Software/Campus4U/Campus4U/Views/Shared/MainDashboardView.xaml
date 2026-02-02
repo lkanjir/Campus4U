@@ -152,7 +152,7 @@
             </Border.Effect>
 
             <Border Background="White" CornerRadius="10" SnapsToDevicePixels="true" ClipToBounds="True" Margin="10">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,3,10,3">
                     <TextBlock x:Name="TxtFavoritesTitle"
                                Text="Favoriti prostorija"
                                FontSize="20"
@@ -168,7 +168,7 @@
                                HorizontalAlignment="Center"
                                MaxWidth="320"/>
                     <ScrollViewer x:Name="ScrollFavorites"
-                                  Margin="0,10,0,0"
+                                  Margin="0,3,0,0"
                                   VerticalScrollBarVisibility="Auto"
                                   HorizontalScrollBarVisibility="Disabled"
                                   Visibility="Collapsed">
@@ -181,12 +181,16 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <templates:EventCard Title="{Binding Title}"
-                                                    Date="{Binding Date}"
-                                                    Description="{Binding Description}"
-                                                    Image="{Binding Image}"
-                                                    EventId="{Binding SpaceId}"
-                                                    SeeRequested="FavoriteSpace_SeeRequested"
-                                                    Margin="0,0,15,15"/>
+                                                         Date="{Binding Date}"
+                                                         Description="{Binding Description}"
+                                                         Image="{Binding Image}"
+                                                         EventId="{Binding SpaceId}"
+                                                         SeeRequested="FavoriteSpace_SeeRequested"
+                                                         Margin="0,0,15,15">
+                                        <FrameworkElement.LayoutTransform>
+                                            <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
+                                        </FrameworkElement.LayoutTransform>
+                                    </templates:EventCard>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
