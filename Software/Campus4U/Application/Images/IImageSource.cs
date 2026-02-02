@@ -7,6 +7,4 @@ public interface IImageSource
     Task UploadProfileImageAsync(ImageUpload upload, CancellationToken ct = default);
     Task<ImagePayload?> GetEventImageAsync(int eventId, CancellationToken ct = default);
     Task UploadEventImageAsync(int eventId, ImageUpload upload, CancellationToken ct = default);
-    Task<ImagePayload?> GetFaultImageAsync(int faultId, CancellationToken ct = default);
-    Task UploadFaultImageAsync(int faultId, ImageUpload upload, CancellationToken ct = default);
 }
