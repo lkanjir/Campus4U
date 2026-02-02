@@ -17,6 +17,7 @@ using Client.Presentation.Views.Posts;
 using Client.Presentation.Views.UserProfile;
 using Duende.IdentityModel.OidcClient.Browser;
 using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -508,6 +509,45 @@ namespace Client.Presentation
             var isStaff = string.Equals(currentRole, "osoblje", StringComparison.OrdinalIgnoreCase);
             var window = new PostsWindow(currentId, isStaff) { Owner = this };
             window.Show();
+        }
+
+        private void MainWindow_OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F1)
+            {
+                e.Handled = true;
+                OpenHelpDocument();
+            }
+        }
+
+        private void BtnHelp_OnClick(object sender, RoutedEventArgs e)
+        {
+            OpenHelpDocument();
+        }
+
+        private void OpenHelpDocument()
+        {
+            try
+            {
+                var helpPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Korisnicka dokumentacija - Campus4U.pdf");
+
+                if (File.Exists(helpPath))
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = helpPath,
+                        UseShellExecute = true
+                    });
+                }
+                else
+                {
+                    MessageBox.Show("Dokument pomoći nije pronađen.", "Pomoć", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Greška pri otvaranju dokumenta: {ex.Message}", "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
