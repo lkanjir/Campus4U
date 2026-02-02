@@ -36,7 +36,7 @@ namespace Client.Presentation.Views.EventFeedBack
         {
             if (cboOcjena.SelectedItem is not ComboBoxItem odabranaOcjena)
             {
-                MessageBox.Show("Odaberite ocjenu.", "Greska", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Odaberite ocjenu.", "Greška", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 

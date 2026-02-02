@@ -12,10 +12,9 @@ using Client.Domain.Spaces;
 using Client.Presentation.Views.Spaces;
 
 namespace Client.Presentation.Views.Shared;
-//Nikola Kihas
 public partial class SpacesDashboardView : UserControl
 {
-
+    //Nikola Kihas
     private static readonly ImageSource DefaultSpaceImage =
         new BitmapImage(new Uri("pack://application:,,,/Images/no-img.png", UriKind.Absolute));
 

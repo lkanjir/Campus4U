@@ -150,7 +150,7 @@ namespace Client.Presentation
                 SetBusy(false);
             }
         }
-
+        //Nikola Kihas
         private async Task UploadOnboardingProfileImageAsync(int id, string profileImagePath)
         {
             var fileInfo = new FileInfo(profileImagePath);
@@ -168,7 +168,7 @@ namespace Client.Presentation
             _imageService.InvalidateProfile(id);
             await LoadHeaderProfileImageAsync(id);
         }
-
+        //Nikola Kihas
         private static string? GetImageContentType(string extension)
         {
             switch (extension.Trim().ToLowerInvariant())
