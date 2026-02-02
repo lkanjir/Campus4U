@@ -14,7 +14,9 @@ namespace Client.Application.Spaces
         Task<bool> ProvjeriDostupnost(int prostorId, DateTime pocetnoVrijeme, DateTime krajnjeVrijeme);
         Task SpremiRezervaciju(Rezervacija rezervacija);
         Task<int> DohvatiZauzetoMjesta(int prostorId, DateTime pocetnoVrijeme, DateTime krajnjeVrijeme);
+        Task<int> DohvatiZauzetoMjestaBezRezervacije(int prostorId, DateTime pocetnoVrijeme, DateTime krajnjeVrijeme, int rezervacijaId);
         Task<List<Rezervacija>> DohvatiRezervacijeKorisnika(int korisnikId);
         Task OtkaziRezervaciju(int rezervacijaId);
+        Task UrediRezervaciju(Rezervacija rezervacija);
     }
 }

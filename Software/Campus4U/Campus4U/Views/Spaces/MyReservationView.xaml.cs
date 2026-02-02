@@ -105,5 +105,27 @@ namespace Client.Presentation.Views.Spaces
                 FiltrirajRezervacije_Click(null, null);
             }
         }
+
+        private async void BtnUrediRezervaciju_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button button)
+            {
+                return;
+            }
+
+            if (button.DataContext is not Rezervacija rezervacija)
+            {
+                return;
+            }
+
+            var prostor = rezervacija.Prostor;
+
+            var pogled = new ReservationView(prostor, korisnikId, rezervacija);
+            if (pogled.ShowDialog() == true)
+            {
+                sveRezervacije = await repo.DohvatiRezervacijeKorisnika(korisnikId);
+                FiltrirajRezervacije_Click(null, null);
+            }
+        }
     }
 }

@@ -99,35 +99,64 @@
                                                Text="{Binding DatumKreiranja, StringFormat=Vrijeme kreiranja: {0:dd.MM.yyyy HH:mm}}"/>
                                 </StackPanel>
 
-                                <Button Grid.Column="2"
-                                        Content="Otkaži"
-                                        Height="32"
-                                        Padding="14,0"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Right"
-                                        Cursor="Hand"
-                                        BorderThickness="0"
-                                        Foreground="White"
-                                        Background="#7A0C19"
-                                        Click="BtnOtkaziRezervaciju_Click"
-                                        Tag="{Binding}">
-                                    <Button.Style>
-                                        <Style TargetType="Button">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Status}" Value="Aktivno">
-                                                    <Setter Property="Visibility" Value="Visible"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Button.Style>
+                                <StackPanel Grid.Column="2" VerticalAlignment="Center">
 
-                                    <Button.Resources>
-                                        <Style TargetType="Border">
-                                            <Setter Property="CornerRadius" Value="8"/>
-                                        </Style>
-                                    </Button.Resources>
-                                </Button>
+                                    <Button Content="Otkaži"
+                                            Height="32"
+                                            Width="100"
+                                            Margin="0,0,0,8"
+                                            Padding="14,0"
+                                            Cursor="Hand"
+                                            BorderThickness="0"
+                                            Foreground="White"
+                                            Background="#7A0C19"
+                                            Click="BtnOtkaziRezervaciju_Click"
+                                            Tag="{Binding}">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Aktivno">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                        <Button.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius" Value="8"/>
+                                            </Style>
+                                        </Button.Resources>
+                                    </Button>
+
+                                    <Button Content="Uredi"
+                                            Height="32"
+                                            Width="100"
+                                            Padding="14,0"
+                                            Cursor="Hand"
+                                            BorderThickness="1"
+                                            BorderBrush="#7A0C19"
+                                            Foreground="#7A0C19"
+                                            Background="Transparent"
+                                            Click="BtnUrediRezervaciju_Click"
+                                            Tag="{Binding}">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Aktivno">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                        <Button.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="CornerRadius" Value="8"/>
+                                            </Style>
+                                        </Button.Resources>
+                                    </Button>
+                                </StackPanel>
                             </Grid>
 
                         </Border>
