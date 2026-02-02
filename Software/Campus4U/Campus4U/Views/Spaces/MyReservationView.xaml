@@ -30,7 +30,7 @@
                             <ControlTemplate TargetType="RadioButton">
                                 <Border x:Name="border"
                                         Background="White"
-                                        BorderBrush="#7A0C19"
+                                        BorderBrush="#b11226"
                                         BorderThickness="2"
                                         CornerRadius="5">
                                     <ContentPresenter HorizontalAlignment="Center"
@@ -38,12 +38,12 @@
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsChecked" Value="True">
-                                        <Setter TargetName="border" Property="Background" Value="#7A0C19"/>
+                                        <Setter TargetName="border" Property="Background" Value="#b11226"/>
                                         <Setter Property="Foreground" Value="White"/>
                                     </Trigger>
                                     <Trigger Property="IsChecked" Value="False">
                                         <Setter TargetName="border" Property="Background" Value="White"/>
-                                        <Setter Property="Foreground" Value="#7A0C19"/>
+                                        <Setter Property="Foreground" Value="#b11226"/>
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -109,11 +109,10 @@
                                             Cursor="Hand"
                                             BorderThickness="0"
                                             Foreground="White"
-                                            Background="#7A0C19"
                                             Click="BtnOtkaziRezervaciju_Click"
                                             Tag="{Binding}">
                                         <Button.Style>
-                                            <Style TargetType="Button">
+                                            <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
                                                 <Setter Property="Visibility" Value="Collapsed"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding Status}" Value="Aktivno">
@@ -135,13 +134,11 @@
                                             Padding="14,0"
                                             Cursor="Hand"
                                             BorderThickness="1"
-                                            BorderBrush="#7A0C19"
-                                            Foreground="#7A0C19"
                                             Background="Transparent"
                                             Click="BtnUrediRezervaciju_Click"
                                             Tag="{Binding}">
                                         <Button.Style>
-                                            <Style TargetType="Button">
+                                            <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
                                                 <Setter Property="Visibility" Value="Collapsed"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding Status}" Value="Aktivno">
