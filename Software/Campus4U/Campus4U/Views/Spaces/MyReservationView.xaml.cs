@@ -105,5 +105,9 @@ namespace Client.Presentation.Views.Spaces
                 FiltrirajRezervacije_Click(null, null);
             }
         }
+
+        private async void BtnUrediRezervaciju_Click(object sender, RoutedEventArgs e)
+        {
+        }
     }
 }
