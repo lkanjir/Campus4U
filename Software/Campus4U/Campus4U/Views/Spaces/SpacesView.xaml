@@ -72,7 +72,7 @@
                         Height="36"
                         Content="Filtriraj"
                         Click="BtnFilter_Click"
-                        Background="#7A0C19"
+                        Style="{StaticResource PrimaryButton}"
                         Foreground="White"
                         FontWeight="Bold"
                         BorderThickness="0"
@@ -89,8 +89,7 @@
                         Height="36"
                         Content="Očisti"
                         Click="BtnClearFilter_Click"
-                        Background="#7A0C19"
-                        Foreground="White"
+                        Style="{StaticResource SecondaryButton}"
                         FontWeight="Bold"
                         BorderThickness="0"
                         Cursor="Hand">
@@ -192,7 +191,7 @@
                                     <StackPanel Orientation="Horizontal"
                                                 Margin="0,0,0,5">
                                         <TextBlock Text="Kapacitet: "
-                                                   Foreground="#7A0C19"
+                                                   Foreground="#b11226"
                                                    FontWeight="Bold"/>
                                         <TextBlock Text="{Binding Kapacitet}"
                                                    Foreground="#555"/>
@@ -209,7 +208,7 @@
                                         Content="Rezerviraj"
                                         Width="150"
                                         Height="35"
-                                        Background="#7A0C19"
+                                        Style="{StaticResource PrimaryButton}"
                                         Foreground="White"
                                         FontWeight="Bold"
                                         BorderThickness="0"
