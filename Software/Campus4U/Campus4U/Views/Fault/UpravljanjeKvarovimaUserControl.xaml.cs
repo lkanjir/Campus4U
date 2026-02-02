@@ -23,6 +23,8 @@ namespace Client.Presentation.Views.Fault
         private List<FaultType> _vrsteKvarova = new();
         private bool _isLoading = true;
 
+        public event EventHandler? PovratakNaPocetni;
+
         public UpravljanjeKvarovimaUserControl()
         {
             InitializeComponent();
@@ -254,6 +256,11 @@ namespace Client.Presentation.Views.Fault
             {
                 MessageBox.Show($"Greška kod otvaranja detalja: {ex.Message}", "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void BtnNazad_Click(object sender, RoutedEventArgs e)
+        {
+            PovratakNaPocetni?.Invoke(this, EventArgs.Empty);
         }
     }
 }

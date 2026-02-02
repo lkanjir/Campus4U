@@ -48,7 +48,7 @@
                         Margin="8,0,0,0"
                         Visibility="Collapsed"
                         Click="BtnUpravljanjeKvarovima_OnClick">
-                        <TextBlock Text="Upravljanje kvarovima (test)" VerticalAlignment="Center"/>
+                        <TextBlock Text="Upravljanje kvarovima" VerticalAlignment="Center"/>
                     </Button>
                     <Button x:Name="BtnHelp" Click="BtnHelp_OnClick"
                         Style="{StaticResource SecondaryButton}"

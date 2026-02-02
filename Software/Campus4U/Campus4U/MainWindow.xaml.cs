@@ -428,6 +428,7 @@ namespace Client.Presentation
         {
             var prijavaKvara = new PrijavaKvaraUserControl();
             prijavaKvara.PostaviKorisnika(currentId);
+            prijavaKvara.PovratakNaPocetni += (_, __) => ApplyRoleContent();
             RoleContent.Content = prijavaKvara;
         }
 
@@ -438,7 +439,9 @@ namespace Client.Presentation
                 MessageBox.Show("Samo osoblje može upravljati kvariovima.");
                 return;
             }
-            RoleContent.Content = new UpravljanjeKvarovimaUserControl();
+            var upravljanjeKvarovima = new UpravljanjeKvarovimaUserControl();
+            upravljanjeKvarovima.PovratakNaPocetni += (_, __) => ApplyRoleContent();
+            RoleContent.Content = upravljanjeKvarovima;
         }
 
         private async Task StartTriggersAsync()
