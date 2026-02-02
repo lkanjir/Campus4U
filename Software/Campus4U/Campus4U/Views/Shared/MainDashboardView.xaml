@@ -59,8 +59,8 @@
                                         </Grid.RowDefinitions>
 
                                         <Border Grid.Row="0" CornerRadius="20,20,0,0" ClipToBounds="True">
-                                            <Image Source="pack://application:,,,/Images/Spaces/ucionicaLogo.jpg"
-                               Stretch="UniformToFill" Width="auto"/>
+                                                <Image Source="pack://application:,,,/Images/Spaces/ucionicaLogo.jpg"
+                                                       Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
 
                                         <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -111,8 +111,8 @@
                                         </Grid.RowDefinitions>
 
                                         <Border Grid.Row="0" CornerRadius="20,20,0,0" ClipToBounds="True">
-                                            <Image Source="pack://application:,,,/Images/Spaces/teretanaLogo.jpg"
-                               Stretch="UniformToFill"/>
+                                                <Image Source="pack://application:,,,/Images/Spaces/teretanaLogo.jpg"
+                                                       Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
 
                                         <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
