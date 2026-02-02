@@ -97,7 +97,7 @@
                 </Button.Resources>
             </Button>
 
-            <Button Grid.Column="2" Content="Rezerviraj" Height="50" Background="#7A0C19" Foreground="White" BorderThickness="0" FontWeight="Bold" Click="BtnRezerviraj_Click">
+            <Button Grid.Column="2" Content="Rezerviraj" Height="50" Background="#7A0C19" Foreground="White" BorderThickness="0" FontWeight="Bold" x:Name="BtnRezerviraj" Click="BtnRezerviraj_Click">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="15"/>

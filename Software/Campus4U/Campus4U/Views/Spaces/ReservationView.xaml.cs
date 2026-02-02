@@ -29,14 +29,30 @@ namespace Client.Presentation.Views.Spaces
         public readonly ReservationRepository reservationRepository = new ReservationRepository();
         private readonly ISpacesFavoritesService _favoritesService;
         private int idKorisnika;
+        private bool jelUredivanje;
+        private Rezervacija? rezervacijaZaUredivanje;
+
         public ReservationView(Space prostor, int idKorisnika)
         {
             InitializeComponent();
             _favoritesService = new SpacesFavoritesService(new SpacesFavoritesRepository());
-            PopuniVremena();
             TrenutniProstor = prostor;
             this.DataContext = TrenutniProstor;
             this.idKorisnika = idKorisnika;
+            jelUredivanje = false;
+            rezervacijaZaUredivanje = null;
+            Loaded += ReservationView_Loaded;
+        }
+
+        public ReservationView(Space prostor, int idKorisnika, Rezervacija rezervacija)
+        {
+            InitializeComponent();
+            _favoritesService = new SpacesFavoritesService(new SpacesFavoritesRepository());
+            TrenutniProstor = prostor;
+            DataContext = TrenutniProstor;
+            this.idKorisnika = idKorisnika;
+            jelUredivanje = true;
+            rezervacijaZaUredivanje = rezervacija;
             Loaded += ReservationView_Loaded;
         }
 
@@ -47,7 +63,7 @@ namespace Client.Presentation.Views.Spaces
             for (int h = 0; h < 24; h++)
             {
                 vremena.Add($"{h:00}:00");
-                vremena.Add($"{h:00}:15");
+                vremena.Add($"{h:00}:30");
             }
 
             odVrijemeCombo.ItemsSource = vremena;
@@ -84,8 +100,7 @@ namespace Client.Presentation.Views.Spaces
                     throw new Exception("Krajnje vrijeme mora biti nakon početnog vremena");
                 }
 
-                var trajanje = kraj - pocetak;
-                if (trajanje > TimeSpan.FromHours(3))
+                if (kraj - pocetak > TimeSpan.FromHours(3))
                 {
                     throw new Exception("Rezervacija ne smije trajati duže od 3 sata.");
                 }
@@ -96,7 +111,25 @@ namespace Client.Presentation.Views.Spaces
                 }
 
                 int brojOsoba = int.Parse(TxtBrojOsoba.Text);
-                int zauzeto = await reservationRepository.DohvatiZauzetoMjesta(TrenutniProstor.ProstorId, pocetak, kraj);
+
+                if (jelUredivanje && rezervacijaZaUredivanje == null)
+                {
+                    MessageBox.Show("INTERNAL ERROR: edit bez rezervacije");
+                    return;
+                }
+
+
+                int zauzeto = jelUredivanje
+                    ? await reservationRepository.DohvatiZauzetoMjestaBezRezervacije(
+                        TrenutniProstor.ProstorId,
+                        pocetak,
+                        kraj,
+                        rezervacijaZaUredivanje.ID)
+                    : await reservationRepository.DohvatiZauzetoMjesta(
+                        TrenutniProstor.ProstorId,
+                        pocetak,
+                        kraj);
+
                 int slobodno = TrenutniProstor.Kapacitet - zauzeto;
 
                 if (brojOsoba > slobodno)
@@ -104,27 +137,48 @@ namespace Client.Presentation.Views.Spaces
                     throw new Exception("Nema dovoljno slobodnih mjesta za odabrani termin.");
                 }
 
-                Rezervacija novaRezervacija = new Rezervacija
-                (
-                    0,
-                    TrenutniProstor,
-                    idKorisnika,
-                    pocetak,
-                    kraj,
-                    "Aktivno",
-                    brojOsoba,
-                    DateTime.Now
-                );
+                if (jelUredivanje)
+                {
+                    Rezervacija izmijenjena = new Rezervacija(
+                        rezervacijaZaUredivanje.ID,
+                        TrenutniProstor,
+                        idKorisnika,
+                        pocetak,
+                        kraj,
+                        rezervacijaZaUredivanje.Status,
+                        brojOsoba,
+                        rezervacijaZaUredivanje.DatumKreiranja
+                    );
 
-                await reservationRepository.SpremiRezervaciju(novaRezervacija);
-                MessageBox.Show("Uspješno ste rezervirali prostor.");
-                this.Close();
+                    await reservationRepository.UrediRezervaciju(izmijenjena);
+                    MessageBox.Show("Uspješno ste uredili rezervaciju.");
+                }
+                else
+                {
+                    Rezervacija nova = new Rezervacija(
+                        0,
+                        TrenutniProstor,
+                        idKorisnika,
+                        pocetak,
+                        kraj,
+                        "Aktivno",
+                        brojOsoba,
+                        DateTime.Now
+                    );
+
+                    await reservationRepository.SpremiRezervaciju(nova);
+                    MessageBox.Show("Uspješno ste rezervirali prostor.");
+                }
+
+                DialogResult = true;
+                Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Greška pri rezervaciji", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         private void BtnMinus_Click(object sender, RoutedEventArgs e)
         {
@@ -173,6 +227,17 @@ namespace Client.Presentation.Views.Spaces
 
         private async void ReservationView_Loaded(object sender, RoutedEventArgs e)
         {
+            PopuniVremena();
+
+            if (jelUredivanje && rezervacijaZaUredivanje != null)
+            {
+                Datum.SelectedDate = rezervacijaZaUredivanje.PocetnoVrijeme.Date;
+                odVrijemeCombo.SelectedItem = rezervacijaZaUredivanje.PocetnoVrijeme.ToString("HH:mm");
+                doVrijemeCombo.SelectedItem = rezervacijaZaUredivanje.KrajnjeVrijeme.ToString("HH:mm");
+                TxtBrojOsoba.Text = rezervacijaZaUredivanje.BrojOsoba.ToString();
+                BtnRezerviraj.Content = "Spremi izmjene";
+            }
+
             await OsvjeziFavoriteGumbeAsync();
         }
 

@@ -60,6 +60,22 @@ namespace Client.Data.Spaces
             return zauzeto;
         }
 
+        public async Task<int> DohvatiZauzetoMjestaBezRezervacije(int prostorId, DateTime pocetnoVrijeme, DateTime krajnjeVrijeme, int rezervacijaId)
+        {
+            await using var db = new Campus4UContext();
+
+            var zauzeto = await db.Rezervacije
+                .Where(r => r.ProstorId == prostorId
+                            && r.Status != "Otkazano"
+                            && r.Id != rezervacijaId
+                            && r.VrijemeOd < krajnjeVrijeme
+                            && r.VrijemeDo > pocetnoVrijeme)
+                .SumAsync(r => (int?)r.BrojOsoba) ?? 0;
+
+            return zauzeto;
+        }
+
+
         public async Task<List<Rezervacija>> DohvatiRezervacijeKorisnika(int korisnikId)
         {
             await using var db = new Campus4UContext();
@@ -111,6 +127,20 @@ namespace Client.Data.Spaces
             if (rezervacija != null)
             {
                 rezervacija.Status = "Otkazano";
+                await db.SaveChangesAsync();
+            }
+        }
+
+        public async Task UrediRezervaciju(Rezervacija rezervacija)
+        {
+            await using var db = new Campus4UContext();
+            var postojećaRezervacija = await db.Rezervacije
+                .FirstOrDefaultAsync(r => r.Id == rezervacija.ID);
+            if (postojećaRezervacija != null)
+            {
+                postojećaRezervacija.VrijemeOd = rezervacija.PocetnoVrijeme;
+                postojećaRezervacija.VrijemeDo = rezervacija.KrajnjeVrijeme;
+                postojećaRezervacija.BrojOsoba = rezervacija.BrojOsoba;
                 await db.SaveChangesAsync();
             }
         }

@@ -69,10 +69,12 @@ namespace Client.Presentation.Views.Spaces
             {
                 return;
             }
-            if (gumb.CommandParameter is not Space prostor)
+            if (gumb.CommandParameter is not SpaceCardItem item)
             {
                 return;
             }
+
+            var prostor = item.Space;
 
             var pogled = new ReservationView(prostor, this.KorisnikID)
             {
