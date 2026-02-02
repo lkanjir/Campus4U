@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:Client.Presentation.Views.UserProfile"
         xmlns:templates="clr-namespace:Client.Presentation.Views.Templates"
         mc:Ignorable="d"
-        Title="UserProfileView" Height="1000" Width="1300" Background="{StaticResource BrushBackground}"
+        Title="UserProfileView" Width="1300" Background="{StaticResource BrushBackground}"
+        SizeToContent="Height"
         WindowStartupLocation="CenterScreen">
     <Grid Margin="30,15,30,15">
         <Grid.RowDefinitions>

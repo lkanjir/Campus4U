@@ -54,6 +54,7 @@ namespace Client.Presentation.Views.UserProfile
         public UserProfileView(string? korisnikSub)
         {
             InitializeComponent();
+            MaxHeight = SystemParameters.WorkArea.Height;
             DataContext = this;
             _korisnikSub = korisnikSub;
             Loaded += UserProfileView_Loaded;
