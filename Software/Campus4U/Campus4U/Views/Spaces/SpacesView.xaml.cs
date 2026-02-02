@@ -32,6 +32,7 @@ namespace Client.Presentation.Views.Spaces
         private readonly ISpacesFavoritesService _favoritesService;
         private readonly TipProstora tipProstora;
         private int KorisnikID;
+        private List<Space> sviProstori = new();
         
         public SpacesView(TipProstora tip, int korisnikID)
         {
@@ -46,7 +47,8 @@ namespace Client.Presentation.Views.Spaces
         private async void SpacesView_Loaded(object sender, RoutedEventArgs e)
         {
             var prostori = await prostorRepo.DohvatiPoTipu(tipProstora);
-            
+            sviProstori = prostori.ToList();
+
             var favoriteIds = new HashSet<int>();
             if(KorisnikID > 0)
             {
@@ -80,6 +82,41 @@ namespace Client.Presentation.Views.Spaces
             pogled.ShowDialog();
             await OsvjeziFavoriteIkoneAsync();
         }
+
+        private void primjeniFilter()
+        {
+            string u = TxtFilter.Text.Trim().ToLower();
+
+            IEnumerable<Space> filtrirano = sviProstori;
+
+            if (!string.IsNullOrEmpty(u))
+            {
+                filtrirano = filtrirano.Where(p =>
+                    (p.Naziv ?? "").ToLower().Contains(u) ||
+                    (p.Oprema ?? "").ToLower().Contains(u) ||
+                    p.Kapacitet.ToString().Contains(u)
+                );
+            }
+
+            GridProstori.ItemsSource = filtrirano.Select(p => new SpaceCardItem(p, false)) .ToList();
+        }
+
+        private void TxtFilter_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            primjeniFilter();
+        }
+
+        private void BtnClearFilter_Click(object sender, RoutedEventArgs e)
+        {
+            TxtFilter.Text = string.Empty;
+            GridProstori.ItemsSource = sviProstori;
+        }
+
+        private void BtnFilter_Click(object sender, RoutedEventArgs e)
+        {
+            primjeniFilter();
+        }
+
         //Nikola Kihas
         private sealed class SpaceCardItem : INotifyPropertyChanged
         {
