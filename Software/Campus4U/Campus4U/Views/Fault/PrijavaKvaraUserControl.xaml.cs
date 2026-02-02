@@ -233,10 +233,14 @@ namespace Client.Presentation.Views.Fault
 
         private void BtnPovratak_Click(object sender, RoutedEventArgs e)
         {
-            // Tu treba staviti kad se napravi početni ekran da se na to vraća
             PanelUspjeh.Visibility = Visibility.Collapsed;
             PanelForma.Visibility = Visibility.Visible;
 
+            PovratakNaPocetni?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void BtnNazad_Click(object sender, RoutedEventArgs e)
+        {
             PovratakNaPocetni?.Invoke(this, EventArgs.Empty);
         }
     }

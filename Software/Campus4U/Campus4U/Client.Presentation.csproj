@@ -38,6 +38,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Resources\Korisnicka dokumentacija - Campus4U.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Application\Client.Application.csproj" />
     <ProjectReference Include="..\Data\Client.Data.csproj" />
     <ProjectReference Include="..\Domain\Client.Domain.csproj" />

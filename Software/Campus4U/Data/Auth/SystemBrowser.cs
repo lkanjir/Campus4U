@@ -19,7 +19,6 @@ public sealed class SystemBrowser : IBrowser
     public async Task<BrowserResult> InvokeAsync(BrowserOptions options,
         CancellationToken cancellationToken = default)
     {
-        StartSystemBrowser(options.StartUrl);
         var result = new BrowserResult();
 
         httpListener?.Abort();
@@ -30,6 +29,7 @@ public sealed class SystemBrowser : IBrowser
 
             httpListener.Prefixes.Add(url);
             httpListener.Start();
+            StartSystemBrowser(options.StartUrl);
             await using (cancellationToken.Register(() => { httpListener?.Abort(); }))
             {
                 HttpListenerContext context;
@@ -55,6 +55,30 @@ public sealed class SystemBrowser : IBrowser
                 await context.Response.OutputStream.WriteAsync(buffer, cancellationToken);
                 context.Response.OutputStream.Close();
                 context.Response.Close();
+
+                var drainUntil = DateTimeOffset.UtcNow.AddSeconds(2);
+                while (DateTimeOffset.UtcNow < drainUntil)
+                {
+                    try
+                    {
+                        var delay = Task.Delay(200, cancellationToken);
+                        var ctxTask = httpListener.GetContextAsync();
+                        var completed = await Task.WhenAny(ctxTask, delay);
+                        if (completed != ctxTask) continue;
+
+                        var extra = ctxTask.Result;
+                        extra.Response.StatusCode = (int)HttpStatusCode.NoContent;
+                        extra.Response.Close();
+                    }
+                    catch (HttpListenerException)
+                    {
+                        break;
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        break;
+                    }
+                }
                 httpListener.Stop();
             }
         }
@@ -80,7 +104,8 @@ public sealed class SystemBrowser : IBrowser
                 : "Došlo je do greške prilikom prijave. Kako bi koristili aplikaciju morate se ponovno prijaviti.";
         }
 
-        var template = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Auth", "Template.html"), Encoding.UTF8);
+        var template = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Auth", "Template.html"),
+            Encoding.UTF8);
         template = template.Replace("{{title}}", title).Replace("{{description}}", description);
         return template;
     }
