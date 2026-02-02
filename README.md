@@ -50,3 +50,52 @@ F12 | Prikaz tjednog jelovnika |Korisnik ima mogućnost pregledati tjedni jelovn
  - git 
  - GitHub
  - SMTP poslužitelj
+
+## Podaci za pristup
+Email: obican@rpp.com lozinka: RPP_dev_test
+
+Email: osoblje@rpp.com lozinka: RPP_dev_test
+
+## Upute za lokalno pokretanje servera
+### Preduvjeti
+- Docker
+- SMTP pristup (Gmail, obavezna autentifikacija).
+
+1. Konfiguracija .env
+   
+Dodajte .env u root projekta sa slijedećim ključevima i vašim vrijednostima:
+
+```
+# SMTP (obavezno)
+SMTP_USERNAME=
+SMTP_PASSWORD=
+SMTP_FROM_EMAIL=
+SMTP_FROM_NAME=Campus4U
+
+
+# Veza na bazu
+CONNECTION_STRING=
+```
+
+2. Izmjena Caddyfile za lokalni test
+   
+Za lokalni test promijeni Caddyfile u:
+```
+:80 {
+  reverse_proxy api:8080
+}
+```
+
+Time API radi na http://localhost/.
+
+3. Izmjena Campus4U\appsettings.json (klijent)
+
+`"Api": { "BaseUrl": "http://localhost/" }`
+
+4. Pokretanje preko Dockera
+   
+U rootu projekta:
+`docker compose up --build`
+
+Zaustavljanje:
+`docker compose down`
