@@ -144,5 +144,21 @@ namespace Client.Data.Spaces
                 await db.SaveChangesAsync();
             }
         }
+
+        public async Task<bool> KorisnikImaPreklapanje(int korisnikId, DateTime pocetnoVrijeme, DateTime krajnjeVrijeme, int? izuzmiRezervacijaId = null)
+        {
+            await using var db = new Campus4UContext();
+            var query = db.Rezervacije
+                .Where(r => r.KorisnikId == korisnikId
+                            && r.Status != "Otkazano"
+                            && pocetnoVrijeme < r.VrijemeDo
+                            && krajnjeVrijeme > r.VrijemeOd);
+            if (izuzmiRezervacijaId.HasValue)
+            {
+                query = query.Where(r => r.Id != izuzmiRezervacijaId.Value);
+            }
+            var postojiPreklapanje = await query.AnyAsync();
+            return postojiPreklapanje;
+        }
     }
 }

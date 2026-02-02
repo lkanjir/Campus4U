@@ -110,6 +110,13 @@ namespace Client.Presentation.Views.Spaces
                     throw new Exception("Rezervaciju morate napraviti najkasnije 5 minuta prije početka i ne može biti u prošlosti.");
                 }
 
+                int? ignorirajId = jelUredivanje ? rezervacijaZaUredivanje?.ID : null;
+                bool imaPreklapanje = await reservationRepository.KorisnikImaPreklapanje(idKorisnika, pocetak, kraj, ignorirajId);
+                if (imaPreklapanje)
+                {
+                    throw new Exception("Već imate rezervaciju koja se preklapa s odabranim terminom.");
+                }
+
                 int brojOsoba = int.Parse(TxtBrojOsoba.Text);
 
                 if (jelUredivanje && rezervacijaZaUredivanje == null)

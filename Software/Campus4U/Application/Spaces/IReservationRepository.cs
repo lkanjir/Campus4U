@@ -18,5 +18,6 @@ namespace Client.Application.Spaces
         Task<List<Rezervacija>> DohvatiRezervacijeKorisnika(int korisnikId);
         Task OtkaziRezervaciju(int rezervacijaId);
         Task UrediRezervaciju(Rezervacija rezervacija);
+        Task<bool> KorisnikImaPreklapanje(int korisnikId, DateTime pocetnoVrijeme, DateTime krajnjeVrijeme, int? izuzmiRezervacijaId = null);
     }
 }
