@@ -98,7 +98,7 @@ public sealed class SystemBrowser : IBrowser
         }
         else
         {
-            title = isSuccess ? "Uspejšna prijava" : "Greška kod prijave";
+            title = isSuccess ? "Uspješna prijava" : "Greška kod prijave";
             description = isSuccess
                 ? "Uspješno ste se prijavili u aplikaciju Campus4U. Možete se vratiti u aplikaciju"
                 : "Došlo je do greške prilikom prijave. Kako bi koristili aplikaciju morate se ponovno prijaviti.";
