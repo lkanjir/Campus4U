@@ -44,6 +44,7 @@ public partial class Campus4UContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__korisnic__3213E83F54EBF408");
 
             entity.ToTable("korisnici");
+            entity.ToTable("korisnici", t => t.HasTrigger("trg_korisnici_obavijesti_postavke"));
 
             entity.HasIndex(e => e.Email, "UQ__korisnic__AB6E61642276BC97").IsUnique();
 
@@ -97,12 +98,18 @@ public partial class Campus4UContext : DbContext
         modelBuilder.Entity<Rezervacije>(entity =>
         {
             entity.ToTable("rezervacije", t => t.HasTrigger("trg_rezervacije_obavijesti_za_slanje"));
+            entity.ToTable("rezervacije", t =>
+            {
+                t.HasTrigger("trg_rezervacije_obavijesti_za_slanje");
+                t.UseSqlOutputClause(false);
+            });
         });
 
         modelBuilder.Entity<Dogadaji>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__dogadaji__3213E83FCAC6C6DB");
         });
+        modelBuilder.Entity<Dogadaji>().ToTable("dogadaji", t => t.HasTrigger("trg_dogadaji_obavijesti_za_slanje"));
 
         modelBuilder.Entity<Dogadaji>(entity =>
         {

@@ -68,6 +68,7 @@ public partial class Campus4UContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__dogadaji__3213E83FCAC6C6DB");
 
             entity.ToTable("dogadaji");
+            entity.ToTable("dogadaji", t => t.HasTrigger("trg_dogadaji_obavijesti_za_slanje"));
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.AutorId).HasColumnName("autor_id");
@@ -194,6 +195,7 @@ public partial class Campus4UContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__korisnic__3213E83F54EBF408");
 
             entity.ToTable("korisnici");
+            entity.ToTable("korisnici", t => t.HasTrigger("trg_korisnici_obavijesti_postavke"));
 
             entity.HasIndex(e => e.Email, "UQ__korisnic__AB6E61642276BC97").IsUnique();
 
